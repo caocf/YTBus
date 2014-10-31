@@ -7,11 +7,10 @@
 //
 
 #import "AppDelegate.h"
-#import "JDODatabase.h"
-#import "AFNetworking.h"
-#import "SSZipArchive.h"
 
-@interface AppDelegate () <BMKGeneralDelegate,SSZipArchiveDelegate>
+@interface AppDelegate () <BMKGeneralDelegate>{
+    
+}
 
 @end
 
@@ -25,42 +24,7 @@
     if (!ret) {
         NSLog(@"manager start failed!");
     }
-    if (![JDODatabase isDBExistInDocument]) {
-        // 若document中不存在数据库文件，则下载数据库文件
-        NSURL *URL = [NSURL URLWithString:@"http://218.56.32.7:1030/SynBusSoftWebservice/DownloadServlet?method=downloadDb"];
-        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-        AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSData *zipData = (NSData *)responseObject;
-            BOOL success = [JDODatabase saveZipFile:zipData];
-            if ( success) { // 解压缩文件
-                BOOL result = [JDODatabase unzipDBFile:self];
-                if ( result) {
-                    // 正在解压
-                }else{  // 解压文件出错
-                    [JDODatabase openDB:1];
-                }
-            }else{  // 保存文件出错
-                [JDODatabase openDB:1];
-            }
-            
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Error: %@", error);
-            [JDODatabase openDB:1];
-        }];
-        [[NSOperationQueue mainQueue] addOperation:op];
-    }else{
-        [JDODatabase openDB:2];
-    }
     return YES;
-}
-
-- (void)zipArchiveDidUnzipArchiveAtPath:(NSString *)path zipInfo:(unz_global_info)zipInfo unzippedPath:(NSString *)unzippedPath{
-    [JDODatabase openDB:2];
-}
-
-- (void)zipArchiveProgressEvent:(NSInteger)loaded total:(NSInteger)total{
-    NSLog(@"解压进度:%g",loaded*1.0/total);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

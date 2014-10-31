@@ -106,6 +106,10 @@
 - (void)didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
 //    NSLog(@"didUpdateUserLocation lat %f,long %f",userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude);
+    if (!_db) {
+        return;
+    }
+    
     currentPosCoor = userLocation.location.coordinate;
     self.navigationItem.rightBarButtonItem.enabled = true;
     
@@ -121,10 +125,6 @@
         }else{
             return;
         }
-    }
-    
-    if (!_db) {
-        return;
     }
     [_nearbyStations removeAllObjects];
     

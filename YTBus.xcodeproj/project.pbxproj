@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
-		2D4BB8BF19F6653500AC3941 /* libbaidumapapi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB8BE19F6653500AC3941 /* libbaidumapapi.a */; };
 		2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2D4BB8C019F6654100AC3941 /* mapapi.bundle */; };
 		2D884B4B19F60ACE00C83F71 /* JDONearByController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D884B4A19F60ACE00C83F71 /* JDONearByController.mm */; };
 		2D884B4E19F61C3200C83F71 /* JDORealTimeController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D884B4D19F61C3200C83F71 /* JDORealTimeController.mm */; };
@@ -56,6 +55,8 @@
 		2DECC34F1A032BAF0022F60E /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC3491A032BAF0022F60E /* unzip.c */; };
 		2DECC3501A032BAF0022F60E /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC34B1A032BAF0022F60E /* zip.c */; };
 		2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC3521A032BBD0022F60E /* SSZipArchive.m */; };
+		2DECC3551A03453F0022F60E /* libbaidumapapi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DECC3541A03453F0022F60E /* libbaidumapapi.a */; };
+		2DFF46FB1A034F8000AFB6DB /* JDOMainTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF46FA1A034F8000AFB6DB /* JDOMainTabController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,7 +133,6 @@
 		2D4BB88419F65DDD00AC3941 /* BMKVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKVersion.h; sourceTree = "<group>"; };
 		2D4BB88519F661F200AC3941 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2D4BB88719F661F900AC3941 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		2D4BB8BE19F6653500AC3941 /* libbaidumapapi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbaidumapapi.a; sourceTree = "<group>"; };
 		2D4BB8C019F6654100AC3941 /* mapapi.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = mapapi.bundle; sourceTree = "<group>"; };
 		2D884B4919F60ACE00C83F71 /* JDONearByController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONearByController.h; sourceTree = "<group>"; };
 		2D884B4A19F60ACE00C83F71 /* JDONearByController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JDONearByController.mm; sourceTree = "<group>"; };
@@ -217,6 +217,9 @@
 		2DECC34C1A032BAF0022F60E /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
 		2DECC3511A032BBD0022F60E /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
 		2DECC3521A032BBD0022F60E /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
+		2DECC3541A03453F0022F60E /* libbaidumapapi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbaidumapapi.a; sourceTree = "<group>"; };
+		2DFF46F91A034F8000AFB6DB /* JDOMainTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOMainTabController.h; sourceTree = "<group>"; };
+		2DFF46FA1A034F8000AFB6DB /* JDOMainTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOMainTabController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,11 +231,11 @@
 				2DECC3421A032B2E0022F60E /* libz.dylib in Frameworks */,
 				2DECC2B719FF9D2C0022F60E /* libsqlite3.dylib in Frameworks */,
 				2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */,
-				2D4BB8BF19F6653500AC3941 /* libbaidumapapi.a in Frameworks */,
 				2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */,
 				2D884BA019F626B100C83F71 /* Security.framework in Frameworks */,
 				2D884B9E19F626AC00C83F71 /* CoreGraphics.framework in Frameworks */,
 				2D884B9A19F6269400C83F71 /* OpenGLES.framework in Frameworks */,
+				2DECC3551A03453F0022F60E /* libbaidumapapi.a in Frameworks */,
 				2D884B9819F6268600C83F71 /* QuartzCore.framework in Frameworks */,
 				2D884B9619F6268100C83F71 /* CoreLocation.framework in Frameworks */,
 			);
@@ -251,8 +254,8 @@
 		2D884B5319F625BD00C83F71 /* BaiduMap-2.5.0 */ = {
 			isa = PBXGroup;
 			children = (
+				2DECC3541A03453F0022F60E /* libbaidumapapi.a */,
 				2D4BB8C019F6654100AC3941 /* mapapi.bundle */,
-				2D4BB8BE19F6653500AC3941 /* libbaidumapapi.a */,
 				2D4BB84819F65DDD00AC3941 /* BMapKit.h */,
 				2D4BB84919F65DDD00AC3941 /* BMKActionPaopaoView.h */,
 				2D4BB84A19F65DDD00AC3941 /* BMKAnnotation.h */,
@@ -430,6 +433,8 @@
 		2DECC29E19FF2A840022F60E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2DFF46F91A034F8000AFB6DB /* JDOMainTabController.h */,
+				2DFF46FA1A034F8000AFB6DB /* JDOMainTabController.m */,
 				2D884B4919F60ACE00C83F71 /* JDONearByController.h */,
 				2D884B4A19F60ACE00C83F71 /* JDONearByController.mm */,
 				2DECC2C51A0218FC0022F60E /* JDONearMapController.h */,
@@ -673,6 +678,7 @@
 				2DECC2C41A01F8520022F60E /* JDONearByCell.m in Sources */,
 				2DECC33C1A0324D00022F60E /* AFXMLRequestOperation.m in Sources */,
 				2DECC33B1A0324D00022F60E /* AFURLConnectionOperation.m in Sources */,
+				2DFF46FB1A034F8000AFB6DB /* JDOMainTabController.m in Sources */,
 				2DECC2B319FF9ABA0022F60E /* FMDatabasePool.m in Sources */,
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,
