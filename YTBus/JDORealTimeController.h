@@ -10,6 +10,6 @@
 
 @interface JDORealTimeController : UIViewController
 
-@property (nonatomic,strong) NSString *title;
+@property (nonatomic,strong) NSString *naviTitle;
 
 @end
