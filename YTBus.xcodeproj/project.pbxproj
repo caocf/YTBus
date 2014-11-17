@@ -14,6 +14,11 @@
 		2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */; };
 		2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABE1A1472770024F1ED /* JDOUtils.m */; };
 		2D33FAC71A15996F0024F1ED /* JDOStationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAC61A15996F0024F1ED /* JDOStationController.m */; };
+		2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FACA1A19836E0024F1ED /* NSDate+SSToolkitAdditions.m */; };
+		2D33FAD41A19836E0024F1ED /* NSString+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FACC1A19836E0024F1ED /* NSString+SSToolkitAdditions.m */; };
+		2D33FAD51A19836E0024F1ED /* NSData+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FACE1A19836E0024F1ED /* NSData+SSToolkitAdditions.m */; };
+		2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD01A19836E0024F1ED /* UIColor+SSToolkitAdditions.m */; };
+		2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */; };
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
 		2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2D4BB8C019F6654100AC3941 /* mapapi.bundle */; };
@@ -93,6 +98,16 @@
 		2D33FAC41A14A6CB0024F1ED /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		2D33FAC51A15996F0024F1ED /* JDOStationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationController.h; sourceTree = "<group>"; };
 		2D33FAC61A15996F0024F1ED /* JDOStationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationController.m; sourceTree = "<group>"; };
+		2D33FAC91A19836E0024F1ED /* NSDate+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		2D33FACA1A19836E0024F1ED /* NSDate+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		2D33FACB1A19836E0024F1ED /* NSString+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		2D33FACC1A19836E0024F1ED /* NSString+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		2D33FACD1A19836E0024F1ED /* NSData+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		2D33FACE1A19836E0024F1ED /* NSData+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		2D33FACF1A19836E0024F1ED /* UIColor+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		2D33FAD01A19836E0024F1ED /* UIColor+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		2D33FAD11A19836E0024F1ED /* UIControl+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+SSToolkitAdditions.h"; sourceTree = "<group>"; };
+		2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+SSToolkitAdditions.m"; sourceTree = "<group>"; };
 		2D4BB84819F65DDD00AC3941 /* BMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMapKit.h; sourceTree = "<group>"; };
 		2D4BB84919F65DDD00AC3941 /* BMKActionPaopaoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKActionPaopaoView.h; sourceTree = "<group>"; };
 		2D4BB84A19F65DDD00AC3941 /* BMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKAnnotation.h; sourceTree = "<group>"; };
@@ -274,6 +289,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D33FAC81A1983540024F1ED /* SSToolkit */ = {
+			isa = PBXGroup;
+			children = (
+				2D33FAC91A19836E0024F1ED /* NSDate+SSToolkitAdditions.h */,
+				2D33FACA1A19836E0024F1ED /* NSDate+SSToolkitAdditions.m */,
+				2D33FACB1A19836E0024F1ED /* NSString+SSToolkitAdditions.h */,
+				2D33FACC1A19836E0024F1ED /* NSString+SSToolkitAdditions.m */,
+				2D33FACD1A19836E0024F1ED /* NSData+SSToolkitAdditions.h */,
+				2D33FACE1A19836E0024F1ED /* NSData+SSToolkitAdditions.m */,
+				2D33FACF1A19836E0024F1ED /* UIColor+SSToolkitAdditions.h */,
+				2D33FAD01A19836E0024F1ED /* UIColor+SSToolkitAdditions.m */,
+				2D33FAD11A19836E0024F1ED /* UIControl+SSToolkitAdditions.h */,
+				2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */,
+			);
+			name = SSToolkit;
+			sourceTree = "<group>";
+		};
 		2D884B5319F625BD00C83F71 /* BaiduMap-2.5.0 */ = {
 			isa = PBXGroup;
 			children = (
@@ -420,6 +452,7 @@
 		2DA6632019F0D97100DFED0B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				2D33FAC81A1983540024F1ED /* SSToolkit */,
 				2DECC3431A032B7A0022F60E /* SSZipArchive */,
 				2DECC2D01A031D750022F60E /* AFNetworking-1.3.3 */,
 				2DECC2C81A0224C30022F60E /* MBProgressHUD */,
@@ -692,6 +725,8 @@
 			files = (
 				2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */,
 				2DECC33D1A0324D00022F60E /* UIImageView+AFNetworking.m in Sources */,
+				2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */,
+				2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */,
 				2DECC2B119FF9ABA0022F60E /* FMDatabaseQueue.m in Sources */,
 				2DECC3361A0324D00022F60E /* AFHTTPRequestOperation.m in Sources */,
 				2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */,
@@ -700,6 +735,7 @@
 				2DECC34F1A032BAF0022F60E /* unzip.c in Sources */,
 				2DECC34D1A032BAF0022F60E /* ioapi.c in Sources */,
 				2DECC2CF1A0310D50022F60E /* JDODatabase.m in Sources */,
+				2D33FAD51A19836E0024F1ED /* NSData+SSToolkitAdditions.m in Sources */,
 				2DECC3401A0325B40022F60E /* JDOHttpClient.m in Sources */,
 				2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */,
 				2DECC2BD1A00DF7F0022F60E /* JDOBusLineDetail.m in Sources */,
@@ -718,11 +754,13 @@
 				2DECC2C41A01F8520022F60E /* JDONearByCell.m in Sources */,
 				2DECC33C1A0324D00022F60E /* AFXMLRequestOperation.m in Sources */,
 				2DECC33B1A0324D00022F60E /* AFURLConnectionOperation.m in Sources */,
+				2D33FAD41A19836E0024F1ED /* NSString+SSToolkitAdditions.m in Sources */,
 				2D33FAC71A15996F0024F1ED /* JDOStationController.m in Sources */,
 				2D33FAB31A10540F0024F1ED /* JDORealTimeCell.m in Sources */,
 				2DFF46FB1A034F8000AFB6DB /* JDOMainTabController.m in Sources */,
 				2DECC2B319FF9ABA0022F60E /* FMDatabasePool.m in Sources */,
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
+				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,
 				2D33FAB91A1450060024F1ED /* JDOPaoPaoTable.m in Sources */,
 				2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */,
