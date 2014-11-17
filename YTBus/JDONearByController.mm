@@ -76,7 +76,7 @@
         rt.busLine = cell.busLine;
     }else if([segue.identifier isEqualToString:@"toNearMap"]){
         JDONearMapController *nm = segue.destinationViewController;
-        nm.centerCoor = lastSearchCoor;
+        nm.centerCoor = currentPosCoor;
         nm.nearbyStations = _nearbyStations;
         nm.linesInfo = _linesInfo;
         nm.title = @"地图";
@@ -160,12 +160,7 @@
         
         if (distance < distanceRadius) {  // 附近站点
             station.distance = @(distance);
-            // 从数据库查询该站点途径的线路
-            // 若站点没有公交线路通过，则认为该站点无效，例如7路通过的奥运酒店
-//            BOOL find = [self findLinesAtStation:station];
-//            if ( find) {
-                [_nearbyStations addObject:station];
-//            }
+            [_nearbyStations addObject:station];
         }else{
 //            NSLog(@"%@:距离超过1000米",station.name);
         }
@@ -322,40 +317,6 @@
 //- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
 //    return 50;
 //}
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 -(void)dealloc{
     if (distanceObserver) {

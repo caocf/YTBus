@@ -20,7 +20,8 @@
     FMDatabase *_db;
     id dbObserver;
     NSIndexPath *selectedIndexPath;
-    UIButton *clearHisBtn;
+    UISearchBar *_searchBar;
+    UIButton *_clearHisBtn;
 }
 
 @end
@@ -31,17 +32,19 @@
     [super viewDidLoad];
     
     // 增加搜索框
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
-    searchBar.placeholder = @"搜索站点";
-    searchBar.delegate = self;
-    self.tableView.tableHeaderView = searchBar;
+    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
+    _searchBar.placeholder = @"搜索站点";
+    _searchBar.delegate = self;
+    self.tableView.tableHeaderView = _searchBar;
     
     // 清除历史记录
-    clearHisBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [clearHisBtn setFrame:CGRectMake((320-150)/2, 0, 150, 44)];
-    [clearHisBtn setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-    [clearHisBtn setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
-    [clearHisBtn setTitle:@"清除搜索历史记录" forState:UIControlStateNormal];
+    _clearHisBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_clearHisBtn setFrame:CGRectMake(0, 0, 320, 44)];
+    [_clearHisBtn setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+    [_clearHisBtn setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+    [_clearHisBtn setTitle:@"清除浏览历史记录" forState:UIControlStateNormal];
+    [_clearHisBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [_clearHisBtn addTarget:self action:@selector(clearHistory:) forControlEvents:UIControlEventTouchUpInside];
     
     _db = [JDODatabase sharedDB];
     if (_db) {
@@ -53,6 +56,15 @@
     }];
 }
 
+- (void) clearHistory:(UIButton *)btn{
+    [_historyStations removeAllObjects];
+    [self.tableView reloadData];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSMutableArray new] forKey:@"history_station"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    self.tableView.tableFooterView = nil;
+}
+
 - (void)loadData{
     // 加载所有站点
     _allStations = [NSMutableArray new];
@@ -60,54 +72,65 @@
     JDOStationModel *preStation;
     while ([rs next]) {
         JDOStationModel *station;
-        NSString *stationId = [rs stringForColumn:@"ID"];
-        if (preStation && [stationId isEqualToString:preStation.fid]) {
+        // 相同名称的站点聚合到一起
+        NSString *stationName = [rs stringForColumn:@"STATIONNAME"];
+        if (preStation && [stationName isEqualToString:preStation.name]) {
             station = preStation;
         }else{
             station = [JDOStationModel new];
-            station.fid = stationId;
+            station.fid = [rs stringForColumn:@"ID"];
             station.name = [rs stringForColumn:@"STATIONNAME"];
             station.direction = [rs stringForColumn:@"GEOGRAPHICALDIRECTION"];
             station.passLines = [NSMutableArray new];
             [_allStations addObject:station];
             preStation = station;
         }
-//        JDOBusLine *busLine = [JDOBusLine new];
-//        busLine.lineName = [rs stringForColumn:@"BUSLINENAME"];
-        [station.passLines addObject:[rs stringForColumn:@"BUSLINENAME"]];
+        if(!station.passLines){
+            station.passLines = [NSMutableArray new];
+        }
+        NSString *lineName = [rs stringForColumn:@"BUSLINENAME"];
+        if(![station.passLines containsObject:lineName]) {
+            [station.passLines addObject:lineName];
+        }
     }
-    _filterAllStations = [_allStations copy];
     
-//    _historyStations = [NSMutableArray new];
-//    NSArray *hisStationIds = [[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"];
-//    NSString *ids = [hisStationIds componentsJoinedByString:@","];
-//    if(ids){
-//        FMResultSet *rs = [_db executeQuery:[GetLineById stringByReplacingOccurrencesOfString:@"?" withString:ids]];
-//        while ([rs next]) {
-//            JDOBusLine *busLine = [JDOBusLine new];
-//            busLine.lineId = [rs stringForColumn:@"ID"];
-//            busLine.lineName = [rs stringForColumn:@"BUSLINENAME"];
-//            busLine.stationA = [rs stringForColumn:@"STATIONANAME"];
-//            busLine.stationB = [rs stringForColumn:@"STATIONBNAME"];
-//            [_favorLines addObject:busLine];
-//        }
-//    }
-//    [self sortLines:_favorLines];
-//    _filterFavorLines = [_favorLines copy];
-//    
-//    [self.tableView reloadData];
+    // 加载历史搜索记录
+    _historyStations = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"] mutableCopy];
+    if(!_historyStations) {
+        _historyStations = [NSMutableArray new];
+    }
+    // 没有历史记录则搜索框获得焦点
+    if (_historyStations.count == 0) {
+        [_searchBar becomeFirstResponder];
+    }else{
+        self.tableView.tableFooterView = _clearHisBtn;
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"toStatinMap"]) {
+    if ([segue.identifier isEqualToString:@"toStationMap"]) {
 //        JDORealTimeController *rt = segue.destinationViewController;
 //        if (selectedIndexPath.section == 0 && _filterFavorStations.count>0) {
 //            rt.busLine = _filterFavorStations[selectedIndexPath.row];
 //        }else{
 //            rt.busLine = _filterAllStations[selectedIndexPath.row];
 //        }
+        // 加入历史记录
+        UITableViewCell *cell = sender;
+        NSString *stationName = [(UILabel *)[cell viewWithTag:1001] text];
+        _historyStations = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"] mutableCopy];
+        if(!_historyStations){
+            _historyStations = [NSMutableArray new];
+        }
+        if (![_historyStations containsObject:stationName]) {
+            [_historyStations addObject:stationName];
+            [[NSUserDefaults standardUserDefaults] setObject:_historyStations forKey:@"history_station"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        
     }
 }
 
@@ -127,6 +150,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if([_searchBar.text isEqualToString:@""]){
+        return _historyStations.count;
+    }
     return _filterAllStations.count;
 }
 
@@ -135,27 +161,35 @@
     static NSString *identifier = @"busStation";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
     
-    JDOStationModel *station = (JDOStationModel *)_filterAllStations[indexPath.row];
-    [(UILabel *)[cell viewWithTag:1001] setText:station.name];
-    NSString *desc;
-    if (station.passLines.count <= 3) {
-        desc = [NSString stringWithFormat:@"%@经过",[station.passLines componentsJoinedByString:@"、"]];
+    if([_searchBar.text isEqualToString:@""]){
+        NSString *station = _historyStations[indexPath.row];
+        [(UILabel *)[cell viewWithTag:1001] setText:station];
+        [(UILabel *)[cell viewWithTag:1002] setText:@""];
     }else{
-        desc = [NSString stringWithFormat:@"%@等%d条线路经过",station.passLines[0],station.passLines.count];
+        JDOStationModel *station = (JDOStationModel *)_filterAllStations[indexPath.row];
+        [(UILabel *)[cell viewWithTag:1001] setText:station.name];
+        NSString *desc;
+        if (station.passLines.count <= 3) {
+            desc = [NSString stringWithFormat:@"%@经过",[station.passLines componentsJoinedByString:@"、"]];
+        }else{
+            desc = [NSString stringWithFormat:@"%@等%d条线路经过",station.passLines[0],station.passLines.count];
+        }
+        [(UILabel *)[cell viewWithTag:1002] setText:desc];
     }
-    [(UILabel *)[cell viewWithTag:1002] setText:desc];
-
     return cell;
 }
 
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-    _filterAllStations = [_allStations mutableCopy];
     if ([searchBar.text isEqualToString:@""]) {
+        if (_historyStations.count>0) {
+            self.tableView.tableFooterView = _clearHisBtn;
+        }
         [self.tableView reloadData];
         return;
     }
     
+    _filterAllStations = [_allStations mutableCopy];
     NSMutableIndexSet *deleteAllIndex = [NSMutableIndexSet indexSet];
     for(int i=0; i<_filterAllStations.count; i++){
         JDOStationModel *station = _filterAllStations[i];
@@ -164,7 +198,7 @@
         }
     }
     [_filterAllStations removeObjectsAtIndexes:deleteAllIndex];
-    
+    self.tableView.tableFooterView = nil;
     [self.tableView reloadData];
 }
 

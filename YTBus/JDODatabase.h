@@ -27,9 +27,7 @@
 #define GetAllStations @"select t0.ID, STATIONNAME, sum(1) as NUM from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID where t0.GPSX2<>0 and t0.GPSY2<>0 group by t0.ID order by STATIONNAME"
 
 // 所有站点名称，及站点通过的线路名称
-#define GetAllStationsWithLine @"select t0.ID as ID, STATIONNAME,GEOGRAPHICALDIRECTION,t3.BUSLINENAME as BUSLINENAME from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID inner join BusLine t3 on t2.BUSLINEID = t3.ID where t0.GPSX2<>0 and t0.GPSY2<>0 order by STATIONNAME,t0.ID"
-
-#define GetHistoryStations @"select t0.ID as ID, STATIONNAME,GEOGRAPHICALDIRECTION,t3.BUSLINENAME as BUSLINENAME from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID inner join BusLine t3 on t2.BUSLINEID = t3.ID where t0.GPSX2<>0 and t0.GPSY2<>0 order by STATIONNAME,t0.ID"
+#define GetAllStationsWithLine @"select t0.ID as ID, (CASE WHEN SUBSTR(STATIONNAME,-1,1)='2' and SUBSTR(STATIONNAME,-2,1) not in ('1','2','3','4','5','6','7','8','9','0') THEN SUBSTR(STATIONNAME,1,LENGTH(STATIONNAME)-1) ELSE STATIONNAME END) as STATIONNAME,GEOGRAPHICALDIRECTION,t3.BUSLINENAME as BUSLINENAME,t3.ID as BUSLINEID from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID inner join BusLine t3 on t2.BUSLINEID = t3.ID where t0.GPSX2<>0 and t0.GPSY2<>0 order by STATIONNAME,t0.ID,t3.ID"
 
 @interface JDODatabase : NSObject
 

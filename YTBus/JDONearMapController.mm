@@ -50,6 +50,8 @@
     _stations = [NSMutableArray new];   // 有线路的站点
     _stationLines = [NSMutableDictionary new];
     for(int i=0; i<_nearbyStations.count; i++){
+        // 从数据库查询该站点途径的线路
+        // 若站点没有公交线路通过，则认为该站点无效，例如7路通过的奥运酒店
         BOOL find = [self findLinesAtStation:_nearbyStations[i]];
         if ( find) {
             [_stations addObject:_nearbyStations[i]];
@@ -111,6 +113,9 @@
 
 - (void)addPointAnnotation:(JDOStationModel *) station{
     JDOStationAnnotation *pointAnnotation = [[JDOStationAnnotation alloc] init];
+    // GPS坐标转百度坐标
+//    CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+//    pointAnnotation.coordinate = bdStation;
     pointAnnotation.coordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
     pointAnnotation.title = station.name;
     pointAnnotation.station = station;
