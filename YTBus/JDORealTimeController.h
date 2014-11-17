@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JDOBusLine.h"
 
-@interface JDORealTimeController : UIViewController
+@interface JDORealTimeController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
-@property (nonatomic,strong) NSString *naviTitle;
+@property (nonatomic,strong) JDOBusLine *busLine;
 
 @end

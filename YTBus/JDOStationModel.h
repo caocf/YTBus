@@ -16,5 +16,10 @@
 @property(nonatomic,strong) NSNumber *gpsX;
 @property(nonatomic,strong) NSNumber *gpsY;
 @property(nonatomic,strong) NSNumber *distance;
+@property(nonatomic,assign) int *passLineNum;
+@property(nonatomic,strong) NSMutableArray/*NSString*/ *passLines;
+
+@property(nonatomic,assign,getter=isStart) BOOL start;
+@property(nonatomic,assign,getter=isEnd) BOOL end;
 
 @end

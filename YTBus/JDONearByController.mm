@@ -21,9 +21,7 @@
     CLLocationCoordinate2D lastSearchCoor;
     CLLocationCoordinate2D currentPosCoor;
     BOOL isFirstPosition;
-    NSMutableArray *_busPoiArray;
     NSMutableArray *_nearbyStations;
-    NSMutableDictionary *_stationLines;
     FMDatabase *_db;
     NSMutableArray *_linesInfo;
     id distanceObserver;
@@ -47,18 +45,19 @@
     }else{
         _locService = [[BMKLocationService alloc] init];
         isFirstPosition = true;
-        _busPoiArray = [[NSMutableArray alloc] init];
         _nearbyStations = [[NSMutableArray alloc] init];
-        _stationLines = [[NSMutableDictionary alloc] init];
         distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
         if (distanceRadius == 0) {
             distanceRadius = 1000;
         }
         
         _db = [JDODatabase sharedDB];
-        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-            _db = [JDODatabase sharedDB];
-        }];
+        if (!_db) {
+            dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
+                _db = [JDODatabase sharedDB];
+            }];
+        }
+        
         distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
             isFirstPosition = true;
             distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
@@ -71,13 +70,15 @@
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"toRealtime"]) {
+    if ([segue.identifier isEqualToString:@"toRealtimeFromNearby"]) {
         JDORealTimeController *rt = segue.destinationViewController;
-        rt.title = @"19路";
+        JDONearByCell *cell = (JDONearByCell *)sender;
+        rt.busLine = cell.busLine;
     }else if([segue.identifier isEqualToString:@"toNearMap"]){
         JDONearMapController *nm = segue.destinationViewController;
         nm.centerCoor = lastSearchCoor;
         nm.nearbyStations = _nearbyStations;
+        nm.linesInfo = _linesInfo;
         nm.title = @"地图";
     }
 }
@@ -143,8 +144,8 @@
     while ([s next]) {
         JDOStationModel *station = [JDOStationModel new];
         station.fid = [NSString stringWithFormat:@"%d",[s intForColumn:@"ID"]];
-        station.name = [NSString stringWithUTF8String:(const char*)[s UTF8StringForColumnName:@"STATIONNAME"]];
-        station.direction = [NSString stringWithUTF8String:(const char*)[s UTF8StringForColumnName:@"GEOGRAPHICALDIRECTION"]];
+        station.name = [s stringForColumn:@"STATIONNAME"];
+        station.direction = [s stringForColumn:@"GEOGRAPHICALDIRECTION"];
         station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSX2"]];
         station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSY2"]];
 //        NSLog(@"%@ gps2原始 x=%@,y=%@",station.name,station.gpsX,station.gpsY);
@@ -184,14 +185,13 @@
     _linesInfo = [[NSMutableArray alloc] init];
     for (int i=0; i<_nearbyStations.count; i++) {
         JDOStationModel *station = _nearbyStations[i];
-        FMResultSet *rs = [_db executeQuery:GetLinesByStation withArgumentsInArray:@[station.fid]];
+        FMResultSet *rs = [_db executeQuery:GetLinesByStation,station.fid];
         while ([rs next]) {
-            if ((const char*)[rs UTF8StringForColumnName:@"LINENAME"] == NULL ||
-                (const char*)[rs UTF8StringForColumnName:@"LINEDETAIL"] == NULL) {
-                NSLog(@"线路详情id：%@不存在",[NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEID"]]);
+            if (![rs stringForColumn:@"LINENAME"] || ![rs stringForColumn:@"LINEDETAIL"]) {
+                NSLog(@"线路详情id：%@不存在",[rs stringForColumn:@"LINEID"]);
                 continue;
             }
-            NSString *lineId = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEID"]];
+            NSString *lineId = [rs stringForColumn:@"LINEID"];
             
             JDOBusLine *busLine;
             for (int i=0; i<_linesInfo.count; i++) {
@@ -205,12 +205,13 @@
             if(!busLine) {
                 busLine = [JDOBusLine new];
                 busLine.lineId = lineId;
-                busLine.lineName = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINENAME"]];
+                busLine.lineName = [rs stringForColumn:@"LINENAME"];
+                busLine.runTime = [rs stringForColumn:@"RUNTIME"];
                 
                 busLine.lineDetailPair = [[NSMutableArray alloc] initWithCapacity:2];
                 JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
-                lineDetail.detailId = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEDETAILID"]];
-                lineDetail.lineDetail = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEDETAIL"]];
+                lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
+                lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
                 [busLine.lineDetailPair addObject:lineDetail];
                 
                 busLine.nearbyStationPair = [[NSMutableArray alloc] initWithCapacity:2];
@@ -223,14 +224,14 @@
                 }
                 // stationPair中的第二个必须保证跟前一个是对向站点。并且上下行的两个站点不一定同名，也就是说，离当前位置最近的两侧站点可能分别是前后两站
                 JDOBusLineDetail *preLineDetail = busLine.lineDetailPair[0];
-                NSString *detailId = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEDETAILID"]];
+                NSString *detailId = [rs stringForColumn:@"LINEDETAILID"];
                 if ([preLineDetail.detailId isEqualToString:detailId]) {
                     continue;
                 }
                 
                 JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
-                lineDetail.detailId = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEDETAILID"]];
-                lineDetail.lineDetail = [NSString stringWithUTF8String:(const char*)[rs UTF8StringForColumnName:@"LINEDETAIL"]];
+                lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
+                lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
                 [busLine.lineDetailPair addObject:lineDetail];
                 
                 [busLine.nearbyStationPair addObject:station];
@@ -239,29 +240,6 @@
     }
     
     [self.tableView reloadData];
-}
-
-- (BOOL) findLinesAtStation:(JDOStationModel *)station{
-    NSMutableArray *lines = [[NSMutableArray alloc] init];
-    NSString *sql = @"select t1.buslinedetail as LINEID, t3.buslinename as LINENAME,t2.buslinename as LINEDETAIL from LINESTATION t1 left join BUSLINEDETAIL t2 on t1.buslinedetail = t2.id left join BUSLINE t3 on t1.buslineid = t3.id where t1.stationid = ?";
-    FMResultSet *s = [_db executeQuery:sql withArgumentsInArray:@[station.fid]];
-    while ([s next]) {
-        const char* lineName = (const char*)[s UTF8StringForColumnName:@"LINENAME"];
-        const char* lineDetail = (const char*)[s UTF8StringForColumnName:@"LINEDETAIL"];
-        if (lineName == NULL || lineDetail == NULL) {
-            NSLog(@"线路详情id：%@不存在",[NSString stringWithUTF8String:(const char*)[s UTF8StringForColumnName:@"LINEID"]]);
-            continue;
-        }
-        JDOBusLineDetail *busLine = [JDOBusLineDetail new];
-//        busLine.lineName = [NSString stringWithUTF8String:lineName];
-        busLine.lineDetail = [NSString stringWithUTF8String:lineDetail];
-        [lines addObject:busLine];
-    }
-    if (lines.count >0) {
-        [_stationLines setObject:lines forKey:station.fid];
-        return true;
-    }
-    return false;
 }
 
 - (void)didFailToLocateUserWithError:(NSError *)error {

@@ -13,5 +13,8 @@
 
 @property (nonatomic,assign) CLLocationCoordinate2D centerCoor;
 @property (nonatomic,strong) NSArray *nearbyStations;
+@property (nonatomic,strong) NSArray *linesInfo;
+
+@property (nonatomic,weak) IBOutlet BMKMapView *mapView;
 
 @end
