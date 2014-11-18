@@ -14,12 +14,15 @@
 #import "JDORealTimeController.h"
 #import "JDOPaoPaoTable.h"
 
-@interface JDONearMapController () <BMKMapViewDelegate,UITableViewDataSource,UITableViewDelegate> {
-    
+@interface JDONearMapController () <BMKMapViewDelegate,BMKLocationServiceDelegate,UITableViewDataSource,UITableViewDelegate> {
+    BMKLocationService *_locService;
+    CLLocationCoordinate2D lastSearchCoor;
+    int distanceRadius;
     NSMutableArray *_stations;
-    NSMutableDictionary *_stationLines;
+    NSMutableArray *_linesOfFoundNearestStation;
     FMDatabase *_db;
     id dbObserver;
+    id distanceObserver;
 }
 
 @end
@@ -29,83 +32,150 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _mapView.centerCoordinate = self.centerCoor;
+    _mapView.centerCoordinate = self.myselfCoor;
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
     _mapView.zoomLevel = 17;
     _mapView.delegate = self;
     
+    _locService = [[BMKLocationService alloc] init];
+    distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+    if (distanceRadius == 0) {
+        distanceRadius = 1000;
+    }
+    
+    lastSearchCoor = CLLocationCoordinate2DMake(self.myselfCoor.latitude, self.myselfCoor.longitude) ;
     _db = [JDODatabase sharedDB];
     if (_db) {
         [self loadData];
+    }else{
+        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
+            _db = [JDODatabase sharedDB];
+        }];
     }
-    dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-        _db = [JDODatabase sharedDB];
-        [self loadData];
+    
+    distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
+        distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
     }];
 }
 
 - (void) loadData {
     _stations = [NSMutableArray new];   // 有线路的站点
-    _stationLines = [NSMutableDictionary new];
+    _linesOfFoundNearestStation = [NSMutableArray new];
     for(int i=0; i<_nearbyStations.count; i++){
         // 从数据库查询该站点途径的线路
         // 若站点没有公交线路通过，则认为该站点无效，例如7路通过的奥运酒店
-        BOOL find = [self findLinesAtStation:_nearbyStations[i]];
-        if ( find) {
-            [_stations addObject:_nearbyStations[i]];
+        JDOStationModel *station = _nearbyStations[i];
+        station.passLines = [NSMutableArray new];
+        station.linesWhenStationIsNearest = [NSMutableArray new];
+        FMResultSet *rs = [_db executeQuery:GetLinesByStation,station.fid];
+        while ([rs next]) {
+            JDOBusLine *busLine = [JDOBusLine new];
+            busLine.lineId = [rs stringForColumn:@"LINEID"];
+            busLine.lineName = [rs stringForColumn:@"LINENAME"];
+            JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
+            lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
+            lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
+            busLine.lineDetailPair = [@[lineDetail] mutableCopy];
+            if (![_linesOfFoundNearestStation containsObject:lineDetail.detailId]) {
+                [station.linesWhenStationIsNearest addObject:lineDetail.detailId];
+                [_linesOfFoundNearestStation addObject:lineDetail.detailId];
+            }
+            [station.passLines addObject:busLine];
+        }
+        if (station.passLines.count >0) {
+            [_stations addObject:station];
         }
     }
     [self addAnnotations];
 }
 
-- (BOOL) findLinesAtStation:(JDOStationModel *)station{
-    NSMutableArray *lines = [[NSMutableArray alloc] init];
+- (void)didUpdateUserHeading:(BMKUserLocation *)userLocation{
+    [_mapView updateLocationData:userLocation];
+}
+
+- (void)didFailToLocateUserWithError:(NSError *)error{
     
-    FMResultSet *rs = [_db executeQuery:GetLinesByStation,station.fid];
-    while ([rs next]) {
-        if (![rs stringForColumn:@"LINENAME"] || ![rs stringForColumn:@"LINEDETAIL"]) {
-            NSLog(@"线路详情id：%@不存在",[rs stringForColumn:@"LINEID"]);
-            continue;
+}
+
+- (void)didUpdateUserLocation:(BMKUserLocation *)userLocation{
+    [_mapView updateLocationData:userLocation];
+    
+    if (!_db) {
+        return;
+    }
+    
+    _myselfCoor = userLocation.location.coordinate;
+    CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(lastSearchCoor),BMKMapPointForCoordinate(_myselfCoor));
+    if (distance > 100) {
+        lastSearchCoor = _myselfCoor;
+    }else{
+        return;
+    }
+    [_nearbyStations removeAllObjects];
+    
+    double longitudeDelta = distanceRadius/85390.0;
+    double latitudeDelta = distanceRadius/111000.0;
+    NSString *sql = @"select * from STATION where gpsx2>? and gpsx2<? and gpsy2>? and gpsy2<? and stationname not like 't_%'";
+    NSArray *argu = @[@(_myselfCoor.longitude-longitudeDelta),@(_myselfCoor.longitude+longitudeDelta),@(_myselfCoor.latitude-latitudeDelta),@(_myselfCoor.latitude+latitudeDelta)];
+    FMResultSet *s = [_db executeQuery:sql withArgumentsInArray:argu];
+    while ([s next]) {
+        JDOStationModel *station = [JDOStationModel new];
+        station.fid = [NSString stringWithFormat:@"%d",[s intForColumn:@"ID"]];
+        station.name = [s stringForColumn:@"STATIONNAME"];
+        station.direction = [s stringForColumn:@"GEOGRAPHICALDIRECTION"];
+        station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSX2"]];
+        station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSY2"]];
+        // 对比与当前地理位置的距离小于1000的站点
+        CLLocationCoordinate2D bdStation = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
+        // gps坐标转百度坐标
+//        CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+        // 转化为直角坐标测距
+        CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(_myselfCoor),BMKMapPointForCoordinate(bdStation));
+        if (distance < distanceRadius) {  // 附近站点
+            station.distance = @(distance);
+            [_nearbyStations addObject:station];
         }
-        
-        JDOBusLine *busLine = [JDOBusLine new];
-        busLine.lineId = [rs stringForColumn:@"LINEID"];
-        busLine.lineName = [rs stringForColumn:@"LINENAME"];
-        JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
-        lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
-        lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
-        busLine.lineDetailPair = [@[lineDetail] mutableCopy];
-        [lines addObject:busLine];
     }
-    if (lines.count >0) {
-        [_stationLines setObject:lines forKey:station.fid];
-        return true;
-    }
-    return false;
+    
+    // 按距离由近及远排序
+    [_nearbyStations sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        JDOStationModel *station1 = (JDOStationModel *)obj1;
+        JDOStationModel *station2 = (JDOStationModel *)obj2;
+        if (station1.distance.doubleValue < station2.distance.doubleValue) {
+            return NSOrderedAscending;
+        }
+        return NSOrderedDescending;
+    }];
+    
+    [self loadData];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [_mapView viewWillAppear];
+    if (_locService) {
+        _locService.delegate = self;
+        [_locService startUserLocationService];
+        _mapView.showsUserLocation = NO;
+        _mapView.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
+        _mapView.showsUserLocation = YES;
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
     [_mapView viewWillDisappear];
-}
-
--(void)viewDidAppear:(BOOL)animated {
-    // 在viewDidLoad里设置annotation的话，因为mapView的delegate还没有设置，导致无法执行回调
-    
+    if (_locService) {
+        [_locService stopUserLocationService];
+        _locService.delegate = nil;
+        _mapView.showsUserLocation = NO;
+    }
 }
 
 -(void)addAnnotations{
-    JDOStationModel *myPosition = [JDOStationModel new];
-    myPosition.name = @"我的位置";
-    myPosition.gpsX = [NSNumber numberWithDouble:self.centerCoor.longitude];
-    myPosition.gpsY = [NSNumber numberWithDouble:self.centerCoor.latitude];
-    [self addPointAnnotation:myPosition];
-    
+    if (self.mapView.annotations.count>0) {
+        [self.mapView removeAnnotations:[self.mapView.annotations copy]];
+    }
     for (int i=0; i<_stations.count; i++) {
         [self addPointAnnotation:_stations[i]];
     }
@@ -117,7 +187,6 @@
 //    CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
 //    pointAnnotation.coordinate = bdStation;
     pointAnnotation.coordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
-    pointAnnotation.title = station.name;
     pointAnnotation.station = station;
     [_mapView addAnnotation:pointAnnotation];
 }
@@ -125,21 +194,15 @@
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     static NSString *AnnotationViewID = @"annotationView";
     BMKPinAnnotationView *newAnnotation = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
-    if ([annotation.title isEqualToString:@"我的位置"]) {
-        newAnnotation.pinColor = BMKPinAnnotationColorGreen;
-        newAnnotation.animatesDrop = false;
-    }else{
-        newAnnotation.pinColor = BMKPinAnnotationColorPurple;
-        newAnnotation.animatesDrop = true;
-        newAnnotation.paopaoView = [self createPaoPaoView:[(JDOStationAnnotation *)annotation station]];
-    }
-    
+    newAnnotation.pinColor = BMKPinAnnotationColorPurple;
+    newAnnotation.paopaoView = [self createPaoPaoView:[(JDOStationAnnotation *)annotation station]];
+    newAnnotation.animatesDrop = false;
     newAnnotation.draggable = false;
     return newAnnotation;
 }
 
 - (BMKActionPaopaoView *)createPaoPaoView:(JDOStationModel *)station{
-    NSArray *paopaoLines = [_stationLines objectForKey:station.fid];
+    NSArray *paopaoLines = station.passLines;
     // 弹出窗口中的线路数目如果小于200，则有多高就显示多高，否则最多显示200高度，内部表格滚动
     float tableHeight = paopaoLines.count*44<200?paopaoLines.count*44:200;
     UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, tableHeight+44)];
@@ -151,7 +214,7 @@
     [customView addSubview:title];
     
     JDOPaoPaoTable *paopaoTable = [[JDOPaoPaoTable alloc] initWithFrame:CGRectMake(0, 44, 200, tableHeight)];
-    paopaoTable.stationId = station.fid;
+    paopaoTable.station = station;
     paopaoTable.delegate = self;
     paopaoTable.dataSource = self;
     [customView addSubview:paopaoTable];
@@ -169,7 +232,7 @@
         JDORealTimeController *rt = segue.destinationViewController;
         JDOPaoPaoTable *paopaoTable = [(NSArray *)sender objectAtIndex:0];
         NSIndexPath *indexPath = [(NSArray *)sender objectAtIndex:1];
-        NSArray *paopaoLines = [_stationLines objectForKey:paopaoTable.stationId];
+        NSArray *paopaoLines = paopaoTable.station.passLines;
         rt.busLine = paopaoLines[indexPath.row];
     }
 }
@@ -182,7 +245,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     JDOPaoPaoTable *paopaoTable = (JDOPaoPaoTable *)tableView;
-    NSArray *paopaoLines = [_stationLines objectForKey:paopaoTable.stationId];
+    NSArray *paopaoLines = paopaoTable.station.passLines;
     return paopaoLines.count;
 }
 
@@ -201,7 +264,7 @@
     UILabel *lineLabel = (UILabel *)[cell viewWithTag:3001];
     
     JDOPaoPaoTable *paopaoTable = (JDOPaoPaoTable *)tableView;
-    NSArray *paopaoLines = [_stationLines objectForKey:paopaoTable.stationId];
+    NSArray *paopaoLines = paopaoTable.station.passLines;
     JDOBusLine *busLine = paopaoLines[indexPath.row];
     JDOBusLineDetail *lineDetail = busLine.lineDetailPair[0];
     NSArray *lineNamePair = [lineDetail.lineDetail componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"－-"]];
@@ -216,19 +279,8 @@
     lineLabel.text = lineContent;
     
     // 某条线路的该站点离当前位置最近，则用特殊颜色标示
-    for(int i=0; i<_linesInfo.count; i++ ){
-        JDOBusLine *aLine = _linesInfo[i];
-        if ([busLine.lineId isEqualToString:aLine.lineId]) {
-            NSArray *stationPair = aLine.nearbyStationPair;
-            for (int j=0; j<stationPair.count; j++) {
-                JDOStationModel *aStation = stationPair[j];
-                if ([paopaoTable.stationId isEqualToString:aStation.fid]) {
-                    lineLabel.textColor = [UIColor blueColor];
-                    break;
-                }
-            }
-            break;
-        }
+    if ([paopaoTable.station.linesWhenStationIsNearest containsObject:lineDetail.detailId]) {
+        lineLabel.textColor = [UIColor blueColor];
     }
     return cell;
 }
@@ -247,16 +299,9 @@
     if (dbObserver) {
         [[NSNotificationCenter defaultCenter] removeObserver:dbObserver];
     }
+    if (distanceObserver) {
+        [[NSNotificationCenter defaultCenter] removeObserver:distanceObserver];
+    }
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

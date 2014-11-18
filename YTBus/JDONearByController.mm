@@ -15,6 +15,7 @@
 #import "JDONearByCell.h"
 #import "JDONearMapController.h"
 #import "JDODatabase.h"
+#import "MBProgressHUD.h"
 
 @interface JDONearByController () <BMKLocationServiceDelegate> {
     BMKLocationService *_locService;
@@ -27,6 +28,7 @@
     id distanceObserver;
     id dbObserver;
     int distanceRadius;
+    MBProgressHUD *hud;
 }
 
 @end
@@ -39,6 +41,7 @@
     self.navigationItem.rightBarButtonItem.enabled = false;
     
     if(![CLLocationManager locationServicesEnabled]){
+        // TODO 界面上提示
         NSLog(@"请开启定位:设置 > 隐私 > 位置 > 定位服务");
     }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied){
         NSLog(@"定位失败，请开启定位:设置 > 隐私 > 位置 > 定位服务 下 XX应用");
@@ -53,7 +56,7 @@
         
         _db = [JDODatabase sharedDB];
         if (!_db) {
-            dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
+            dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
                 _db = [JDODatabase sharedDB];
             }];
         }
@@ -76,9 +79,8 @@
         rt.busLine = cell.busLine;
     }else if([segue.identifier isEqualToString:@"toNearMap"]){
         JDONearMapController *nm = segue.destinationViewController;
-        nm.centerCoor = currentPosCoor;
+        nm.myselfCoor = currentPosCoor;
         nm.nearbyStations = _nearbyStations;
-        nm.linesInfo = _linesInfo;
         nm.title = @"地图";
     }
 }
@@ -98,15 +100,18 @@
 }
 
 - (void)willStartLocatingUser{
-    NSLog(@"started");
+
 }
 - (void)didStopLocatingUser{
-    NSLog(@"stopped");
+
 }
 
 - (void)didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
-//    NSLog(@"didUpdateUserLocation lat %f,long %f",userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude);
+    if (hud) {
+        [hud hide:true];
+        hud = nil;
+    }
     if (!_db) {
         return;
     }
@@ -182,10 +187,6 @@
         JDOStationModel *station = _nearbyStations[i];
         FMResultSet *rs = [_db executeQuery:GetLinesByStation,station.fid];
         while ([rs next]) {
-            if (![rs stringForColumn:@"LINENAME"] || ![rs stringForColumn:@"LINEDETAIL"]) {
-                NSLog(@"线路详情id：%@不存在",[rs stringForColumn:@"LINEID"]);
-                continue;
-            }
             NSString *lineId = [rs stringForColumn:@"LINEID"];
             
             JDOBusLine *busLine;
@@ -238,7 +239,15 @@
 }
 
 - (void)didFailToLocateUserWithError:(NSError *)error {
-    NSLog(@"location error:%@",error);   //CLError.h中定义的错误号
+    if (error.code == kCLErrorLocationUnknown) {
+        if (!hud) {
+            hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
+            hud.minShowTime = 1.0f;
+            hud.labelText = @"定位中,请稍后...";
+        }
+    }else{
+        NSLog(@"location error:%@",error);
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -252,30 +261,16 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-//    return _nearbyStations.count;
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    JDOStationModel *station = [_nearbyStations objectAtIndex:section];
-//    NSArray *lines = [_stationLines objectForKey:station.fid];
-//    return lines.count;
     return _linesInfo.count;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     JDONearByCell *cell = [tableView dequeueReusableCellWithIdentifier:@"busLine" forIndexPath:indexPath];
-
-//    JDOStationModel *station = (JDOStationModel *)_nearbyStations[indexPath.section];
-//    NSArray *lines = [_stationLines objectForKey:station.fid];
-//    JDOBusLineDetail *busLine = lines[indexPath.row];
-//    
-//    UILabel *label1 = (UILabel *)[cell viewWithTag:1001];
-//    [label1 setText:busLine.lineName];
-//    UILabel *label2 = (UILabel *)[cell viewWithTag:1002];
-//    [label2 setText:busLine.lineDetail];
-    
     JDOBusLine *busLine = _linesInfo[indexPath.row];
     
     cell.indexPath = indexPath;

@@ -17,7 +17,9 @@
 @property(nonatomic,strong) NSNumber *gpsY;
 @property(nonatomic,strong) NSNumber *distance;
 @property(nonatomic,assign) int *passLineNum;
-@property(nonatomic,strong) NSMutableArray/*NSString<lineName>*/ *passLines;
+@property(nonatomic,strong) NSMutableArray/*NSString<lineName>*/ *passLinesName;
+@property(nonatomic,strong) NSMutableArray/*NSString<lineDetailId>*/ *linesWhenStationIsNearest; //该站点是最近站点的线路
+@property(nonatomic,strong) NSMutableArray/*JDOBusLine*/ *passLines;
 
 @property(nonatomic,assign,getter=isStart) BOOL start;
 @property(nonatomic,assign,getter=isEnd) BOOL end;

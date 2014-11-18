@@ -11,6 +11,6 @@
 
 @interface JDOPaoPaoTable : UITableView
 
-@property (nonatomic,strong) NSString *stationId;
+@property (nonatomic,strong) JDOStationModel *station;
 
 @end

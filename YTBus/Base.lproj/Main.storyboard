@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
-        <deployment version="1536" identifier="iOS"/>
+        <deployment version="1536" defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
@@ -179,7 +179,7 @@
                                 </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="35" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="c1U-JG-9Za">
-                                <rect key="frame" x="0.0" y="155" width="320" height="413"/>
+                                <rect key="frame" x="0.0" y="155" width="320" height="364"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="lineStation" rowHeight="35" id="9bu-si-7It" customClass="JDORealTimeCell">
@@ -547,7 +547,7 @@
         <!--站点地图-->
         <scene sceneID="DEn-7s-Zue">
             <objects>
-                <viewController title="站点地图" id="5js-5E-5MP" sceneMemberID="viewController">
+                <viewController title="站点地图" id="5js-5E-5MP" customClass="JDOStationMapController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="GsW-cR-2eB"/>
                         <viewControllerLayoutGuide type="bottom" id="dEC-4x-cWn"/>
@@ -555,9 +555,23 @@
                     <view key="view" contentMode="scaleToFill" id="jcC-Du-qpK">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="UNV-HD-lxq">
+                                <rect key="frame" x="0.0" y="266" width="320" height="253"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3qo-MX-41I" customClass="BMKMapView">
+                                <rect key="frame" x="0.0" y="64" width="320" height="200"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="站点名称" id="w6g-dL-CzU"/>
+                    <connections>
+                        <outlet property="mapView" destination="3qo-MX-41I" id="qeG-ue-lKb"/>
+                        <outlet property="tableView" destination="UNV-HD-lxq" id="u1j-jP-BFN"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qNo-zQ-HhA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

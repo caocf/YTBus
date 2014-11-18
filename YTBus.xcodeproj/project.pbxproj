@@ -19,6 +19,7 @@
 		2D33FAD51A19836E0024F1ED /* NSData+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FACE1A19836E0024F1ED /* NSData+SSToolkitAdditions.m */; };
 		2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD01A19836E0024F1ED /* UIColor+SSToolkitAdditions.m */; };
 		2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */; };
+		2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */; };
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
 		2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2D4BB8C019F6654100AC3941 /* mapapi.bundle */; };
@@ -108,6 +109,8 @@
 		2D33FAD01A19836E0024F1ED /* UIColor+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+SSToolkitAdditions.m"; sourceTree = "<group>"; };
 		2D33FAD11A19836E0024F1ED /* UIControl+SSToolkitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+SSToolkitAdditions.h"; sourceTree = "<group>"; };
 		2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+SSToolkitAdditions.m"; sourceTree = "<group>"; };
+		2D33FAD81A1ADCA20024F1ED /* JDOStationMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationMapController.h; sourceTree = "<group>"; };
+		2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JDOStationMapController.mm; sourceTree = "<group>"; };
 		2D4BB84819F65DDD00AC3941 /* BMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMapKit.h; sourceTree = "<group>"; };
 		2D4BB84919F65DDD00AC3941 /* BMKActionPaopaoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKActionPaopaoView.h; sourceTree = "<group>"; };
 		2D4BB84A19F65DDD00AC3941 /* BMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKAnnotation.h; sourceTree = "<group>"; };
@@ -503,6 +506,8 @@
 				2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */,
 				2D33FAC51A15996F0024F1ED /* JDOStationController.h */,
 				2D33FAC61A15996F0024F1ED /* JDOStationController.m */,
+				2D33FAD81A1ADCA20024F1ED /* JDOStationMapController.h */,
+				2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */,
 				2DECC2B81A0081700022F60E /* JDOSettingController.h */,
 				2DECC2B91A0081710022F60E /* JDOSettingController.m */,
 			);
@@ -742,6 +747,7 @@
 				2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */,
 				2DECC2C01A01D7B20022F60E /* JDOBusLine.m in Sources */,
 				2DECC2C71A0218FC0022F60E /* JDONearMapController.mm in Sources */,
+				2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */,
 				2DA662F919F0D92D00DFED0B /* main.m in Sources */,
 				2DECC2B219FF9ABA0022F60E /* FMDatabaseAdditions.m in Sources */,
 				2DECC2BA1A0081710022F60E /* JDOSettingController.m in Sources */,

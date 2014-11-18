@@ -40,11 +40,13 @@
     _db = [JDODatabase sharedDB];
     if (_db) {
         [self loadData];
+    }else{
+        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
+            _db = [JDODatabase sharedDB];
+            [self loadData];
+        }];
     }
-    dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-        _db = [JDODatabase sharedDB];
-        [self loadData];
-    }];
+    
     favorObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"favor_line_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
         [self loadFavorLines];
         [self.tableView reloadData];

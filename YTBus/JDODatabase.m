@@ -47,8 +47,6 @@ static int currentDB;
     if (DB) {
         if (which==currentDB) {
             return;
-        }else{
-            [DB close];
         }
     }
     currentDB = which;
@@ -57,8 +55,11 @@ static int currentDB;
     if (db) {
         BOOL success = [db open];
         if ( success) {
+            if (DB) {
+                [DB close];
+            }
             DB = db;
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"db_changed" object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"db_finished" object:nil];
         }
     }
 }

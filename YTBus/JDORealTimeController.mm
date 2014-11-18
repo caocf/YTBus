@@ -45,11 +45,12 @@
     _db = [JDODatabase sharedDB];
     if (_db) {
         [self loadData];
+    }else{
+        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
+            _db = [JDODatabase sharedDB];
+            [self loadData];
+        }];
     }
-    dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-        _db = [JDODatabase sharedDB];
-        [self loadData];
-    }];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

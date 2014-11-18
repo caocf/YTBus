@@ -49,11 +49,12 @@
     _db = [JDODatabase sharedDB];
     if (_db) {
         [self loadData];
+    }else{
+        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
+            _db = [JDODatabase sharedDB];
+            [self loadData];
+        }];
     }
-    dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-        _db = [JDODatabase sharedDB];
-        [self loadData];
-    }];
 }
 
 - (void) clearHistory:(UIButton *)btn{
@@ -81,16 +82,13 @@
             station.fid = [rs stringForColumn:@"ID"];
             station.name = [rs stringForColumn:@"STATIONNAME"];
             station.direction = [rs stringForColumn:@"GEOGRAPHICALDIRECTION"];
-            station.passLines = [NSMutableArray new];
+            station.passLinesName = [NSMutableArray new];
             [_allStations addObject:station];
             preStation = station;
         }
-        if(!station.passLines){
-            station.passLines = [NSMutableArray new];
-        }
         NSString *lineName = [rs stringForColumn:@"BUSLINENAME"];
-        if(![station.passLines containsObject:lineName]) {
-            [station.passLines addObject:lineName];
+        if(![station.passLinesName containsObject:lineName]) {
+            [station.passLinesName addObject:lineName];
         }
     }
     
@@ -169,10 +167,10 @@
         JDOStationModel *station = (JDOStationModel *)_filterAllStations[indexPath.row];
         [(UILabel *)[cell viewWithTag:1001] setText:station.name];
         NSString *desc;
-        if (station.passLines.count <= 3) {
-            desc = [NSString stringWithFormat:@"%@经过",[station.passLines componentsJoinedByString:@"、"]];
+        if (station.passLinesName.count <= 3) {
+            desc = [NSString stringWithFormat:@"%@经过",[station.passLinesName componentsJoinedByString:@"、"]];
         }else{
-            desc = [NSString stringWithFormat:@"%@等%d条线路经过",station.passLines[0],station.passLines.count];
+            desc = [NSString stringWithFormat:@"%@等%d条线路经过",station.passLinesName[0],station.passLinesName.count];
         }
         [(UILabel *)[cell viewWithTag:1002] setText:desc];
     }
