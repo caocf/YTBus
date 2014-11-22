@@ -11,17 +11,51 @@
 #import "AFNetworking.h"
 #import "SSZipArchive.h"
 #import "MBProgressHUD.h"
+#import "JDOConstants.h"
+
 
 @interface JDOMainTabController () <SSZipArchiveDelegate> {
     MBProgressHUD *hud;
 }
-
+//UINavigationBar
 @end
 
 @implementation JDOMainTabController
 
+- (id)initWithCoder:(NSCoder *)aDecoder{
+    self = [super initWithCoder:aDecoder];
+    if (!self) {
+        return nil;
+    }
+    
+    self.tabBar.backgroundImage = [UIImage imageNamed:@"导航底图"];
+    self.tabBar.itemPositioning = UITabBarItemPositioningFill;
+    if (After_iOS7){
+        self.tabBar.translucent = false;
+    }
+    
+    // 设置tabBarItem的图标
+    NSArray *imageNames = @[@"附近",@"线路",@"站点",@"换乘",@"更多"];
+    for(int i=0; i<self.tabBar.items.count; i++){
+        UITabBarItem *item = self.tabBar.items[i];
+        item.title = nil;
+        // 按TabBar的默认item大小128*96进行裁图会让图标向上偏移
+        item.imageInsets = UIEdgeInsetsMake(5.5, 0, -5.5, 0);
+        UIImage *selectedImg = [[UIImage imageNamed:[imageNames[i] stringByAppendingString:@"2"]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        UIImage *unselectedImg = [[UIImage imageNamed:[imageNames[i] stringByAppendingString:@"1"]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        if (After_iOS7) {
+            item.image = unselectedImg;
+            item.selectedImage = selectedImg;
+        }else{
+            [item setFinishedSelectedImage:selectedImg withFinishedUnselectedImage:unselectedImg];
+        }
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     if (![JDODatabase isDBExistInDocument]) {
         // 若document中不存在数据库文件，则下载数据库文件
         hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];

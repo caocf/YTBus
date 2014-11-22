@@ -24,6 +24,9 @@
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
+    _mapView.rotateEnabled = false;
+    _mapView.overlookEnabled = false;
+    _mapView.showMapScaleBar = false;
     _mapView.zoomLevel = 13;
     _mapView.delegate = self;
     

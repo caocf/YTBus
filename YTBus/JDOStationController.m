@@ -99,7 +99,7 @@
     }
     // 没有历史记录则搜索框获得焦点
     if (_historyStations.count == 0) {
-        [_searchBar becomeFirstResponder];
+//        [_searchBar becomeFirstResponder];
     }else{
         self.tableView.tableFooterView = _clearHisBtn;
         [self.tableView reloadData];

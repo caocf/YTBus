@@ -19,6 +19,7 @@
 @property (nonatomic,assign) IBOutlet UILabel *lineNameLabel;
 @property (nonatomic,assign) IBOutlet UILabel *lineDetailLabel;
 @property (nonatomic,assign) IBOutlet UILabel *stationLabel;
+@property (nonatomic,assign) IBOutlet UILabel *distanceLabel;
 @property (nonatomic,assign) IBOutlet UIButton *switchDirection;
 
 - (IBAction) onSwitchClicked:(UIButton *)btn;

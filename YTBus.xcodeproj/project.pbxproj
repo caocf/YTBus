@@ -20,6 +20,18 @@
 		2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD01A19836E0024F1ED /* UIColor+SSToolkitAdditions.m */; };
 		2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */; };
 		2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */; };
+		2D33FAED1A1B40EE0024F1ED /* 切换1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FAE11A1B40EE0024F1ED /* 切换1@2x.png */; };
+		2D33FAEE1A1B40EE0024F1ED /* 切换2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FAE21A1B40EE0024F1ED /* 切换2@2x.png */; };
+		2D33FAF41A1C45F70024F1ED /* 分割@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FAF31A1C45F70024F1ED /* 分割@2x.png */; };
+		2D33FAF71A1C47BE0024F1ED /* JDONavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */; };
+		2D33FAF91A1C4D870024F1ED /* 导航底图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FAF81A1C4D870024F1ED /* 导航底图@2x.png */; };
+		2D33FB051A1C7A830024F1ED /* 地图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB031A1C7A820024F1ED /* 地图@2x.png */; };
+		2D33FB061A1C7A830024F1ED /* 公交车列表@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB041A1C7A830024F1ED /* 公交车列表@2x.png */; };
+		2D33FB0C1A2080B90024F1ED /* 弹出列表01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB071A2080B90024F1ED /* 弹出列表01@2x.png */; };
+		2D33FB0D1A2080B90024F1ED /* 弹出列表02@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB081A2080B90024F1ED /* 弹出列表02@2x.png */; };
+		2D33FB0E1A2080B90024F1ED /* 弹出列表03@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB091A2080B90024F1ED /* 弹出列表03@2x.png */; };
+		2D33FB0F1A2080B90024F1ED /* 弹出列表04@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB0A1A2080B90024F1ED /* 弹出列表04@2x.png */; };
+		2D33FB101A2080B90024F1ED /* 近@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D33FB0B1A2080B90024F1ED /* 近@2x.png */; };
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
 		2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2D4BB8C019F6654100AC3941 /* mapapi.bundle */; };
@@ -111,6 +123,20 @@
 		2D33FAD21A19836E0024F1ED /* UIControl+SSToolkitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+SSToolkitAdditions.m"; sourceTree = "<group>"; };
 		2D33FAD81A1ADCA20024F1ED /* JDOStationMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationMapController.h; sourceTree = "<group>"; };
 		2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JDOStationMapController.mm; sourceTree = "<group>"; };
+		2D33FAE11A1B40EE0024F1ED /* 切换1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "切换1@2x.png"; sourceTree = "<group>"; };
+		2D33FAE21A1B40EE0024F1ED /* 切换2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "切换2@2x.png"; sourceTree = "<group>"; };
+		2D33FAF31A1C45F70024F1ED /* 分割@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分割@2x.png"; sourceTree = "<group>"; };
+		2D33FAF51A1C47BE0024F1ED /* JDONavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONavigationBar.h; sourceTree = "<group>"; };
+		2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONavigationBar.m; sourceTree = "<group>"; };
+		2D33FAF81A1C4D870024F1ED /* 导航底图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "导航底图@2x.png"; sourceTree = "<group>"; };
+		2D33FAFA1A1C4ED30024F1ED /* JDOConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOConstants.h; sourceTree = "<group>"; };
+		2D33FB031A1C7A820024F1ED /* 地图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图@2x.png"; sourceTree = "<group>"; };
+		2D33FB041A1C7A830024F1ED /* 公交车列表@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "公交车列表@2x.png"; sourceTree = "<group>"; };
+		2D33FB071A2080B90024F1ED /* 弹出列表01@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "弹出列表01@2x.png"; sourceTree = "<group>"; };
+		2D33FB081A2080B90024F1ED /* 弹出列表02@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "弹出列表02@2x.png"; sourceTree = "<group>"; };
+		2D33FB091A2080B90024F1ED /* 弹出列表03@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "弹出列表03@2x.png"; sourceTree = "<group>"; };
+		2D33FB0A1A2080B90024F1ED /* 弹出列表04@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "弹出列表04@2x.png"; sourceTree = "<group>"; };
+		2D33FB0B1A2080B90024F1ED /* 近@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "近@2x.png"; sourceTree = "<group>"; };
 		2D4BB84819F65DDD00AC3941 /* BMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMapKit.h; sourceTree = "<group>"; };
 		2D4BB84919F65DDD00AC3941 /* BMKActionPaopaoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKActionPaopaoView.h; sourceTree = "<group>"; };
 		2D4BB84A19F65DDD00AC3941 /* BMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKAnnotation.h; sourceTree = "<group>"; };
@@ -407,7 +433,6 @@
 				2DA6632019F0D97100DFED0B /* Vendors */,
 				2DA6632219F0D9A000DFED0B /* Frameworks */,
 				2DA6630319F0D92D00DFED0B /* Main.storyboard */,
-				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
 				2DA6630819F0D92D00DFED0B /* LaunchScreen.xib */,
 				2DA662F619F0D92D00DFED0B /* Supporting Files */,
 			);
@@ -468,6 +493,18 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
+				2D33FB071A2080B90024F1ED /* 弹出列表01@2x.png */,
+				2D33FB081A2080B90024F1ED /* 弹出列表02@2x.png */,
+				2D33FB091A2080B90024F1ED /* 弹出列表03@2x.png */,
+				2D33FB0A1A2080B90024F1ED /* 弹出列表04@2x.png */,
+				2D33FB0B1A2080B90024F1ED /* 近@2x.png */,
+				2D33FB031A1C7A820024F1ED /* 地图@2x.png */,
+				2D33FB041A1C7A830024F1ED /* 公交车列表@2x.png */,
+				2D33FAF81A1C4D870024F1ED /* 导航底图@2x.png */,
+				2D33FAF31A1C45F70024F1ED /* 分割@2x.png */,
+				2D33FAE11A1B40EE0024F1ED /* 切换1@2x.png */,
+				2D33FAE21A1B40EE0024F1ED /* 切换2@2x.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -556,6 +593,8 @@
 				2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */,
 				2D33FAB71A1450060024F1ED /* JDOPaoPaoTable.h */,
 				2D33FAB81A1450060024F1ED /* JDOPaoPaoTable.m */,
+				2D33FAF51A1C47BE0024F1ED /* JDONavigationBar.h */,
+				2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -578,6 +617,7 @@
 				2DECC33F1A0325B40022F60E /* JDOHttpClient.m */,
 				2D33FABD1A1472760024F1ED /* JDOUtils.h */,
 				2D33FABE1A1472770024F1ED /* JDOUtils.m */,
+				2D33FAFA1A1C4ED30024F1ED /* JDOConstants.h */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -706,9 +746,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D33FB0E1A2080B90024F1ED /* 弹出列表03@2x.png in Resources */,
+				2D33FAED1A1B40EE0024F1ED /* 切换1@2x.png in Resources */,
+				2D33FB0F1A2080B90024F1ED /* 弹出列表04@2x.png in Resources */,
+				2D33FAEE1A1B40EE0024F1ED /* 切换2@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
+				2D33FB061A1C7A830024F1ED /* 公交车列表@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
+				2D33FB0D1A2080B90024F1ED /* 弹出列表02@2x.png in Resources */,
 				2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */,
+				2D33FB101A2080B90024F1ED /* 近@2x.png in Resources */,
+				2D33FAF41A1C45F70024F1ED /* 分割@2x.png in Resources */,
+				2D33FB051A1C7A830024F1ED /* 地图@2x.png in Resources */,
+				2D33FB0C1A2080B90024F1ED /* 弹出列表01@2x.png in Resources */,
+				2D33FAF91A1C4D870024F1ED /* 导航底图@2x.png in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
 			);
@@ -764,6 +815,7 @@
 				2D33FAC71A15996F0024F1ED /* JDOStationController.m in Sources */,
 				2D33FAB31A10540F0024F1ED /* JDORealTimeCell.m in Sources */,
 				2DFF46FB1A034F8000AFB6DB /* JDOMainTabController.m in Sources */,
+				2D33FAF71A1C47BE0024F1ED /* JDONavigationBar.m in Sources */,
 				2DECC2B319FF9ABA0022F60E /* FMDatabasePool.m in Sources */,
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
 				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
@@ -851,7 +903,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
@@ -887,7 +939,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
@@ -908,7 +960,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = YTBus/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -933,7 +985,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = YTBus/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

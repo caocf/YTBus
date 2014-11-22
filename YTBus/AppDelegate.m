@@ -24,6 +24,9 @@
     if (!ret) {
         NSLog(@"manager start failed!");
     }
+    application.statusBarStyle = UIStatusBarStyleLightContent;
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UIBarButtonItem appearance] setTintColor:[UIColor whiteColor]];
     return YES;
 }
 

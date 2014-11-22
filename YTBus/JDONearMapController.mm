@@ -23,6 +23,7 @@
     FMDatabase *_db;
     id dbObserver;
     id distanceObserver;
+    BOOL needRefresh;
 }
 
 @end
@@ -31,12 +32,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor redColor];
+    self.mapView.backgroundColor = [UIColor yellowColor];
+
     _mapView.centerCoordinate = self.myselfCoor;
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
+    _mapView.rotateEnabled = false;
+    _mapView.overlookEnabled = false;
+    _mapView.showMapScaleBar = false;
     _mapView.zoomLevel = 17;
+    _mapView.minZoomLevel = 15;
     _mapView.delegate = self;
     
     _locService = [[BMKLocationService alloc] init];
@@ -57,6 +64,7 @@
     
     distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
         distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+        needRefresh = true;
     }];
 }
 
@@ -108,8 +116,9 @@
     
     _myselfCoor = userLocation.location.coordinate;
     CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(lastSearchCoor),BMKMapPointForCoordinate(_myselfCoor));
-    if (distance > 100) {
+    if (distance > 100 || needRefresh) {
         lastSearchCoor = _myselfCoor;
+        needRefresh = false;
     }else{
         return;
     }
@@ -160,6 +169,10 @@
         _mapView.showsUserLocation = NO;
         _mapView.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
         _mapView.showsUserLocation = YES;
+        BMKLocationViewDisplayParam *param = [BMKLocationViewDisplayParam new];
+//        param.locationViewImgName = @"";
+        param.isAccuracyCircleShow = false;
+        [_mapView updateLocationViewWithParam:param];
     }
 }
 
@@ -203,18 +216,31 @@
 
 - (BMKActionPaopaoView *)createPaoPaoView:(JDOStationModel *)station{
     NSArray *paopaoLines = station.passLines;
-    // 弹出窗口中的线路数目如果小于200，则有多高就显示多高，否则最多显示200高度，内部表格滚动
-    float tableHeight = paopaoLines.count*44<200?paopaoLines.count*44:200;
-    UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, tableHeight+44)];
-    customView.backgroundColor = [UIColor lightGrayColor];
+    // 弹出窗口中的线路数目如果小于220，则有多高就显示多高，否则最多显示220高度，内部表格滚动
+    float tableHeight = paopaoLines.count*40<220?paopaoLines.count*40:220;
+    UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 189, 35+tableHeight+12)];
     
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)];
-    title.font = [UIFont systemFontOfSize:15];
-    title.text = [NSString stringWithFormat:@"%@  %@|%d米",station.name,station.direction,[station.distance intValue]];
-    [customView addSubview:title];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 189, 35)];
+    header.image = [UIImage imageNamed:@"弹出列表01"];
+    [customView addSubview:header];
     
-    JDOPaoPaoTable *paopaoTable = [[JDOPaoPaoTable alloc] initWithFrame:CGRectMake(0, 44, 200, tableHeight)];
+    UILabel *title = [[UILabel alloc] initWithFrame:header.bounds];
+    title.font = [UIFont boldSystemFontOfSize:15];
+    title.minimumFontSize = 12;
+    title.adjustsFontSizeToFitWidth = true;
+    title.textColor = [UIColor whiteColor];
+    title.textAlignment = NSTextAlignmentCenter;
+    title.text = [NSString stringWithFormat:@"%@[%@]  %d米",station.name,station.direction,[station.distance intValue]];
+    [header addSubview:title];
+    
+    UIImageView *footer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 35+tableHeight+12-51, 189, 51)];
+    footer.image = [UIImage imageNamed:@"弹出列表04"];
+    [customView addSubview:footer];
+    
+    JDOPaoPaoTable *paopaoTable = [[JDOPaoPaoTable alloc] initWithFrame:CGRectMake(0, 35, 189, tableHeight)];
     paopaoTable.station = station;
+    paopaoTable.rowHeight = 40;
+    paopaoTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     paopaoTable.delegate = self;
     paopaoTable.dataSource = self;
     [customView addSubview:paopaoTable];
@@ -256,12 +282,29 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:lineIdentifier];
     if( cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:lineIdentifier];
-        UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 189-20, 40)];
         lineLabel.font = [UIFont systemFontOfSize:14];
+        lineLabel.minimumFontSize = 12;
+        lineLabel.adjustsFontSizeToFitWidth = true;
+        lineLabel.textColor = [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1];
         lineLabel.tag = 3001;
         [cell addSubview:lineLabel];
+        
+        UIImageView *nearIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, 15, 39)];
+        nearIcon.image = [UIImage imageNamed:@"近"];
+        nearIcon.tag = 3002;
+        [cell addSubview:nearIcon];
     }
+    if (indexPath.row%2 == 0) {
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"弹出列表02"]];
+    }else{
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"弹出列表03"]];
+    }
+    
     UILabel *lineLabel = (UILabel *)[cell viewWithTag:3001];
+    UIImageView *nearIcon = (UIImageView *)[cell viewWithTag:3002];
     
     JDOPaoPaoTable *paopaoTable = (JDOPaoPaoTable *)tableView;
     NSArray *paopaoLines = paopaoTable.station.passLines;
@@ -274,13 +317,15 @@
         NSLog(@"双向站点不全：%@",lineNamePair);
         lineContent = busLine.lineName;
     }else{
-        lineContent = [NSString stringWithFormat:@"%@(开往 %@ 方向)",busLine.lineName,lineNamePair[1]];
+        lineContent = [NSString stringWithFormat:@"%@ 开往 %@",busLine.lineName,lineNamePair[1]];
     }
     lineLabel.text = lineContent;
     
     // 某条线路的该站点离当前位置最近，则用特殊颜色标示
     if ([paopaoTable.station.linesWhenStationIsNearest containsObject:lineDetail.detailId]) {
-        lineLabel.textColor = [UIColor blueColor];
+        nearIcon.hidden = false;
+    }else{
+        nearIcon.hidden = true;
     }
     return cell;
 }
