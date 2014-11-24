@@ -62,7 +62,7 @@
         hud.dimBackground = true;
         hud.minShowTime = 1.0f;
         hud.labelText = @"初始化数据";
-        NSURL *URL = [NSURL URLWithString:@"http://218.56.32.7:1030/SynBusSoftWebservice/DownloadServlet?method=downloadDb"];
+        NSURL *URL = [NSURL URLWithString:DB_Download_URL];
         NSURLRequest *request = [NSURLRequest requestWithURL:URL];
         NSLog(@"开始下载");
         AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
@@ -91,6 +91,9 @@
     }else{
         //TODO 更新最新数据
         [JDODatabase openDB:2];
+//    http://218.56.32.7:4998/SynBusSoftWebservice/services/SynBusSoft
+//        SOAPAction: http://service.epfgetAppVersion
+//        <v:Envelope xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:getAppVersion id="o0" c:root="1" xmlns:n0="http://service.epf" /></v:Body></v:Envelope>
     }
 
 }

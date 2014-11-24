@@ -16,6 +16,7 @@
 #import "JDONearMapController.h"
 #import "JDODatabase.h"
 #import "MBProgressHUD.h"
+#import "JDOConstants.h"
 
 @interface JDONearByController () <BMKLocationServiceDelegate> {
     BMKLocationService *_locService;
@@ -29,7 +30,6 @@
     id dbObserver;
     int distanceRadius;
     MBProgressHUD *hud;
-    NSMutableData *webData;
 }
 
 @end
@@ -40,7 +40,7 @@
     [super viewDidLoad];
     
     self.navigationItem.rightBarButtonItem.enabled = false;
-    self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"分割"]];
+    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 5)];   // 填充边距
 //    self.tableView.showsVerticalScrollIndicator = false;
     
@@ -71,73 +71,7 @@
             distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
         }];
     }
-    
-    
-    
-    NSString *soapMessage = @"<v:Envelope xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:d=\"http://www.w3.org/2001/XMLSchema\" xmlns:c=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:v=\"http://schemas.xmlsoap.org/soap/envelope/\"><v:Header /><v:Body><GetBusLineStatus xmlns=\"http://www.dongfang-china.com/\" id=\"o0\" c:root=\"1\"><stationID i:type=\"d:int\">4</stationID><lineID i:type=\"d:int\">1</lineID><lineStatus i:type=\"d:int\">1</lineStatus></GetBusLineStatus></v:Body></v:Envelope>";
-    NSLog(soapMessage);
-    NSURL *url = [NSURL URLWithString:@"http://218.56.32.7:4999/BusPosition.asmx"];
-    NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *msgLength = [NSString stringWithFormat:@"%d", [soapMessage length]];
-    //以下对请求信息添加属性前四句是必有的，第五句是soap信息。
-    [theRequest addValue: @"text/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [theRequest addValue: @"http://www.dongfang-china.com/GetBusLineStatus" forHTTPHeaderField:@"SOAPAction"];
-    [theRequest addValue: msgLength forHTTPHeaderField:@"Content-Length"];
-    [theRequest setHTTPMethod:@"POST"];
-    [theRequest setHTTPBody: [soapMessage dataUsingEncoding:NSUTF8StringEncoding]];
-    NSURLConnection *theConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self];
-    if( theConnection ){
-        webData = [NSMutableData data];
-    }
 }
-
--(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response{
-    [webData setLength: 0];
-    NSLog(@"connection: didReceiveResponse:1");
-}
-
--(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{
-    [webData appendData:data];
-    NSLog(@"connection: didReceiveData:2");
-}
-
--(void)connectionDidFinishLoading:(NSURLConnection *)connection{
-    NSLog(@"3 DONE. Received Bytes: %d", [webData length]);
-    NSString *theXML = [[NSString alloc] initWithBytes: [webData mutableBytes] length:[webData length] encoding:NSUTF8StringEncoding];
-    NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithData: webData];
-//    [xmlParser setDelegate: self];
-//    [xmlParser setShouldResolveExternalEntities: YES];
-//    [xmlParser parse];
-}
-
-//-(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *) namespaceURI qualifiedName:(NSString *)qName attributes: (NSDictionary *)attributeDict{
-//    NSLog(@"4 parser didStarElemen: namespaceURI: attributes:");
-//    if( [elementName isEqualToString:@"getOffesetUTCTimeResult"]){
-//        if(!soapResults){
-//            soapResults = [[NSMutableString alloc] init];
-//        }
-//    }
-//}
-//
-//-(void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string{
-//    NSLog(@"5 parser: foundCharacters:");
-//    if( recordResults ){
-//        [soapResults appendString: string];
-//    }
-//}
-//
-//-(void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
-//    NSLog(@"6 parser: didEndElement:");
-//    if( [elementName isEqualToString:@"getOffesetUTCTimeResult"]){
-//        recordResults = FALSE;
-//        greeting.text = [[[NSString init]stringWithFormat:@"第%@时区的时间是: ",nameInput.text] stringByAppendingString:soapResults];
-//        soapResults = nil;
-//        NSLog(@"hoursOffset result");
-//    }
-//}
-
-
-
 
 #pragma mark - Navigation
 
@@ -279,6 +213,7 @@
                 JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
                 lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
                 lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
+                lineDetail.direction = [rs stringForColumn:@"LINEDIRECTION"];
                 [busLine.lineDetailPair addObject:lineDetail];
                 
                 busLine.nearbyStationPair = [[NSMutableArray alloc] initWithCapacity:2];
@@ -299,6 +234,7 @@
                 JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
                 lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
                 lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
+                lineDetail.direction = [rs stringForColumn:@"LINEDIRECTION"];
                 [busLine.lineDetailPair addObject:lineDetail];
                 
                 [busLine.nearbyStationPair addObject:station];

@@ -12,5 +12,6 @@
 
 @property(nonatomic,strong) NSString *detailId;
 @property(nonatomic,strong) NSString *lineDetail;
+@property(nonatomic,strong) NSString *direction;
 
 @end

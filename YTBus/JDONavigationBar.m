@@ -22,7 +22,7 @@
     }
 //    UITextAttributeFont,UITextAttributeTextShadowOffset,UITextAttributeTextShadowColor
     self.titleTextAttributes = @{UITextAttributeTextColor:[UIColor whiteColor]};
-    [self setBackgroundImage:[UIImage imageNamed:@"分割"] forBarMetrics:UIBarMetricsDefault];
+    [self setBackgroundImage:[UIImage imageNamed:@"navigation"] forBarMetrics:UIBarMetricsDefault];
     return self;
 }
 

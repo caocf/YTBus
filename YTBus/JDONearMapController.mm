@@ -85,6 +85,7 @@
             JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
             lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
             lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
+            lineDetail.direction = [rs stringForColumn:@"LINEDIRECTION"];
             busLine.lineDetailPair = [@[lineDetail] mutableCopy];
             if (![_linesOfFoundNearestStation containsObject:lineDetail.detailId]) {
                 [station.linesWhenStationIsNearest addObject:lineDetail.detailId];
