@@ -7,6 +7,7 @@
 //
 
 #import "JDOUtils.h"
+#import "MBProgressHUD.h"
 
 @implementation JDOUtils
 
@@ -32,6 +33,13 @@
         return result;
     }
     return true;
+}
+
++ (void) showHUDText:(NSString *)text inView:(UIView *)view{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:true];
+    hud.mode = MBProgressHUDModeText;
+    hud.labelText = text;
+    [hud hide:true afterDelay:1.0f];
 }
 
 @end

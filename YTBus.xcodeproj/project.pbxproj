@@ -10,7 +10,6 @@
 		2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */; };
 		2D33FAB31A10540F0024F1ED /* JDORealTimeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */; };
 		2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAB51A109D3C0024F1ED /* JDORealTimeMapController.mm */; };
-		2D33FAB91A1450060024F1ED /* JDOPaoPaoTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAB81A1450060024F1ED /* JDOPaoPaoTable.m */; };
 		2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */; };
 		2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABE1A1472770024F1ED /* JDOUtils.m */; };
 		2D33FAC71A15996F0024F1ED /* JDOStationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAC61A15996F0024F1ED /* JDOStationController.m */; };
@@ -22,6 +21,8 @@
 		2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */; };
 		2D33FAF71A1C47BE0024F1ED /* JDONavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */; };
 		2D33FB141A22F0F00024F1ED /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB131A22F0F00024F1ED /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2D33FB191A241F850024F1ED /* JDOInterChangeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB181A241F850024F1ED /* JDOInterChangeController.m */; };
+		2D33FB1C1A247C4C0024F1ED /* JDORouteMapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */; };
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
 		2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2D4BB8C019F6654100AC3941 /* mapapi.bundle */; };
@@ -91,8 +92,6 @@
 		2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDORealTimeCell.m; sourceTree = "<group>"; };
 		2D33FAB41A109D3B0024F1ED /* JDORealTimeMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDORealTimeMapController.h; sourceTree = "<group>"; };
 		2D33FAB51A109D3C0024F1ED /* JDORealTimeMapController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JDORealTimeMapController.mm; sourceTree = "<group>"; };
-		2D33FAB71A1450060024F1ED /* JDOPaoPaoTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOPaoPaoTable.h; sourceTree = "<group>"; };
-		2D33FAB81A1450060024F1ED /* JDOPaoPaoTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOPaoPaoTable.m; sourceTree = "<group>"; };
 		2D33FABA1A1458F40024F1ED /* JDOBusLineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOBusLineController.h; sourceTree = "<group>"; };
 		2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOBusLineController.m; sourceTree = "<group>"; };
 		2D33FABD1A1472760024F1ED /* JDOUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOUtils.h; sourceTree = "<group>"; };
@@ -118,6 +117,10 @@
 		2D33FAFA1A1C4ED30024F1ED /* JDOConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOConstants.h; sourceTree = "<group>"; };
 		2D33FB121A22F0F00024F1ED /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		2D33FB131A22F0F00024F1ED /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		2D33FB171A241F840024F1ED /* JDOInterChangeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOInterChangeController.h; sourceTree = "<group>"; };
+		2D33FB181A241F850024F1ED /* JDOInterChangeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOInterChangeController.m; sourceTree = "<group>"; };
+		2D33FB1A1A247C4C0024F1ED /* JDORouteMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDORouteMapController.h; sourceTree = "<group>"; };
+		2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDORouteMapController.m; sourceTree = "<group>"; };
 		2D4BB84819F65DDD00AC3941 /* BMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMapKit.h; sourceTree = "<group>"; };
 		2D4BB84919F65DDD00AC3941 /* BMKActionPaopaoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKActionPaopaoView.h; sourceTree = "<group>"; };
 		2D4BB84A19F65DDD00AC3941 /* BMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKAnnotation.h; sourceTree = "<group>"; };
@@ -525,6 +528,10 @@
 				2D33FAC61A15996F0024F1ED /* JDOStationController.m */,
 				2D33FAD81A1ADCA20024F1ED /* JDOStationMapController.h */,
 				2D33FAD91A1ADCA20024F1ED /* JDOStationMapController.mm */,
+				2D33FB171A241F840024F1ED /* JDOInterChangeController.h */,
+				2D33FB181A241F850024F1ED /* JDOInterChangeController.m */,
+				2D33FB1A1A247C4C0024F1ED /* JDORouteMapController.h */,
+				2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */,
 				2DECC2B81A0081700022F60E /* JDOSettingController.h */,
 				2DECC2B91A0081710022F60E /* JDOSettingController.m */,
 			);
@@ -571,8 +578,6 @@
 				2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */,
 				2D33FAB11A10540F0024F1ED /* JDORealTimeCell.h */,
 				2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */,
-				2D33FAB71A1450060024F1ED /* JDOPaoPaoTable.h */,
-				2D33FAB81A1450060024F1ED /* JDOPaoPaoTable.m */,
 				2D33FAF51A1C47BE0024F1ED /* JDONavigationBar.h */,
 				2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */,
 			);
@@ -757,6 +762,7 @@
 				2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */,
 				2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */,
 				2DECC3391A0324D00022F60E /* AFNetworkActivityIndicatorManager.m in Sources */,
+				2D33FB191A241F850024F1ED /* JDOInterChangeController.m in Sources */,
 				2DECC34F1A032BAF0022F60E /* unzip.c in Sources */,
 				2DECC34D1A032BAF0022F60E /* ioapi.c in Sources */,
 				2DECC2CF1A0310D50022F60E /* JDODatabase.m in Sources */,
@@ -790,11 +796,11 @@
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
 				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,
-				2D33FAB91A1450060024F1ED /* JDOPaoPaoTable.m in Sources */,
 				2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */,
 				2DECC33A1A0324D00022F60E /* AFPropertyListRequestOperation.m in Sources */,
 				2D884B4E19F61C3200C83F71 /* JDORealTimeController.mm in Sources */,
 				2D884B4B19F60ACE00C83F71 /* JDONearByController.mm in Sources */,
+				2D33FB1C1A247C4C0024F1ED /* JDORouteMapController.m in Sources */,
 				2DECC2CB1A0224E10022F60E /* MBProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

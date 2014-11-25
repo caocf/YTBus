@@ -12,7 +12,16 @@
 #import "JDOBusLine.h"
 #import "JDOStationAnnotation.h"
 #import "JDORealTimeController.h"
-#import "JDOPaoPaoTable.h"
+
+@interface JDOPaoPaoTable : UITableView
+
+@property (nonatomic,strong) JDOStationModel *station;
+
+@end
+
+@implementation JDOPaoPaoTable
+
+@end
 
 @interface JDONearMapController () <BMKMapViewDelegate,BMKLocationServiceDelegate,UITableViewDataSource,UITableViewDelegate> {
     BMKLocationService *_locService;
@@ -188,7 +197,7 @@
 
 -(void)addAnnotations{
     if (self.mapView.annotations.count>0) {
-        [self.mapView removeAnnotations:[self.mapView.annotations copy]];
+        [self.mapView removeAnnotations:[NSArray arrayWithArray:self.mapView.annotations]];
     }
     for (int i=0; i<_stations.count; i++) {
         [self addPointAnnotation:_stations[i]];
@@ -285,7 +294,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:lineIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 189-20, 40)];
+        UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 189-20-5, 40)];
         lineLabel.font = [UIFont systemFontOfSize:14];
         lineLabel.minimumFontSize = 12;
         lineLabel.adjustsFontSizeToFitWidth = true;

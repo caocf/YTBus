@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface JDOUtils : NSObject
 
 + (NSString *) getJDOCacheDirectory;
++ (void) showHUDText:(NSString *)text inView:(UIView *)view;
 
 @end

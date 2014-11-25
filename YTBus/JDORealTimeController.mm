@@ -15,6 +15,7 @@
 #import "JDORealTimeMapController.h"
 #import "JDOConstants.h"
 #import "JSONKit.h"
+#import "JDOUtils.h"
 
 @interface JDORealTimeController () <NSXMLParserDelegate> {
     NSMutableArray *_stations;
@@ -64,34 +65,74 @@
 }
 
 - (void)loadData{
-    // 从线路进入时，没有lineDetail；或者从附近进入但双向线路不全，都需要从数据库加载
-    if(!_busLine.lineDetailPair || _busLine.lineDetailPair.count<2){
-        NSMutableArray *lineDetails = [NSMutableArray new];
-        NSString *getDetailIdByLineId = @"select ID,DIRECTION from BusLineDetail where BUSLINEID = ?";
-        FMResultSet *rs = [_db executeQuery:getDetailIdByLineId,_busLine.lineId];
-        while ([rs next]) {
-            JDOBusLineDetail *aLineDetail = [JDOBusLineDetail new];
-            aLineDetail.detailId = [rs stringForColumn:@"ID"];
-            aLineDetail.direction = [rs stringForColumn:@"DIRECTION"];
-            [lineDetails addObject:aLineDetail];
-        }
-        if(lineDetails.count == 0){
-            NSLog(@"线路无详情数据");
-            return;
-        }
-        if (_busLine.lineDetailPair.count == 1 && lineDetails.count == 2) {
-            JDOBusLineDetail *d1 = _busLine.lineDetailPair[0];
-            JDOBusLineDetail *d2 = lineDetails[0];
-            if ([d1.detailId isEqualToString:d2.detailId]) {
-                _busLine.showingIndex = 0;
-            }else{
-                _busLine.showingIndex = 1;
+    [self loadBothDirectionLineDetailAndTargetStation];
+    [self loadCurrentLineInfoAndAllStations];
+    
+    self.navigationItem.rightBarButtonItem.enabled = true;
+    // 收藏标志
+    NSArray *favorLineIds = [[NSUserDefaults standardUserDefaults] arrayForKey:@"favor_line"];
+    if (favorLineIds) {
+        for (int i=0; i<favorLineIds.count; i++) {
+            NSString *lineId = favorLineIds[i];
+            if([_busLine.lineId isEqualToString:lineId]){
+                [_favorBtn setTitle:@"已收藏" forState:UIControlStateNormal];
+                break;
             }
-        }else{
-            _busLine.showingIndex = 0;
         }
-        _busLine.lineDetailPair = lineDetails;
     }
+    
+    [self scrollToTargetStation];
+}
+
+- (void)loadBothDirectionLineDetailAndTargetStation{
+    if(_busLine.lineDetailPair.count==2 ){
+        return;
+    }
+    
+    NSMutableArray *lineDetails = [NSMutableArray new];
+    NSString *getDetailIdByLineId = @"select ID,DIRECTION from BusLineDetail where BUSLINEID = ?";
+    FMResultSet *rs = [_db executeQuery:getDetailIdByLineId,_busLine.lineId];
+    while ([rs next]) {
+        JDOBusLineDetail *aLineDetail = [JDOBusLineDetail new];
+        aLineDetail.detailId = [rs stringForColumn:@"ID"];
+        aLineDetail.direction = [rs stringForColumn:@"DIRECTION"];
+        [lineDetails addObject:aLineDetail];
+    }
+    if(lineDetails.count == 0){
+        NSLog(@"线路无详情数据");
+        return;
+    }
+    // 从线路进入时，没有lineDetail
+    if (!_busLine.lineDetailPair || _busLine.lineDetailPair.count ==0) {
+        _busLine.lineDetailPair = lineDetails;
+        _busLine.nearbyStationPair = [NSMutableArray arrayWithObjects:[NSNull null],[NSNull null],nil];
+    }else if(_busLine.lineDetailPair.count == 1){
+        // 从附近进入，且附近只有单向线路
+        if ( lineDetails.count == 2) {  // 重新查询出双向线路
+            JDOBusLineDetail *d0 = _busLine.lineDetailPair[0];
+            JDOBusLineDetail *d1 = lineDetails[0];
+            JDOBusLineDetail *d2 = lineDetails[1];
+            JDOBusLineDetail *converseLine;
+            if ([d0.detailId isEqualToString:d1.detailId]) {
+                converseLine = d2;
+            }else{
+                converseLine = d1;
+            }
+            [_busLine.lineDetailPair addObject:converseLine];
+            JDOStationModel *cStation = [self findStationByLine:converseLine andConverseStation:_busLine.nearbyStationPair[0]];
+            if (cStation) {
+                [_busLine.nearbyStationPair addObject:cStation];
+            }else{
+                [_busLine.nearbyStationPair addObject:[NSNull null]];
+            }
+        }
+    }else{
+        NSLog(@"线路超过两条!");
+    }
+}
+
+- (void) loadCurrentLineInfoAndAllStations{
+    isLoadFinised = false;
     
     // 选择显示方向线路详情
     JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
@@ -119,26 +160,27 @@
         [_stations addObject:station];
     }
     [_tableView reloadData];
-    self.navigationItem.rightBarButtonItem.enabled = true;
     
-    // 收藏标志
-    NSArray *favorLineIds = [[NSUserDefaults standardUserDefaults] arrayForKey:@"favor_line"];
-    if (favorLineIds) {
-        for (int i=0; i<favorLineIds.count; i++) {
-            NSString *lineId = favorLineIds[i];
-            if([_busLine.lineId isEqualToString:lineId]){
-                [_favorBtn setTitle:@"已收藏" forState:UIControlStateNormal];
-                break;
-            }
-        }
+    isLoadFinised = true;
+}
+
+- (JDOStationModel *) findStationByLine:(JDOBusLineDetail *)lineDetail andConverseStation:(JDOStationModel *)station{
+    FMResultSet *rs = [_db executeQuery:GetConverseStation,station.name,lineDetail.detailId];
+    if ([rs next]) {
+        JDOStationModel *station = [JDOStationModel new];
+        station.fid = [rs stringForColumn:@"STATIONID"];
+        station.name = [rs stringForColumn:@"STATIONNAME"];
+        station.direction = [rs stringForColumn:@"DIRECTION"];
+        station.gpsX = [NSNumber numberWithDouble:[rs doubleForColumn:@"GPSX"]];
+        station.gpsY = [NSNumber numberWithDouble:[rs doubleForColumn:@"GPSY"]];
+        return station;
     }
-    
-    isLoadFinised = true;   // 站点加载完成后timer可以开始获取实时数据，在这之前获取到也没有地方进行绘制
+    return nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:Bus_Refresh_Interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
     [_timer fire];
 }
 
@@ -163,14 +205,23 @@
     }
     if (!_busLine.nearbyStationPair || _busLine.nearbyStationPair.count==0 ) {
         NSLog(@"站点信息不存在");
-//        return;
-        _busLine.nearbyStationPair = [@[[_stations lastObject]] mutableCopy];
+        return;
     }
+    JDOStationModel *startStation;
+    if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
+        // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
+//        startStation = [_stations lastObject];
+        // 没有附近站点的时候，不显示实时数据
+        return;
+    }else{
+        startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
+    }
+    NSString *stationId = startStation.fid;
     NSString *busLineId = _busLine.lineId;
     JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
     NSString *lineStatus = [lineDetail.direction isEqualToString:@"下行"]?@"1":@"2";
-    JDOStationModel *startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
-    NSString *stationId = startStation.fid;
+    
+    
     
     NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_MSG,stationId,busLineId,lineStatus];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:GetBusLineStatus_URL]];
@@ -198,6 +249,10 @@
     [xmlParser parse];
 }
 
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
+    [JDOUtils showHUDText:[NSString stringWithFormat:@"无法获取实时数据：%@",error] inView:self.view];
+}
+
 -(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *) namespaceURI qualifiedName:(NSString *)qName attributes: (NSDictionary *)attributeDict{
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
         _jsonResult = [[NSMutableString alloc] init];
@@ -215,13 +270,24 @@
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
         NSLog(@"%@",_jsonResult);
         isRecording = false;
-        [self redrawBus];
+        if (_jsonResult.length==0) {
+            [JDOUtils showHUDText:@"没有满足条件的车辆信息" inView:self.view];
+        }else{
+            NSArray *list = [_jsonResult objectFromJSONString];
+            if (!list) {
+                [JDOUtils showHUDText:@"实时数据JSON格式错误" inView:self.view];
+            }else{
+                [self redrawBus:list];
+            }
+        }
     }
 }
 
-- (void) redrawBus{
-    // 清空之前绘制的bus图标
-    NSArray *list = [_jsonResult objectFromJSONString];
+- (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError{
+    [JDOUtils showHUDText:[NSString stringWithFormat:@"解析实时数据XML时出现错误：%@",parseError] inView:self.view];
+}
+
+- (void) redrawBus:(NSArray *)list{
     _busIndexSet = [NSMutableSet new];
     for (int i=0; i<list.count; i++){
         NSDictionary *dict = list[i];
@@ -249,7 +315,31 @@
 }
 
 - (IBAction)changeDirection:(id)sender{
+    if (_busLine.lineDetailPair.count !=2 ) {
+        return;
+    }
+    _busLine.showingIndex = (_busLine.showingIndex==0?1:0);
+    [self loadCurrentLineInfoAndAllStations];
+    [_timer fire];
+
+    [self scrollToTargetStation];
     
+}
+
+- (void) scrollToTargetStation{
+    if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
+        return;
+    }
+    JDOStationModel *station = _busLine.nearbyStationPair[_busLine.showingIndex];
+    NSUInteger index = [_stations indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        if ([((JDOStationModel *)obj).fid isEqualToString:station.fid]) {
+            return true;
+        }
+        return false;
+    }];
+    if (index != NSNotFound) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:true];
+    }
 }
 
 - (IBAction)clickFavor:(id)sender{
@@ -286,7 +376,7 @@
 
     [cell.stationName setText:station.name];
     
-    if(_busLine.nearbyStationPair.count>0){
+    if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]){
         JDOStationModel *startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
         if ([station.fid isEqualToString:startStation.fid]) {
             cell.stationIcon.image = [UIImage imageNamed:@"first"];
