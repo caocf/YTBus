@@ -142,8 +142,18 @@
         [_plans addObject:plan];
         JDOInterChangeModel *model = [JDOInterChangeModel new];
         [_list addObject:model];
-        model.distance = [NSString stringWithFormat:@"%d米",plan.distance];
-        model.duration = [NSString stringWithFormat:@"%d小时%d分",plan.duration.hours,plan.duration.minutes];
+        
+        if (plan.distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
+            model.distance = [NSString stringWithFormat:@"%.1f公里",plan.distance/1000.0f];
+        }else{
+            model.distance = [NSString stringWithFormat:@"%d米",plan.distance];
+        }
+        if (plan.duration.hours!=0) {
+            model.duration = [NSString stringWithFormat:@"%d小时%d分",plan.duration.hours,plan.duration.minutes];
+        }else{
+            model.duration = [NSString stringWithFormat:@"%d分钟",plan.duration.minutes];
+        }
+        
         int busChangeNum=0;
         for (int j=0; j<plan.steps.count; j++) {
             BMKTransitStep *aStep = plan.steps[j];
@@ -192,11 +202,27 @@
     
     JDOInterChangeModel *model = _list[indexPath.row];
     cell.seqBg.image = [UIImage imageNamed:model.type==0?@"标签1":@"标签2"];
-    cell.seqLabel.text = [NSString stringWithFormat:@"%2d",indexPath.row+1];
+    cell.seqLabel.text = [NSString stringWithFormat:@"%02d",indexPath.row+1];
     cell.typeLabel.text = model.type==0?@"直达":@"换乘";
-    cell.typeLabel.textColor = model.type==0?Green_Color:Red_Color;
+    cell.typeLabel.backgroundColor = model.type==0?Green_Color:Red_Color;
     cell.busLabel.text = model.busChangeInfo;
-    cell.descLabel.text = [NSString stringWithFormat:@"共%d站,距离%@,耗时%@",model.busStationNumber,model.distance,model.duration];
+    NSString *desc = [NSString stringWithFormat:@"共%d站 / 距离%@ / 耗时%@",model.busStationNumber,model.distance,model.duration];
+    if (After_iOS6) {
+        NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:desc];
+        
+        NSRange range = [desc rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+        while (range.location != NSNotFound) {
+            [attrString addAttribute:NSForegroundColorAttributeName value:Green_Color range:range];
+            [attrString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:14] range:range];
+            int location = range.location+range.length;
+            int length = desc.length-location;
+            range = [desc rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet] options:0 range:NSMakeRange(location, length)];
+        }
+        cell.descLabel.attributedText = attrString;
+    }else{
+        cell.descLabel.text = desc;
+    }
+    
     
     return cell;
 }

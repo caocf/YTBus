@@ -10,6 +10,7 @@
 #import "UIColor+SSToolkitAdditions.h"
 #import "JDOUtils.h"
 
+#define After_iOS6 [[[UIDevice currentDevice] systemVersion] floatValue]>=6.0
 #define After_iOS7 [[[UIDevice currentDevice] systemVersion] floatValue]>=7.0
 #define DB_Download_URL @"http://218.56.32.7:1030/SynBusSoftWebservice/DownloadServlet?method=downloadDb"
 #define GetBusLineStatus_URL @"http://218.56.32.7:4999/BusPosition.asmx"

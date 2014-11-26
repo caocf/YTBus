@@ -100,18 +100,19 @@
     [lines sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
         JDOBusLine *line1 = (JDOBusLine *)obj1;
         JDOBusLine *line2 = (JDOBusLine *)obj2;
-        int number1 = [line1.lineName intValue];
-        int number2 = [line2.lineName intValue];
-        if (number1 == 0) {
-            return NSOrderedDescending;
-        }
-        if (number2 == 0) {
-            return NSOrderedAscending;
-        }
-        if (number1 < number2) {
-            return NSOrderedAscending;
-        }
-        return NSOrderedDescending;
+//        int number1 = [line1.lineName intValue];
+//        int number2 = [line2.lineName intValue];
+//        if (number1 == 0) {
+//            return NSOrderedDescending;
+//        }
+//        if (number2 == 0) {
+//            return NSOrderedAscending;
+//        }
+//        if (number1 < number2) {
+//            return NSOrderedAscending;
+//        }
+//        return NSOrderedDescending;
+        return [line1.lineName compare:line2.lineName options:NSNumericSearch];
     }];
 }
 
@@ -151,15 +152,20 @@
     return sectionNum;
 }
 
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-//    
-//}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"矩形按钮"]];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+    label.textColor = [UIColor whiteColor];
+    label.font = [UIFont boldSystemFontOfSize:16.0];
     if (section == 0 && _filterFavorLines.count>0) {
-        return @"收藏线路";
+        label.text = @"收藏线路";
+    }else{
+        label.text = @"所有线路";
     }
-    return @"所有线路";
+    [label sizeToFit];
+    label.center = iv.center;
+    [iv addSubview:label];
+    return iv;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
