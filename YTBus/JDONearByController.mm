@@ -12,11 +12,37 @@
 #import "JDOStationModel.h"
 #import "JDOBusLineDetail.h"
 #import "JDOBusLine.h"
-#import "JDONearByCell.h"
 #import "JDONearMapController.h"
 #import "JDODatabase.h"
 #import "MBProgressHUD.h"
 #import "JDOConstants.h"
+
+@interface JDONearByCell : UITableViewCell
+
+@property (nonatomic,strong) JDOBusLine *busLine;
+
+@property (nonatomic,assign) UITableView *tableView;
+@property (nonatomic,strong) NSIndexPath *indexPath;
+
+@property (nonatomic,assign) IBOutlet UILabel *lineNameLabel;
+@property (nonatomic,assign) IBOutlet UILabel *lineDetailLabel;
+@property (nonatomic,assign) IBOutlet UILabel *stationLabel;
+@property (nonatomic,assign) IBOutlet UILabel *distanceLabel;
+@property (nonatomic,assign) IBOutlet UIButton *switchDirection;
+
+- (IBAction) onSwitchClicked:(UIButton *)btn;
+
+@end
+
+@implementation JDONearByCell
+
+- (IBAction) onSwitchClicked:(UIButton *)btn{
+    self.busLine.showingIndex = self.busLine.showingIndex==0?1:0;
+    
+    [self.tableView reloadRowsAtIndexPaths:@[self.indexPath] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+@end
 
 @interface JDONearByController () <BMKLocationServiceDelegate> {
     BMKLocationService *_locService;

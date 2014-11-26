@@ -29,8 +29,8 @@
     }
     
     self.tabBar.backgroundImage = [UIImage imageNamed:@"导航底图"];
-    self.tabBar.itemPositioning = UITabBarItemPositioningFill;
     if (After_iOS7){
+        self.tabBar.itemPositioning = UITabBarItemPositioningFill;
         self.tabBar.translucent = false;
     }
     
@@ -41,11 +41,11 @@
         item.title = nil;
         // 按TabBar的默认item大小128*96进行裁图会让图标向上偏移
         item.imageInsets = UIEdgeInsetsMake(5.5, 0, -5.5, 0);
-        UIImage *selectedImg = [[UIImage imageNamed:[imageNames[i] stringByAppendingString:@"2"]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-        UIImage *unselectedImg = [[UIImage imageNamed:[imageNames[i] stringByAppendingString:@"1"]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        UIImage *selectedImg = [UIImage imageNamed:[imageNames[i] stringByAppendingString:@"2"]];
+        UIImage *unselectedImg = [UIImage imageNamed:[imageNames[i] stringByAppendingString:@"1"]];
         if (After_iOS7) {
-            item.image = unselectedImg;
-            item.selectedImage = selectedImg;
+            item.image = [unselectedImg imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+            item.selectedImage = [selectedImg imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         }else{
             [item setFinishedSelectedImage:selectedImg withFinishedUnselectedImage:unselectedImg];
         }

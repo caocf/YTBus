@@ -8,11 +8,15 @@
 
 #import "JDOInterChangeController.h"
 #import "BMapKit.h"
-#import "JDOUtils.h"
+#import "JDOConstants.h"
 #import "JDORouteMapController.h"
+
+#define Green_Color [UIColor colorWithRed:55/255.0f green:170/255.0f blue:50/255.0f alpha:1.0f]
+#define Red_Color [UIColor colorWithRed:240/255.0f green:50/255.0f blue:50/255.0f alpha:1.0f]
 
 @interface JDOInterChangeModel : NSObject
 
+@property (nonatomic,assign) int type;
 @property (nonatomic,strong) NSMutableString *busChangeInfo;
 @property (nonatomic,assign) int busStationNumber;
 @property (nonatomic,strong) NSString *distance;
@@ -24,22 +28,43 @@
 
 @end
 
+@interface JDOInterChangeCell : UITableViewCell
+
+@property (nonatomic,weak) IBOutlet UIImageView *seqBg;
+@property (nonatomic,weak) IBOutlet UILabel *seqLabel;
+@property (nonatomic,weak) IBOutlet UILabel *typeLabel;
+@property (nonatomic,weak) IBOutlet UILabel *busLabel;
+@property (nonatomic,weak) IBOutlet UILabel *descLabel;
+
+@end
+
+@implementation JDOInterChangeCell
+
+@end
+
 @interface JDOInterChangeController () <BMKRouteSearchDelegate,UITableViewDataSource,UITableViewDelegate>
 
-@property (nonatomic,assign) IBOutlet UITableView *tableView;
-@property (nonatomic,assign) IBOutlet UIButton *changeBtn;
-@property (nonatomic,assign) IBOutlet UIButton *searchBtn;
-@property (nonatomic,assign) IBOutlet UITextField *startField;
-@property (nonatomic,assign) IBOutlet UITextField *endField;
-@property (nonatomic,assign) IBOutlet UISegmentedControl *changeTypeSeg;
+@property (nonatomic,weak) IBOutlet UITableView *tableView;
+@property (nonatomic,weak) IBOutlet UIButton *changeBtn;
+@property (nonatomic,weak) IBOutlet UIButton *searchBtn;
+@property (nonatomic,weak) IBOutlet UITextField *startField;
+@property (nonatomic,weak) IBOutlet UITextField *endField;
+@property (nonatomic,weak) IBOutlet UIButton *startBtn;
+@property (nonatomic,weak) IBOutlet UIButton *endBtn;
+@property (nonatomic,weak) IBOutlet UIButton *changeType0;
+@property (nonatomic,weak) IBOutlet UIButton *changeType1;
+@property (nonatomic,weak) IBOutlet UIButton *changeType2;
 
 - (IBAction)directionChanged:(UIButton *)sender;
 - (IBAction)doSearch:(UIButton *)sender;
-- (IBAction)typeChanged:(UISegmentedControl *)sender;
+- (IBAction)typeChanged:(UIButton *)sender;
+- (IBAction)setLocation:(UIButton *)sender;
+
 @end
 
 @implementation JDOInterChangeController{
     BMKRouteSearch *_routesearch;
+    BMKTransitPolicy transitPolicy;
     NSMutableArray *_list;
     NSMutableArray *_plans;
 }
@@ -55,6 +80,9 @@
     
     _startField.text = @"广电大厦";
     _endField.text = @"万达广场";
+    transitPolicy = BMK_TRANSIT_TIME_FIRST;
+    
+    self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"矩形下"]];
 }
 
 - (IBAction)directionChanged:(UIButton *)sender {
@@ -71,7 +99,7 @@
     
     BMKTransitRoutePlanOption *transitRouteSearchOption = [BMKTransitRoutePlanOption new];
     transitRouteSearchOption.city = @"烟台市";
-    transitRouteSearchOption.transitPolicy = BMK_TRANSIT_TIME_FIRST;
+    transitRouteSearchOption.transitPolicy = transitPolicy;
     transitRouteSearchOption.from = start;
     transitRouteSearchOption.to = end;
     
@@ -82,7 +110,14 @@
     }
 }
 
-- (IBAction)typeChanged:(UISegmentedControl *)sender {
+- (IBAction)typeChanged:(UIButton *)sender {
+    [_changeType0 setImage:(sender==_changeType0?[UIImage imageNamed:@"圆点"]:[UIImage imageNamed:@"圆点灰"]) forState:UIControlStateNormal];
+    [_changeType1 setImage:(sender==_changeType1?[UIImage imageNamed:@"圆点"]:[UIImage imageNamed:@"圆点灰"]) forState:UIControlStateNormal];
+    [_changeType2 setImage:(sender==_changeType2?[UIImage imageNamed:@"圆点"]:[UIImage imageNamed:@"圆点灰"]) forState:UIControlStateNormal];
+    transitPolicy = sender==_changeType0?BMK_TRANSIT_TIME_FIRST:(sender==_changeType1?BMK_TRANSIT_TRANSFER_FIRST:BMK_TRANSIT_WALK_FIRST);
+}
+
+- (IBAction)setLocation:(UIButton *)sender{
     
 }
 
@@ -109,9 +144,11 @@
         [_list addObject:model];
         model.distance = [NSString stringWithFormat:@"%d米",plan.distance];
         model.duration = [NSString stringWithFormat:@"%d小时%d分",plan.duration.hours,plan.duration.minutes];
+        int busChangeNum=0;
         for (int j=0; j<plan.steps.count; j++) {
             BMKTransitStep *aStep = plan.steps[j];
             if (aStep.stepType == BMK_BUSLINE) {
+                busChangeNum++;
                 NSString *busName = aStep.vehicleInfo.title;
                 int stationNumber = aStep.vehicleInfo.passStationNum;
                 if (model.busChangeInfo == nil) {
@@ -122,6 +159,7 @@
                 model.busStationNumber += stationNumber;
             }
         }
+        model.type = busChangeNum>1?1:0;    // 0:直达,1:转乘
     }
     [self.tableView reloadData];
 }
@@ -149,46 +187,16 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cellIdentifier = @"cellIdentifier";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if( cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 300, 20)];
-        lineLabel.font = [UIFont systemFontOfSize:14];
-        lineLabel.minimumFontSize = 12;
-        lineLabel.adjustsFontSizeToFitWidth = true;
-        lineLabel.textColor = [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1];
-        lineLabel.tag = 3001;
-        [cell addSubview:lineLabel];
-        
-        UILabel *stationNumLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 300, 20)];
-        stationNumLabel.font = [UIFont systemFontOfSize:14];
-        stationNumLabel.minimumFontSize = 12;
-        stationNumLabel.adjustsFontSizeToFitWidth = true;
-        stationNumLabel.textColor = [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1];
-        stationNumLabel.tag = 3002;
-        [cell addSubview:stationNumLabel];
-        
-//        UIImageView *nearIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, 15, 39)];
-//        nearIcon.image = [UIImage imageNamed:@"近"];
-//        nearIcon.tag = 3002;
-//        [cell addSubview:nearIcon];
-    }
-    if (indexPath.row%2 == 0) {
-        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"弹出列表02"]];
-    }else{
-        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"弹出列表03"]];
-    }
-    
-    UILabel *lineLabel = (UILabel *)[cell viewWithTag:3001];
-    UILabel *stationNumLabel = (UILabel *)[cell viewWithTag:3002];
+    JDOInterChangeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"routeIdentifier"];
     
     JDOInterChangeModel *model = _list[indexPath.row];
-    lineLabel.text = model.busChangeInfo;
-    stationNumLabel.text = [NSString stringWithFormat:@"共%d站,距离%@,耗时%@",model.busStationNumber,model.distance,model.duration];
+    cell.seqBg.image = [UIImage imageNamed:model.type==0?@"标签1":@"标签2"];
+    cell.seqLabel.text = [NSString stringWithFormat:@"%2d",indexPath.row+1];
+    cell.typeLabel.text = model.type==0?@"直达":@"换乘";
+    cell.typeLabel.textColor = model.type==0?Green_Color:Red_Color;
+    cell.busLabel.text = model.busChangeInfo;
+    cell.descLabel.text = [NSString stringWithFormat:@"共%d站,距离%@,耗时%@",model.busStationNumber,model.distance,model.duration];
     
     return cell;
 }

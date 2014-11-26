@@ -11,7 +11,7 @@
 #import "JDODatabase.h"
 #import "JDOStationModel.h"
 #import "JDORealTimeController.h"
-#import "NSString+SSToolkitAdditions.h"
+#import "JDOConstants.h"
 
 @interface JDOStationController () <UISearchBarDelegate> {
     NSMutableArray *_allStations;

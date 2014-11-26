@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "JDOConstants.h"
 
 @interface AppDelegate () <BMKGeneralDelegate>{
     
@@ -25,8 +26,13 @@
         NSLog(@"manager start failed!");
     }
     application.statusBarStyle = UIStatusBarStyleLightContent;
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    [[UIBarButtonItem appearance] setTintColor:[UIColor whiteColor]];
+    if (After_iOS7) {
+        [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+        [[UIBarButtonItem appearance] setTintColor:[UIColor whiteColor]];
+    }else{
+        [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithHex:@"233247"]];
+    }
+    
     return YES;
 }
 

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */; };
-		2D33FAB31A10540F0024F1ED /* JDORealTimeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */; };
 		2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAB51A109D3C0024F1ED /* JDORealTimeMapController.mm */; };
 		2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */; };
 		2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABE1A1472770024F1ED /* JDOUtils.m */; };
@@ -51,7 +50,6 @@
 		2DECC2BA1A0081710022F60E /* JDOSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2B91A0081710022F60E /* JDOSettingController.m */; };
 		2DECC2BD1A00DF7F0022F60E /* JDOBusLineDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2BC1A00DF7F0022F60E /* JDOBusLineDetail.m */; };
 		2DECC2C01A01D7B20022F60E /* JDOBusLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2BF1A01D7B20022F60E /* JDOBusLine.m */; };
-		2DECC2C41A01F8520022F60E /* JDONearByCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2C31A01F8520022F60E /* JDONearByCell.m */; };
 		2DECC2C71A0218FC0022F60E /* JDONearMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2C61A0218FC0022F60E /* JDONearMapController.mm */; };
 		2DECC2CB1A0224E10022F60E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2CA1A0224E10022F60E /* MBProgressHUD.m */; };
 		2DECC2CF1A0310D50022F60E /* JDODatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2CE1A0310D50022F60E /* JDODatabase.m */; };
@@ -88,8 +86,6 @@
 /* Begin PBXFileReference section */
 		2D33FAAE1A0CB2AE0024F1ED /* JDOStationAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationAnnotation.h; sourceTree = "<group>"; };
 		2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationAnnotation.m; sourceTree = "<group>"; };
-		2D33FAB11A10540F0024F1ED /* JDORealTimeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDORealTimeCell.h; sourceTree = "<group>"; };
-		2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDORealTimeCell.m; sourceTree = "<group>"; };
 		2D33FAB41A109D3B0024F1ED /* JDORealTimeMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDORealTimeMapController.h; sourceTree = "<group>"; };
 		2D33FAB51A109D3C0024F1ED /* JDORealTimeMapController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JDORealTimeMapController.mm; sourceTree = "<group>"; };
 		2D33FABA1A1458F40024F1ED /* JDOBusLineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOBusLineController.h; sourceTree = "<group>"; };
@@ -227,8 +223,6 @@
 		2DECC2BC1A00DF7F0022F60E /* JDOBusLineDetail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOBusLineDetail.m; sourceTree = "<group>"; };
 		2DECC2BE1A01D7B20022F60E /* JDOBusLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOBusLine.h; sourceTree = "<group>"; };
 		2DECC2BF1A01D7B20022F60E /* JDOBusLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOBusLine.m; sourceTree = "<group>"; };
-		2DECC2C21A01F8520022F60E /* JDONearByCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONearByCell.h; sourceTree = "<group>"; };
-		2DECC2C31A01F8520022F60E /* JDONearByCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONearByCell.m; sourceTree = "<group>"; };
 		2DECC2C51A0218FC0022F60E /* JDONearMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONearMapController.h; sourceTree = "<group>"; };
 		2DECC2C61A0218FC0022F60E /* JDONearMapController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JDONearMapController.mm; sourceTree = "<group>"; };
 		2DECC2C91A0224E10022F60E /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
@@ -572,12 +566,8 @@
 		2DECC2C11A01F8240022F60E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2DECC2C21A01F8520022F60E /* JDONearByCell.h */,
-				2DECC2C31A01F8520022F60E /* JDONearByCell.m */,
 				2D33FAAE1A0CB2AE0024F1ED /* JDOStationAnnotation.h */,
 				2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */,
-				2D33FAB11A10540F0024F1ED /* JDORealTimeCell.h */,
-				2D33FAB21A10540F0024F1ED /* JDORealTimeCell.m */,
 				2D33FAF51A1C47BE0024F1ED /* JDONavigationBar.h */,
 				2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */,
 			);
@@ -783,12 +773,10 @@
 				2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */,
 				2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */,
 				2DECC3501A032BAF0022F60E /* zip.c in Sources */,
-				2DECC2C41A01F8520022F60E /* JDONearByCell.m in Sources */,
 				2DECC33C1A0324D00022F60E /* AFXMLRequestOperation.m in Sources */,
 				2DECC33B1A0324D00022F60E /* AFURLConnectionOperation.m in Sources */,
 				2D33FAD41A19836E0024F1ED /* NSString+SSToolkitAdditions.m in Sources */,
 				2D33FAC71A15996F0024F1ED /* JDOStationController.m in Sources */,
-				2D33FAB31A10540F0024F1ED /* JDORealTimeCell.m in Sources */,
 				2DFF46FB1A034F8000AFB6DB /* JDOMainTabController.m in Sources */,
 				2D33FAF71A1C47BE0024F1ED /* JDONavigationBar.m in Sources */,
 				2DECC2B319FF9ABA0022F60E /* FMDatabasePool.m in Sources */,

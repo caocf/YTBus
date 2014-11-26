@@ -11,11 +11,22 @@
 #import "JDOBusLineDetail.h"
 #import "JDOStationModel.h"
 #import "JDODatabase.h"
-#import "JDORealTimeCell.h"
 #import "JDORealTimeMapController.h"
 #import "JDOConstants.h"
 #import "JSONKit.h"
-#import "JDOUtils.h"
+
+@interface JDORealTimeCell : UITableViewCell
+
+@property (nonatomic,assign) IBOutlet UIImageView *stationIcon;
+@property (nonatomic,assign) IBOutlet UILabel *stationName;
+@property (nonatomic,assign) IBOutlet UIImageView *arrivingBus;
+@property (nonatomic,assign) IBOutlet UIImageView *arrivedBus;
+
+@end
+
+@implementation JDORealTimeCell
+
+@end
 
 @interface JDORealTimeController () <NSXMLParserDelegate> {
     NSMutableArray *_stations;

@@ -19,10 +19,13 @@
     if (After_iOS7){
         // 若设置该选项=false，则self.view的origin.y从导航栏以下开始计算，否则从屏幕顶端开始计算
         self.translucent = false;
+        [self setBackgroundImage:[UIImage imageNamed:@"navigation_iOS7"] forBarMetrics:UIBarMetricsDefault];
+    }else{
+        [self setBackgroundImage:[UIImage imageNamed:@"navigation_iOS6"] forBarMetrics:UIBarMetricsDefault];
     }
 //    UITextAttributeFont,UITextAttributeTextShadowOffset,UITextAttributeTextShadowColor
     self.titleTextAttributes = @{UITextAttributeTextColor:[UIColor whiteColor]};
-    [self setBackgroundImage:[UIImage imageNamed:@"navigation"] forBarMetrics:UIBarMetricsDefault];
+    
     return self;
 }
 

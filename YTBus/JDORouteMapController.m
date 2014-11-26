@@ -8,7 +8,10 @@
 
 #import "JDORouteMapController.h"
 
-@interface JDORouteMapController ()
+@interface JDORouteMapController () <BMKMapViewDelegate,UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic,weak) IBOutlet BMKMapView *mapView;
+@property (nonatomic,weak) IBOutlet UITableView *tableView;
 
 @end
 

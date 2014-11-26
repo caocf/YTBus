@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UIColor+SSToolkitAdditions.h"
+#import "JDOUtils.h"
 
 #define After_iOS7 [[[UIDevice currentDevice] systemVersion] floatValue]>=7.0
 #define DB_Download_URL @"http://218.56.32.7:1030/SynBusSoftWebservice/DownloadServlet?method=downloadDb"

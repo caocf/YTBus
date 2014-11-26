@@ -11,7 +11,7 @@
 #import "JDODatabase.h"
 #import "JDOBusLine.h"
 #import "JDORealTimeController.h"
-#import "NSString+SSToolkitAdditions.h"
+#import "JDOConstants.h"
 
 @interface JDOBusLineController () <UISearchBarDelegate> {
     NSMutableArray *_favorLines;

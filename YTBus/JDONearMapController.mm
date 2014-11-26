@@ -41,8 +41,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor redColor];
-    self.mapView.backgroundColor = [UIColor yellowColor];
 
     _mapView.centerCoordinate = self.myselfCoor;
     _mapView.zoomEnabled = true;
@@ -235,6 +233,7 @@
     [customView addSubview:header];
     
     UILabel *title = [[UILabel alloc] initWithFrame:header.bounds];
+    title.backgroundColor = [UIColor clearColor];   // iOS7以下label背景色为白色，以上为透明
     title.font = [UIFont boldSystemFontOfSize:15];
     title.minimumFontSize = 12;
     title.adjustsFontSizeToFitWidth = true;
@@ -295,6 +294,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
         UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 189-20-5, 40)];
+        lineLabel.backgroundColor = [UIColor clearColor];
         lineLabel.font = [UIFont systemFontOfSize:14];
         lineLabel.minimumFontSize = 12;
         lineLabel.adjustsFontSizeToFitWidth = true;
