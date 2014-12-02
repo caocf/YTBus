@@ -13,6 +13,7 @@
 #import "JDOBusLine.h"
 #import "JDOBusLineDetail.h"
 #import "JDOStationAnnotation.h"
+#import "JDORealTimeController.h"
 
 @interface JDOStationMapController () <BMKMapViewDelegate,UITableViewDataSource,UITableViewDelegate>
 
@@ -26,19 +27,20 @@
     FMDatabase *_db;
     NSMutableArray *_stations;
     JDOStationModel *selectedStation;
+    NSIndexPath *selectedIndexPath;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _mapView.zoomEnabled = false;
-    _mapView.zoomEnabledWithTap = false;
-    _mapView.scrollEnabled = false;
+    _mapView.zoomEnabled = true;
+    _mapView.zoomEnabledWithTap = true;
+    _mapView.scrollEnabled = true;
     _mapView.rotateEnabled = false;
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
-    _mapView.zoomLevel = 19;
     _mapView.delegate = self;
+    _mapView.minZoomLevel = 15;
     
     _db = [JDODatabase sharedDB];
     if (_db) {
@@ -79,7 +81,15 @@
         lineDetail.lineDetail = [rs stringForColumn:@"BUSLINEDETAIL"];
         lineDetail.direction = [rs stringForColumn:@"DIRECTION"];
     }
+    selectedStation = _stations[0];
+    _stationLabel.text = selectedStation.name;
+    [_tableView reloadData];
     
+    if(_stations.count > 2){
+        _mapView.zoomLevel = 16;
+    }else{
+        _mapView.zoomLevel = 19;
+    }
     [self setMapCenter];
     [self addStationAnnotation];
 }
@@ -163,7 +173,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"lineStation" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"stationLine" forIndexPath:indexPath];
 //    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
     
     JDOBusLine *busLine = selectedStation.passLines[indexPath.row];
@@ -172,6 +182,20 @@
     [(UILabel *)[cell viewWithTag:1002] setText:lineDetail.lineDetail];
     
     return cell;
+}
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    selectedIndexPath = indexPath;
+    return indexPath;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"toRealtimeFromStation"]) {
+        JDORealTimeController *rt = segue.destinationViewController;
+        JDOBusLine *busLine = selectedStation.passLines[selectedIndexPath.row];
+        busLine.nearbyStationPair = [NSMutableArray arrayWithObject:selectedStation];
+        rt.busLine = busLine;
+    }
 }
 
 - (void)didReceiveMemoryWarning {

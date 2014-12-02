@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="49e-Tb-3d3">
     <dependencies>
-        <deployment version="1536" defaultVersion="1280" identifier="iOS"/>
+        <deployment version="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
@@ -198,7 +198,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OZ9-eZ-kaV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1010" y="-17"/>
+            <point key="canvasLocation" x="-930" y="1079"/>
         </scene>
         <!--换乘定位-->
         <scene sceneID="Omi-Y5-2Ag">
@@ -211,7 +211,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ybj-Hz-o78" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1010" y="684"/>
+            <point key="canvasLocation" x="-1158" y="1792"/>
         </scene>
         <!--换乘方案-->
         <scene sceneID="VbR-N3-cA2">
@@ -244,7 +244,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sLB-ar-iKt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1526" y="-17"/>
+            <point key="canvasLocation" x="-722" y="1799"/>
         </scene>
         <!--附近-->
         <scene sceneID="Mmx-c4-fv4">
@@ -333,7 +333,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8vJ-49-tDG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="692" y="-1446"/>
+            <point key="canvasLocation" x="712" y="-1114"/>
         </scene>
         <!--附近-->
         <scene sceneID="K1c-NN-7PB">
@@ -361,7 +361,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XzV-xs-ZLj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1130" y="-1809"/>
+            <point key="canvasLocation" x="1266" y="-1114"/>
         </scene>
         <!--线路实时-->
         <scene sceneID="Xad-oO-LZU">
@@ -501,7 +501,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kf0-0S-wbL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1130" y="-1094"/>
+            <point key="canvasLocation" x="1266" y="-397"/>
         </scene>
         <!--地图-->
         <scene sceneID="cVe-QY-7QX">
@@ -568,7 +568,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SXr-Br-Vhv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1551" y="-1094"/>
+            <point key="canvasLocation" x="1719" y="-397"/>
         </scene>
         <!--附近-->
         <scene sceneID="8EC-sx-Lxb">
@@ -587,7 +587,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EnX-Nk-RzN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="257" y="-1442"/>
+            <point key="canvasLocation" x="257" y="-1114"/>
         </scene>
         <!--主界面-->
         <scene sceneID="yl2-sM-qoP">
@@ -677,7 +677,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GMS-zQ-gPt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="698" y="-723"/>
+            <point key="canvasLocation" x="712" y="-397"/>
         </scene>
         <!--线路-->
         <scene sceneID="rJ3-er-QlV">
@@ -694,7 +694,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vuu-kd-KYq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="257" y="-723"/>
+            <point key="canvasLocation" x="257" y="-397"/>
         </scene>
         <!--更多-->
         <scene sceneID="paq-rL-hvV">
@@ -713,7 +713,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VKw-g7-BMI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-485" y="371"/>
+            <point key="canvasLocation" x="-445" y="371"/>
         </scene>
         <!--设置-->
         <scene sceneID="QlN-Fe-HOg">
@@ -774,7 +774,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ofl-yA-11e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-485" y="1062"/>
+            <point key="canvasLocation" x="-445" y="1062"/>
         </scene>
         <!--站点-->
         <scene sceneID="3zX-P7-NXn">
@@ -822,7 +822,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ulc-5q-aU0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5" y="1048"/>
+            <point key="canvasLocation" x="409" y="371"/>
         </scene>
         <!--站点地图-->
         <scene sceneID="DEn-7s-Zue">
@@ -832,12 +832,35 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="42" sectionHeaderHeight="22" sectionFooterHeight="22" id="UNV-HD-lxq">
-                                <rect key="frame" x="0.0" y="330" width="320" height="174"/>
+                            <view contentMode="scaleToFill" id="3qo-MX-41I" customClass="BMKMapView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="288"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" id="UfY-rk-sOq">
+                                <rect key="frame" x="0.0" y="289" width="320" height="41"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="站点底图.png" id="H6L-o9-Idb">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="41"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="广播电视台" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="oQi-FC-YNG">
+                                        <rect key="frame" x="16" y="10" width="288" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="42" sectionHeaderHeight="22" sectionFooterHeight="22" id="UNV-HD-lxq">
+                                <rect key="frame" x="0.0" y="331" width="320" height="173"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="42" id="zju-K7-DS9">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="stationLine" rowHeight="42" id="zju-K7-DS9">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zju-K7-DS9" id="jqE-u7-GOI">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -859,27 +882,15 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="U4C-Oa-85a" kind="push" id="XU4-GO-KEV"/>
+                                            <segue destination="U4C-Oa-85a" kind="push" identifier="toRealtimeFromStation" id="XU4-GO-KEV"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="5js-5E-5MP" id="Z4m-0J-eJY"/>
+                                    <outlet property="delegate" destination="5js-5E-5MP" id="MmB-JX-HUA"/>
+                                </connections>
                             </tableView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="6Jg-d8-muV">
-                                <rect key="frame" x="0.0" y="289" width="320" height="41"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="广播电视台" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="oQi-FC-YNG">
-                                <rect key="frame" x="16" y="299" width="288" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <view contentMode="scaleToFill" id="3qo-MX-41I" customClass="BMKMapView">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="289"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -894,7 +905,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qNo-zQ-HhA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="478" y="1048"/>
+            <point key="canvasLocation" x="842" y="371"/>
         </scene>
         <!--站点-->
         <scene sceneID="dgo-C4-e5O">
@@ -913,7 +924,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="M42-MU-ih2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5" y="371"/>
+            <point key="canvasLocation" x="-7" y="371"/>
         </scene>
         <!--换乘-->
         <scene sceneID="NgH-ku-lb9">
@@ -932,7 +943,20 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i5i-3Y-GD8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="478" y="-17"/>
+            <point key="canvasLocation" x="-930" y="371"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="c0J-up-y0w">
+            <objects>
+                <viewController id="fBk-UU-Bpo" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TXn-nu-RaO">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vRW-Hg-4Qz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
         </scene>
     </scenes>
     <resources>
@@ -948,6 +972,7 @@
         <image name="标签1" width="22" height="42"/>
         <image name="矩形上" width="320" height="171"/>
         <image name="矩形按钮" width="270" height="35"/>
+        <image name="站点底图.png" width="320" height="41"/>
         <image name="箭头" width="8" height="16"/>
         <image name="线路圆点" width="10" height="10"/>
         <image name="起点" width="18" height="17"/>

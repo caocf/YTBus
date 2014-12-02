@@ -118,7 +118,7 @@
         _busLine.lineDetailPair = lineDetails;
         _busLine.nearbyStationPair = [NSMutableArray arrayWithObjects:[NSNull null],[NSNull null],nil];
     }else if(_busLine.lineDetailPair.count == 1){
-        // 从附近进入，且附近只有单向线路
+        // 从附近进入，且附近只有单向线路 或者从站点进入
         if ( lineDetails.count == 2) {  // 重新查询出双向线路
             JDOBusLineDetail *d0 = _busLine.lineDetailPair[0];
             JDOBusLineDetail *d1 = lineDetails[0];
@@ -170,6 +170,8 @@
         station.gpsY = [NSNumber numberWithDouble:[rs doubleForColumn:@"GPSY"]];
         [_stations addObject:station];
     }
+    
+    [_busIndexSet removeAllObjects];
     [_tableView reloadData];
     
     isLoadFinised = true;
@@ -349,7 +351,7 @@
         return false;
     }];
     if (index != NSNotFound) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:true];
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:true];
     }
 }
 

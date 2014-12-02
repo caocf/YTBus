@@ -42,6 +42,7 @@
 		2DA6631619F0D92E00DFED0B /* YTBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6631519F0D92E00DFED0B /* YTBusTests.m */; };
 		2DAF41231A2DA780007E60A3 /* 地图标注1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DAF41211A2DA780007E60A3 /* 地图标注1@2x.png */; };
 		2DAF41241A2DA780007E60A3 /* 地图标注2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DAF41221A2DA780007E60A3 /* 地图标注2@2x.png */; };
+		2DAF41261A2DC32C007E60A3 /* 站点底图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DAF41251A2DC32C007E60A3 /* 站点底图@2x.png */; };
 		2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A119FF2AC80022F60E /* JDOStationModel.m */; };
 		2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A619FF9ABA0022F60E /* FMDatabase.m */; };
 		2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A819FF9ABA0022F60E /* FMResultSet.m */; };
@@ -209,6 +210,7 @@
 		2DA6631519F0D92E00DFED0B /* YTBusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTBusTests.m; sourceTree = "<group>"; };
 		2DAF41211A2DA780007E60A3 /* 地图标注1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图标注1@2x.png"; sourceTree = "<group>"; };
 		2DAF41221A2DA780007E60A3 /* 地图标注2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图标注2@2x.png"; sourceTree = "<group>"; };
+		2DAF41251A2DC32C007E60A3 /* 站点底图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "站点底图@2x.png"; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -488,6 +490,7 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DAF41251A2DC32C007E60A3 /* 站点底图@2x.png */,
 				2DAF41211A2DA780007E60A3 /* 地图标注1@2x.png */,
 				2DAF41221A2DA780007E60A3 /* 地图标注2@2x.png */,
 				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
@@ -737,6 +740,7 @@
 				2DAF41231A2DA780007E60A3 /* 地图标注1@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */,
+				2DAF41261A2DC32C007E60A3 /* 站点底图@2x.png in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
 			);
