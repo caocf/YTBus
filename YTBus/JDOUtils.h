@@ -13,5 +13,6 @@
 
 + (NSString *) getJDOCacheDirectory;
 + (void) showHUDText:(NSString *)text inView:(UIView *)view;
++ (BOOL) isEmptyString:(NSString *)str;
 
 @end

@@ -12,5 +12,6 @@
 @interface JDOStationAnnotation : BMKPointAnnotation
 
 @property (nonatomic,strong) JDOStationModel *station;
+@property (nonatomic,assign) BOOL selected;
 
 @end

@@ -36,6 +36,9 @@
     searchBar.placeholder = @"搜索线路";
     searchBar.delegate = self;
     self.tableView.tableHeaderView = searchBar;
+    self.tableView.bounces = false;
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 10)];
+    self.tableView.tableFooterView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     
     _db = [JDODatabase sharedDB];
     if (_db) {
@@ -152,19 +155,38 @@
     return sectionNum;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 45;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 6;    // storyboard中不能定义小数
+}
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    UIImageView *iv = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"矩形按钮"]];
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 45)];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.textColor = [UIColor whiteColor];
     label.font = [UIFont boldSystemFontOfSize:16.0];
     if (section == 0 && _filterFavorLines.count>0) {
+        iv.image = [UIImage imageNamed:@"收藏线路顶部"];
         label.text = @"收藏线路";
     }else{
+        iv.image = [UIImage imageNamed:@"所有线路顶部"];
         label.text = @"所有线路";
     }
     [label sizeToFit];
-    label.center = iv.center;
+    CGRect f = label.frame;
+    f.origin.x = (320-f.size.width)/2;
+    f.origin.y = iv.frame.size.height-f.size.height-10;
+    label.frame = f;
     [iv addSubview:label];
+    return iv;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 6)];
+    iv.image = [UIImage imageNamed:@"线路底部"];
     return iv;
 }
 
@@ -179,6 +201,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier = @"busLine";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
+    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
     
     JDOBusLine *busLine;
     if (indexPath.section == 0 && _filterFavorLines.count>0) {
@@ -187,8 +210,8 @@
         busLine =  (JDOBusLine *)_filterAllLines[indexPath.row];
     }
     [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
-    [(UILabel *)[cell viewWithTag:1002] setText:busLine.stationA];
-    [(UILabel *)[cell viewWithTag:1003] setText:busLine.stationB];
+    [(UILabel *)[cell viewWithTag:1002] setText:(busLine.stationA==nil?@"未知站点":busLine.stationA)];
+    [(UILabel *)[cell viewWithTag:1003] setText:(busLine.stationB==nil?@"未知站点":busLine.stationB)];
     
     return cell;
 }

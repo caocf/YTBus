@@ -27,9 +27,15 @@
 #define GetAllStations @"select t0.ID, STATIONNAME, sum(1) as NUM from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID where t0.GPSX2<>0 and t0.GPSY2<>0 group by t0.ID order by STATIONNAME"
 
 // 所有站点名称，及站点通过的线路名称
-#define GetAllStationsWithLine @"select t0.ID as ID, (CASE WHEN SUBSTR(STATIONNAME,-1,1)='2' and SUBSTR(STATIONNAME,-2,1) not in ('1','2','3','4','5','6','7','8','9','0') THEN SUBSTR(STATIONNAME,1,LENGTH(STATIONNAME)-1) ELSE STATIONNAME END) as STATIONNAME,GEOGRAPHICALDIRECTION,t3.BUSLINENAME as BUSLINENAME,t3.ID as BUSLINEID from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID inner join BusLine t3 on t2.BUSLINEID = t3.ID where t0.GPSX2<>0 and t0.GPSY2<>0 order by STATIONNAME,t0.ID,t3.ID"
+#define GetAllStationsWithLine @"select t0.ID as STATIONID, (CASE WHEN SUBSTR(STATIONNAME,-1,1)='2' and SUBSTR(STATIONNAME,-2,1) not in ('1','2','3','4','5','6','7','8','9','0') THEN SUBSTR(STATIONNAME,1,LENGTH(STATIONNAME)-1) ELSE STATIONNAME END) as STATIONNAME,t3.BUSLINENAME as BUSLINENAME,t3.ID as BUSLINEID from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID inner join BusLine t3 on t2.BUSLINEID = t3.ID where t0.GPSX2<>0 and t0.GPSY2<>0 order by STATIONNAME,t0.ID,(case when cast(t3.buslinename as int)=0 then 999 else cast(t3.buslinename as int) end)"
 
+// 根据站点名称，查询是否有同名的对象站点
 #define GetConverseStation @"select t2.* from BusLineDetail t0 inner join LINESTATION t1 on t0.ID = t1.BUSLINEDETAIL inner join STATION t2 on t1.STATIONID = t2.ID where t2.STATIONNAME = ? and t0.ID = ?"
+
+// 根据站点名称，查询所有同名站点及通过的所有线路
+#define GetStationsWithLinesByName @"select t0.ID as STATIONID, (CASE WHEN SUBSTR(STATIONNAME,-1,1)='2' and SUBSTR(STATIONNAME,-2,1) not in ('1','2','3','4','5','6','7','8','9','0') THEN SUBSTR(STATIONNAME,1,LENGTH(STATIONNAME)-1) ELSE STATIONNAME END) as STATIONNAME,t0.GPSX2 as GPSX, t0.GPSY2 as GPSY, t3.ID as BUSLINEID, t3.BUSLINENAME as BUSLINENAME,t2.ID as LINEDETAILID, t2.BUSLINENAME as BUSLINEDETAIL, t2.DIRECTION as DIRECTION from STATION t0 inner join LINESTATION t1 on t0.ID = t1.STATIONID inner join BusLineDetail t2 on t1.BUSLINEDETAIL = t2.ID inner join BusLine t3 on t2.BUSLINEID = t3.ID where STATIONNAME=? and t0.GPSX2<>0 and t0.GPSY2<>0  order by t0.ID, (case when cast(t3.buslinename as int)=0 then 999 else cast(t3.buslinename as int) end)"
+
+#define Get
 
 @interface JDODatabase : NSObject
 

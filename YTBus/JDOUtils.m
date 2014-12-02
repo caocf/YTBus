@@ -42,4 +42,8 @@
     [hud hide:true afterDelay:1.0f];
 }
 
++ (BOOL) isEmptyString:(NSString *)str{
+    return str==nil || [[str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqualToString:@""];
+}
+
 @end

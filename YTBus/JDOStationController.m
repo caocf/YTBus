@@ -12,6 +12,7 @@
 #import "JDOStationModel.h"
 #import "JDORealTimeController.h"
 #import "JDOConstants.h"
+#import "JDOStationMapController.h"
 
 @interface JDOStationController () <UISearchBarDelegate> {
     NSMutableArray *_allStations;
@@ -79,9 +80,9 @@
             station = preStation;
         }else{
             station = [JDOStationModel new];
-            station.fid = [rs stringForColumn:@"ID"];
+            station.fid = [rs stringForColumn:@"STATIONID"];
             station.name = [rs stringForColumn:@"STATIONNAME"];
-            station.direction = [rs stringForColumn:@"GEOGRAPHICALDIRECTION"];
+//            station.direction = [rs stringForColumn:@"GEOGRAPHICALDIRECTION"];
             station.passLinesName = [NSMutableArray new];
             [_allStations addObject:station];
             preStation = station;
@@ -110,15 +111,13 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"toStationMap"]) {
-//        JDORealTimeController *rt = segue.destinationViewController;
-//        if (selectedIndexPath.section == 0 && _filterFavorStations.count>0) {
-//            rt.busLine = _filterFavorStations[selectedIndexPath.row];
-//        }else{
-//            rt.busLine = _filterAllStations[selectedIndexPath.row];
-//        }
-        // 加入历史记录
         UITableViewCell *cell = sender;
         NSString *stationName = [(UILabel *)[cell viewWithTag:1001] text];
+        
+        JDOStationMapController *controller = segue.destinationViewController;
+        controller.stationName = stationName;
+        
+        // 加入历史记录
         _historyStations = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"] mutableCopy];
         if(!_historyStations){
             _historyStations = [NSMutableArray new];

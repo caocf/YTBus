@@ -22,6 +22,7 @@
 		2D33FB141A22F0F00024F1ED /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB131A22F0F00024F1ED /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		2D33FB191A241F850024F1ED /* JDOInterChangeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB181A241F850024F1ED /* JDOInterChangeController.m */; };
 		2D33FB1C1A247C4C0024F1ED /* JDORouteMapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */; };
+		2D33FB471A26E7D00024F1ED /* JDOLocationMapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB461A26E7D00024F1ED /* JDOLocationMapController.m */; };
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
 		2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2D4BB8C019F6654100AC3941 /* mapapi.bundle */; };
@@ -39,6 +40,8 @@
 		2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630619F0D92D00DFED0B /* Images.xcassets */; };
 		2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630819F0D92D00DFED0B /* LaunchScreen.xib */; };
 		2DA6631619F0D92E00DFED0B /* YTBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6631519F0D92E00DFED0B /* YTBusTests.m */; };
+		2DAF41231A2DA780007E60A3 /* 地图标注1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DAF41211A2DA780007E60A3 /* 地图标注1@2x.png */; };
+		2DAF41241A2DA780007E60A3 /* 地图标注2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DAF41221A2DA780007E60A3 /* 地图标注2@2x.png */; };
 		2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A119FF2AC80022F60E /* JDOStationModel.m */; };
 		2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A619FF9ABA0022F60E /* FMDatabase.m */; };
 		2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A819FF9ABA0022F60E /* FMResultSet.m */; };
@@ -117,6 +120,8 @@
 		2D33FB181A241F850024F1ED /* JDOInterChangeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOInterChangeController.m; sourceTree = "<group>"; };
 		2D33FB1A1A247C4C0024F1ED /* JDORouteMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDORouteMapController.h; sourceTree = "<group>"; };
 		2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDORouteMapController.m; sourceTree = "<group>"; };
+		2D33FB451A26E7CF0024F1ED /* JDOLocationMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOLocationMapController.h; sourceTree = "<group>"; };
+		2D33FB461A26E7D00024F1ED /* JDOLocationMapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOLocationMapController.m; sourceTree = "<group>"; };
 		2D4BB84819F65DDD00AC3941 /* BMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMapKit.h; sourceTree = "<group>"; };
 		2D4BB84919F65DDD00AC3941 /* BMKActionPaopaoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKActionPaopaoView.h; sourceTree = "<group>"; };
 		2D4BB84A19F65DDD00AC3941 /* BMKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKAnnotation.h; sourceTree = "<group>"; };
@@ -202,6 +207,8 @@
 		2DA6630F19F0D92E00DFED0B /* YTBusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YTBusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA6631419F0D92E00DFED0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DA6631519F0D92E00DFED0B /* YTBusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTBusTests.m; sourceTree = "<group>"; };
+		2DAF41211A2DA780007E60A3 /* 地图标注1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图标注1@2x.png"; sourceTree = "<group>"; };
+		2DAF41221A2DA780007E60A3 /* 地图标注2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图标注2@2x.png"; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -481,6 +488,8 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DAF41211A2DA780007E60A3 /* 地图标注1@2x.png */,
+				2DAF41221A2DA780007E60A3 /* 地图标注2@2x.png */,
 				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
 			);
 			name = Resources;
@@ -526,6 +535,8 @@
 				2D33FB181A241F850024F1ED /* JDOInterChangeController.m */,
 				2D33FB1A1A247C4C0024F1ED /* JDORouteMapController.h */,
 				2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */,
+				2D33FB451A26E7CF0024F1ED /* JDOLocationMapController.h */,
+				2D33FB461A26E7D00024F1ED /* JDOLocationMapController.m */,
 				2DECC2B81A0081700022F60E /* JDOSettingController.h */,
 				2DECC2B91A0081710022F60E /* JDOSettingController.m */,
 			);
@@ -722,6 +733,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
+				2DAF41241A2DA780007E60A3 /* 地图标注2@2x.png in Resources */,
+				2DAF41231A2DA780007E60A3 /* 地图标注1@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
@@ -772,6 +785,7 @@
 				2DECC3351A0324D00022F60E /* AFHTTPClient.m in Sources */,
 				2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */,
 				2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */,
+				2D33FB471A26E7D00024F1ED /* JDOLocationMapController.m in Sources */,
 				2DECC3501A032BAF0022F60E /* zip.c in Sources */,
 				2DECC33C1A0324D00022F60E /* AFXMLRequestOperation.m in Sources */,
 				2DECC33B1A0324D00022F60E /* AFURLConnectionOperation.m in Sources */,

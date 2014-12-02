@@ -321,7 +321,7 @@
     [cell.lineDetailLabel setText:lineDetail.lineDetail];
     
     JDOStationModel *station = busLine.nearbyStationPair[busLine.showingIndex];
-    [cell.stationLabel setText:[NSString stringWithFormat:@"%@[%@]",station.name,station.direction]];
+    [cell.stationLabel setText:[NSString stringWithFormat:@"%@ [%@]",station.name,station.direction]];
     [cell.distanceLabel setText:[NSString stringWithFormat:@"%d米",[station.distance intValue]]];
     
     cell.switchDirection.hidden = (busLine.lineDetailPair.count==1);

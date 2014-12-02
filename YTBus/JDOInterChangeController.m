@@ -10,9 +10,21 @@
 #import "BMapKit.h"
 #import "JDOConstants.h"
 #import "JDORouteMapController.h"
+#import "MBProgressHUD.h"
 
 #define Green_Color [UIColor colorWithRed:55/255.0f green:170/255.0f blue:50/255.0f alpha:1.0f]
 #define Red_Color [UIColor colorWithRed:240/255.0f green:50/255.0f blue:50/255.0f alpha:1.0f]
+
+
+@interface JDOPoiSearch : BMKPoiSearch
+
+@property (nonatomic,strong) UITextField *tf;
+
+@end
+
+@implementation JDOPoiSearch
+
+@end
 
 @interface JDOInterChangeModel : NSObject
 
@@ -32,7 +44,6 @@
 
 @property (nonatomic,weak) IBOutlet UIImageView *seqBg;
 @property (nonatomic,weak) IBOutlet UILabel *seqLabel;
-@property (nonatomic,weak) IBOutlet UILabel *typeLabel;
 @property (nonatomic,weak) IBOutlet UILabel *busLabel;
 @property (nonatomic,weak) IBOutlet UILabel *descLabel;
 
@@ -42,7 +53,7 @@
 
 @end
 
-@interface JDOInterChangeController () <BMKRouteSearchDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface JDOInterChangeController () <BMKRouteSearchDelegate,BMKPoiSearchDelegate,UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate>
 
 @property (nonatomic,weak) IBOutlet UITableView *tableView;
 @property (nonatomic,weak) IBOutlet UIButton *changeBtn;
@@ -63,26 +74,71 @@
 @end
 
 @implementation JDOInterChangeController{
-    BMKRouteSearch *_routesearch;
+    BMKRouteSearch *_routeSearch;
     BMKTransitPolicy transitPolicy;
     NSMutableArray *_list;
     NSMutableArray *_plans;
+    MBProgressHUD *hud;
+    
+    JDOPoiSearch *_locSearch1;
+    JDOPoiSearch *_locSearch2;
+    UITableView *_dropDown1;
+    UITableView *_dropDown2;
+    NSMutableArray *_locations1;
+    NSMutableArray *_locations2;
+    UITextField *_currentTf;
+    BOOL isDropDown1Show;
+    BOOL isDropDown2Show;
+    NSDate *lastSearchTime;
+    UIView *_background;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _routesearch = [[BMKRouteSearch alloc] init];
-    _routesearch.delegate = self;
+    // 定义呈现视图的上下文
+    self.definesPresentationContext = true;
+    
+    _routeSearch = [[BMKRouteSearch alloc] init];
+    _routeSearch.delegate = self;
+    
+    _locSearch1 = [[JDOPoiSearch alloc] init];
+    _locSearch1.tf = _startField;
+    _locSearch1.delegate = self;
+    _locSearch2 = [[JDOPoiSearch alloc] init];
+    _locSearch2.tf = _endField;
+    _locSearch2.delegate = self;
     
     _list = [NSMutableArray new];
     _plans= [NSMutableArray new];
+    _locations1 = [NSMutableArray new];
+    _locations2 = [NSMutableArray new];
     
     _startField.text = @"广电大厦";
     _endField.text = @"万达广场";
+    _startField.delegate = self;
+    _endField.delegate = self;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:nil object:_startField];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:nil object:_endField];
     transitPolicy = BMK_TRANSIT_TIME_FIRST;
     
     self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"矩形下"]];
+    
+    _dropDown1 = [[UITableView alloc] initWithFrame:CGRectZero];
+    _dropDown1.rowHeight = 30;
+    _dropDown1.dataSource = self;
+    _dropDown1.delegate = self;
+    
+    _dropDown2 = [[UITableView alloc] initWithFrame:CGRectZero];
+    _dropDown2.rowHeight = 30;
+    _dropDown2.dataSource = self;
+    _dropDown2.delegate = self;
+    
+    _background = [[UIView alloc] initWithFrame:self.view.bounds];
+    _background.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
+    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeDropDownList)];
+    [_background addGestureRecognizer:gesture];
+
 }
 
 - (IBAction)directionChanged:(UIButton *)sender {
@@ -92,6 +148,18 @@
 }
 
 - (IBAction)doSearch:(UIButton *)sender {
+    [self.startField resignFirstResponder];
+    [self.endField resignFirstResponder];
+    
+    if ([JDOUtils isEmptyString:_startField.text]) {
+        [JDOUtils showHUDText:@"请输入起点" inView:self.view];
+        return;
+    }
+    if ([JDOUtils isEmptyString:_endField.text]) {
+        [JDOUtils showHUDText:@"请输入终点" inView:self.view];
+        return;
+    }
+    
     BMKPlanNode *start = [BMKPlanNode new];
     start.name = _startField.text;
     BMKPlanNode *end = [BMKPlanNode new];
@@ -103,11 +171,166 @@
     transitRouteSearchOption.from = start;
     transitRouteSearchOption.to = end;
     
-    BOOL flag = [_routesearch transitSearch:transitRouteSearchOption];
+    BOOL flag = [_routeSearch transitSearch:transitRouteSearchOption];
     
     if(!flag){
         [JDOUtils showHUDText:@"检索请求失败" inView:self.view];
+    }else{
+        hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
+        hud.minShowTime = 1.0f;
+        hud.labelText = @"正在检索";
+//        self.searchBtn.enabled = false;
     }
+}
+
+- (void)doSuggestionSearch:(UITextField *)tf{
+    if (tf == _startField) {
+        [_locations1 removeAllObjects];
+        // TODO区域限制不起作用
+        [_locSearch1 poiSearchInCity:[self createPoiOptionArea:@"烟台市" keyword:tf.text]];
+//        [_locSearch1 poiSearchInCity:[self createPoiOptionArea:@"莱山区" keyword:tf.text]];
+//        [_locSearch1 poiSearchInCity:[self createPoiOptionArea:@"开发区" keyword:tf.text]];
+    }else{
+        [_locations2 removeAllObjects];
+        [_locSearch2 poiSearchInCity:[self createPoiOptionArea:@"烟台市" keyword:tf.text]];
+//        [_locSearch2 poiSearchInCity:[self createPoiOptionArea:@"莱山区" keyword:tf.text]];
+//        [_locSearch2 poiSearchInCity:[self createPoiOptionArea:@"开发区" keyword:tf.text]];
+    }
+}
+
+- (BMKCitySearchOption *) createPoiOptionArea:(NSString *)area keyword:(NSString *)keyword{
+    BMKCitySearchOption *option = [[BMKCitySearchOption alloc] init];
+    option.city = area;
+    option.pageIndex = 0;
+    option.pageCapacity = 10;
+    option.keyword = keyword;
+    return option;
+}
+
+- (void)onGetPoiResult:(BMKPoiSearch *)searcher result:(BMKPoiResult *)poiResultList errorCode:(BMKSearchErrorCode)error{
+    UITextField *tf = ((JDOPoiSearch *)searcher).tf;
+    if (![tf isFirstResponder]) {
+        return;
+    }
+    NSMutableArray *locations;
+    UITableView *dropDown;
+    if (tf == _startField) {
+        locations = _locations1;
+        dropDown = _dropDown1;
+    }else if (tf == _endField){
+        locations = _locations2;
+        dropDown = _dropDown2;
+    }
+    if (error == BMK_SEARCH_NO_ERROR) {
+        for (int i=0; i<poiResultList.poiInfoList.count; i++) {
+            [locations addObject:poiResultList.poiInfoList[i]];
+        }
+        // 公交站排在最前面
+        [locations sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            BMKPoiInfo *info1 = obj1;
+            BMKPoiInfo *info2 = obj2;
+            return info1.epoitype>=info2.epoitype?NSOrderedAscending:NSOrderedDescending;
+        }];
+        [dropDown reloadData];
+        if(locations.count > 0){
+            [self animateDropDownList:dropDown show:true];
+        }else{
+            [self animateDropDownList:dropDown show:false];
+        }
+    }else if(error == BMK_SEARCH_RESULT_NOT_FOUND){
+        [dropDown reloadData];
+        if(locations.count > 0){
+            [self animateDropDownList:dropDown show:true];
+        }else{
+            [self animateDropDownList:dropDown show:false];
+        }
+    }
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    _currentTf = textField;
+    if (![JDOUtils isEmptyString:textField.text]) {
+        [self doSuggestionSearch:textField];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+    _currentTf = nil;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(doSuggestionSearch:) object:textField];
+    if (textField == _startField && isDropDown1Show) {
+        [self animateDropDownList:_dropDown1 show:false];
+    }else if(textField == _endField && isDropDown2Show){
+        [self animateDropDownList:_dropDown2 show:false];
+    }
+}
+
+- (void)textChanged:(NSNotification *)noti{
+    UITextField *textField = (UITextField *)noti.object;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(doSuggestionSearch:) object:textField];
+    if ([JDOUtils isEmptyString:textField.text]) {
+        if (textField == _startField) {
+            [self animateDropDownList:_dropDown1 show:false];
+        }else{
+            [self animateDropDownList:_dropDown2 show:false];
+        }
+    }else{
+        [self performSelector:@selector(doSuggestionSearch:) withObject:textField afterDelay:1];
+    }
+}
+
+- (void)animateDropDownList:(UITableView *)dropDown show:(BOOL) show{
+    CGPoint point;
+    if (dropDown == _dropDown1) {
+        point = CGPointMake(CGRectGetMinX(_startField.frame), CGRectGetMaxY(_startField.frame)+2);
+        if (show && !isDropDown1Show) {
+            [self.view addSubview:_background];
+            _dropDown1.frame = CGRectMake(point.x, point.y, 240, 0);
+            [self.view addSubview:_dropDown1];
+        }
+    }else{
+        point = CGPointMake(CGRectGetMinX(_endField.frame), CGRectGetMaxY(_endField.frame)+2);
+        if (show && !isDropDown2Show) {
+            [self.view addSubview:_background];
+            _dropDown2.frame = CGRectMake(point.x, point.y, 240, 0);
+            [self.view addSubview:_dropDown2];
+        }
+    }
+    
+    if (show) {
+        int row = [dropDown numberOfRowsInSection:0];
+        float height = row>5?dropDown.rowHeight*5:dropDown.rowHeight*row;
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            dropDown.frame = CGRectMake(point.x, point.y, 240, height);
+        } completion:^(BOOL finished) {
+            if (dropDown == _dropDown1) {
+                isDropDown1Show = true;
+            }else{
+                isDropDown2Show = true;
+            }
+        }];
+    }else{
+        [_background removeFromSuperview];
+        [UIView animateWithDuration:0.2 animations:^{
+            dropDown.frame = CGRectMake(point.x, point.y, 240, 0);
+        } completion:^(BOOL finished) {
+            [dropDown removeFromSuperview];
+            if (dropDown == _dropDown1) {
+                isDropDown1Show = false;
+            }else{
+                isDropDown2Show = false;
+            }
+        }];
+    }
+    
+}
+
+- (void) closeDropDownList{
+    [_startField resignFirstResponder];
+    [_endField resignFirstResponder];
+    [_dropDown1 removeFromSuperview];
+    [_dropDown2 removeFromSuperview];
+    [_background removeFromSuperview];
 }
 
 - (IBAction)typeChanged:(UIButton *)sender {
@@ -118,10 +341,13 @@
 }
 
 - (IBAction)setLocation:(UIButton *)sender{
-    
+    [self performSegueWithIdentifier:@"toLocationMap" sender:nil];
 }
 
 - (void)onGetTransitRouteResult:(BMKRouteSearch *)searcher result:(BMKTransitRouteResult *)result errorCode:(BMKSearchErrorCode)error{
+//    self.searchBtn.enabled = true;
+    [hud hide:true];
+    
     if (error != BMK_SEARCH_NO_ERROR) {
         NSString *errorInfo;
         switch (error) {
@@ -175,7 +401,17 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [self performSegueWithIdentifier:@"toRouteMap" sender:indexPath];
+    if (tableView == _tableView) {
+        [self performSegueWithIdentifier:@"toRouteMap" sender:indexPath];
+    }else if(tableView == _dropDown1){
+        BMKPoiInfo *poiInfo = _locations1[indexPath.row];
+        _startField.text = poiInfo.name;
+        [_startField resignFirstResponder];
+    }else if(tableView == _dropDown2){
+        BMKPoiInfo *poiInfo = _locations2[indexPath.row];
+        _endField.text = poiInfo.name;
+        [_endField resignFirstResponder];
+    }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -183,6 +419,8 @@
         JDORouteMapController *controller = segue.destinationViewController;
         int index = [(NSIndexPath *)sender row];
         controller.route = _plans[index];
+    }else if([segue.identifier isEqualToString:@"toLocationMap"]){
+        
     }
 }
 
@@ -193,38 +431,65 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _list.count;
+    if (tableView == _tableView) {
+        return _list.count;
+    }else if(tableView == _dropDown1){
+        return _locations1.count;
+    }else if(tableView == _dropDown2){
+        return _locations2.count;
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    JDOInterChangeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"routeIdentifier"];
-    
-    JDOInterChangeModel *model = _list[indexPath.row];
-    cell.seqBg.image = [UIImage imageNamed:model.type==0?@"标签1":@"标签2"];
-    cell.seqLabel.text = [NSString stringWithFormat:@"%02d",indexPath.row+1];
-    cell.typeLabel.text = model.type==0?@"直达":@"换乘";
-    cell.typeLabel.backgroundColor = model.type==0?Green_Color:Red_Color;
-    cell.busLabel.text = model.busChangeInfo;
-    NSString *desc = [NSString stringWithFormat:@"共%d站 / 距离%@ / 耗时%@",model.busStationNumber,model.distance,model.duration];
-    if (After_iOS6) {
-        NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:desc];
+    if (tableView == _tableView) {
+        JDOInterChangeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"routeIdentifier"];
         
-        NSRange range = [desc rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]];
-        while (range.location != NSNotFound) {
-            [attrString addAttribute:NSForegroundColorAttributeName value:Green_Color range:range];
-            [attrString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:14] range:range];
-            int location = range.location+range.length;
-            int length = desc.length-location;
-            range = [desc rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet] options:0 range:NSMakeRange(location, length)];
+        JDOInterChangeModel *model = _list[indexPath.row];
+//        cell.seqBg.image = [UIImage imageNamed:model.type==0?@"标签1":@"标签2"];
+        cell.seqLabel.text = [NSString stringWithFormat:@"%02d",indexPath.row+1];
+        cell.busLabel.text = model.busChangeInfo;
+        NSString *desc = [NSString stringWithFormat:@"共%d站 / 距离%@ / 耗时%@",model.busStationNumber,model.distance,model.duration];
+        if (After_iOS6) {
+            NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:desc];
+            NSRange range = [desc rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+            while (range.location != NSNotFound) {
+                [attrString addAttribute:NSForegroundColorAttributeName value:[UIColor lightGrayColor] range:range];
+                [attrString addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:13] range:range];
+                int location = range.location+range.length;
+                int length = desc.length-location;
+                range = [desc rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet] options:0 range:NSMakeRange(location, length)];
+            }
+            cell.descLabel.attributedText = attrString;
+        }else{
+            cell.descLabel.text = desc;
         }
-        cell.descLabel.attributedText = attrString;
+        return cell;
     }else{
-        cell.descLabel.text = desc;
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"locationCell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"locationCell"];
+            cell.contentView.backgroundColor = [UIColor lightGrayColor];
+            UILabel *label = [[UILabel alloc] init];
+            label.tag = 1001;
+            [cell.contentView addSubview:label];
+        }
+        UILabel *label = (UILabel *)[cell viewWithTag:1001];
+        BMKPoiInfo *poiInfo ;
+        if (tableView == _dropDown1) {
+            poiInfo = _locations1[indexPath.row];
+        }else{
+            poiInfo = _locations2[indexPath.row];
+        }
+        label.text = [poiInfo.name stringByAppendingString:poiInfo.address];
+        [label sizeToFit];
+        return cell;
     }
-    
-    
-    return cell;
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:_startField];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:_endField];
 }
 
 @end
