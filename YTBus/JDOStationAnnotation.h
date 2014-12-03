@@ -13,5 +13,6 @@
 
 @property (nonatomic,strong) JDOStationModel *station;
 @property (nonatomic,assign) BOOL selected;
+@property (nonatomic,assign) int index;
 
 @end

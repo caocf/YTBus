@@ -14,6 +14,7 @@
 #import "JDOBusLineDetail.h"
 #import "JDOStationAnnotation.h"
 #import "JDORealTimeController.h"
+#import "JDOConstants.h"
 
 @interface JDOStationMapController () <BMKMapViewDelegate,UITableViewDataSource,UITableViewDelegate>
 
@@ -46,6 +47,10 @@
     if (_db) {
         [self loadData];
     }
+    
+    self.tableView.sectionHeaderHeight = 15;
+    self.tableView.sectionFooterHeight = 15;
+    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
 }
 
 - (void)loadData{
@@ -88,7 +93,7 @@
     if(_stations.count > 2){
         _mapView.zoomLevel = 16;
     }else{
-        _mapView.zoomLevel = 19;
+        _mapView.zoomLevel = 18;
     }
     [self setMapCenter];
     [self addStationAnnotation];
@@ -130,6 +135,7 @@
         annotation.coordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
         annotation.station = station;
         annotation.selected = (i==0);
+        annotation.index = i+1;
         annotation.title = @""; //didSelectAnnotationView回调触发必须设置title，设置title后若不想弹出paopao，只能设置空customView
         [_mapView addAnnotation:annotation];
     }
@@ -140,10 +146,11 @@
     BMKAnnotationView *annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
     annotationView.centerOffset = CGPointMake(0, -16);
     annotationView.paopaoView = [[BMKActionPaopaoView alloc] initWithCustomView:[[UIView alloc] initWithFrame:CGRectZero]];
-    if (((JDOStationAnnotation *)annotation).selected) {
-        annotationView.image = [UIImage imageNamed:@"地图标注1"];
+    JDOStationAnnotation *sa = (JDOStationAnnotation *)annotation;
+    if (sa.selected) {
+        annotationView.image = [UIImage imageNamed:[NSString stringWithFormat:@"地图标注蓝%d",sa.index]];
     }else{
-        annotationView.image = [UIImage imageNamed:@"地图标注2"];
+        annotationView.image = [UIImage imageNamed:[NSString stringWithFormat:@"地图标注红%d",sa.index]];
     }
     return annotationView;
 }
@@ -151,11 +158,11 @@
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
     JDOStationAnnotation *sa = view.annotation;
     sa.selected = true;
-    view.image = [UIImage imageNamed:@"地图标注1"];
+    view.image = [UIImage imageNamed:[NSString stringWithFormat:@"地图标注蓝%d",sa.index]];
     for(JDOStationAnnotation *other in _mapView.annotations){
         if(other != sa){
             other.selected = false;
-            [_mapView viewForAnnotation:other].image = [UIImage imageNamed:@"地图标注2"];
+            [_mapView viewForAnnotation:other].image = [UIImage imageNamed:[NSString stringWithFormat:@"地图标注红%d",other.index]];
         }
     }
     selectedStation = sa.station;
@@ -171,15 +178,28 @@
     return selectedStation.passLines.count;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+    iv.image = [UIImage imageNamed:@"表格圆角上"];
+    return iv;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+    iv.image = [UIImage imageNamed:@"表格圆角下"];
+    return iv;
+}
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"stationLine" forIndexPath:indexPath];
-//    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
+    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
     
     JDOBusLine *busLine = selectedStation.passLines[indexPath.row];
     JDOBusLineDetail *lineDetail = busLine.lineDetailPair[0];
     [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
     [(UILabel *)[cell viewWithTag:1002] setText:lineDetail.lineDetail];
+    [[cell viewWithTag:1003] setHidden:(indexPath.row == selectedStation.passLines.count-1)];
     
     return cell;
 }

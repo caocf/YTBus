@@ -122,8 +122,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:nil object:_endField];
     transitPolicy = BMK_TRANSIT_TIME_FIRST;
     
-    self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"矩形下"]];
-    
     _dropDown1 = [[UITableView alloc] initWithFrame:CGRectZero];
     _dropDown1.rowHeight = 30;
     _dropDown1.dataSource = self;
@@ -138,6 +136,8 @@
     _background.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeDropDownList)];
     [_background addGestureRecognizer:gesture];
+    
+    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
 
 }
 
@@ -177,7 +177,7 @@
         [JDOUtils showHUDText:@"检索请求失败" inView:self.view];
     }else{
         hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
-        hud.minShowTime = 1.0f;
+//        hud.minShowTime = 1.0f;
         hud.labelText = @"正在检索";
 //        self.searchBtn.enabled = false;
     }
@@ -441,14 +441,49 @@
     return 0;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if (tableView == _tableView && _list.count>0) {
+        return 15;
+    }
+    return 0;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    if (tableView == _tableView && _list.count>0) {
+        return 15;
+    }
+    return 0;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    if (tableView == _tableView) {
+        UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+        iv.image = [UIImage imageNamed:@"表格圆角上"];
+        return iv;
+    }
+    return nil;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    if (tableView == _tableView) {
+        UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+        iv.image = [UIImage imageNamed:@"表格圆角下"];
+        return iv;
+    }
+    return nil;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView == _tableView) {
         JDOInterChangeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"routeIdentifier"];
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
         
         JDOInterChangeModel *model = _list[indexPath.row];
 //        cell.seqBg.image = [UIImage imageNamed:model.type==0?@"标签1":@"标签2"];
         cell.seqLabel.text = [NSString stringWithFormat:@"%02d",indexPath.row+1];
         cell.busLabel.text = model.busChangeInfo;
+        [[cell viewWithTag:1003] setHidden:(indexPath.row == _list.count-1)];
+        
         NSString *desc = [NSString stringWithFormat:@"共%d站 / 距离%@ / 耗时%@",model.busStationNumber,model.distance,model.duration];
         if (After_iOS6) {
             NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:desc];

@@ -36,6 +36,8 @@
 }
 
 + (void) showHUDText:(NSString *)text inView:(UIView *)view{
+    // 若有其他的hud正在显示，先关闭
+    [MBProgressHUD hideAllHUDsForView:view animated:false];
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:true];
     hud.mode = MBProgressHUDModeText;
     hud.labelText = text;

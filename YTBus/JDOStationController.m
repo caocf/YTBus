@@ -44,7 +44,9 @@
     [_clearHisBtn setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
     [_clearHisBtn setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
     [_clearHisBtn setTitle:@"清除浏览历史记录" forState:UIControlStateNormal];
-    [_clearHisBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [_clearHisBtn setTitleColor:[UIColor colorWithHex:@"828282"] forState:UIControlStateNormal];
+    [_clearHisBtn setBackgroundColor:[UIColor clearColor]];
+    [_clearHisBtn setTitleEdgeInsets:UIEdgeInsetsMake(-8, 0, 0, 0)];
     [_clearHisBtn addTarget:self action:@selector(clearHistory:) forControlEvents:UIControlEventTouchUpInside];
     
     _db = [JDODatabase sharedDB];
@@ -56,6 +58,9 @@
             [self loadData];
         }];
     }
+    
+    self.tableView.bounces = false;
+    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
 }
 
 - (void) clearHistory:(UIButton *)btn{
@@ -65,6 +70,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     self.tableView.tableFooterView = nil;
+    [self.tableView scrollsToTop];
 }
 
 - (void)loadData{
@@ -147,22 +153,52 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if([_searchBar.text isEqualToString:@""]){
+    
+    if([JDOUtils isEmptyString:_searchBar.text]){
         return _historyStations.count;
     }
     return _filterAllStations.count;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if([JDOUtils isEmptyString:_searchBar.text]){
+        if (_historyStations.count > 0) {
+            return 15;
+        }
+        return 0;
+    }else{
+        if (_filterAllStations.count > 0) {
+            return 15;
+        }
+        return 0;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return [self tableView:tableView heightForHeaderInSection:section];
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+    iv.image = [UIImage imageNamed:@"表格圆角上"];
+    return iv;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+    iv.image = [UIImage imageNamed:@"表格圆角下"];
+    return iv;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *identifier = @"busStation";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
-    
-    if([_searchBar.text isEqualToString:@""]){
+    UITableViewCell *cell;
+    if([JDOUtils isEmptyString:_searchBar.text]){  // 历史记录
+        cell = [tableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
         NSString *station = _historyStations[indexPath.row];
         [(UILabel *)[cell viewWithTag:1001] setText:station];
-        [(UILabel *)[cell viewWithTag:1002] setText:@""];
+        [[cell viewWithTag:1003] setHidden:(indexPath.row == _historyStations.count-1)];
     }else{
+        cell = [tableView dequeueReusableCellWithIdentifier:@"stationCell" forIndexPath:indexPath];
         JDOStationModel *station = (JDOStationModel *)_filterAllStations[indexPath.row];
         [(UILabel *)[cell viewWithTag:1001] setText:station.name];
         NSString *desc;
@@ -172,13 +208,16 @@
             desc = [NSString stringWithFormat:@"%@等%d条线路经过",station.passLinesName[0],station.passLinesName.count];
         }
         [(UILabel *)[cell viewWithTag:1002] setText:desc];
+        [[cell viewWithTag:1003] setHidden:(indexPath.row == _filterAllStations.count-1)];
     }
+    
+    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
     return cell;
 }
 
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-    if ([searchBar.text isEqualToString:@""]) {
+    if ([JDOUtils isEmptyString:_searchBar.text]) {
         if (_historyStations.count>0) {
             self.tableView.tableFooterView = _clearHisBtn;
         }
@@ -197,6 +236,12 @@
     [_filterAllStations removeObjectsAtIndexes:deleteAllIndex];
     self.tableView.tableFooterView = nil;
     [self.tableView reloadData];
+}
+
+// 在拼音输入未转换成汉字阶段只调这个函数，不调上面的
+- (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    [self searchBar:searchBar textDidChange:text];
+    return true;
 }
 
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
