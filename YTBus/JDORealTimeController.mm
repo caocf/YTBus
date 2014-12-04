@@ -15,10 +15,13 @@
 #import "JDOConstants.h"
 #import "JSONKit.h"
 
+#define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
+
 @interface JDORealTimeCell : UITableViewCell
 
 @property (nonatomic,assign) IBOutlet UIImageView *stationIcon;
 @property (nonatomic,assign) IBOutlet UILabel *stationName;
+@property (nonatomic,assign) IBOutlet UILabel *stationSeq;
 @property (nonatomic,assign) IBOutlet UIImageView *arrivingBus;
 @property (nonatomic,assign) IBOutlet UIImageView *arrivedBus;
 
@@ -73,6 +76,10 @@
             [self loadData];
         }];
     }
+    
+    self.tableView.sectionHeaderHeight = 15;
+    self.tableView.sectionFooterHeight = 15;
+    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
 }
 
 - (void)loadData{
@@ -86,7 +93,7 @@
         for (int i=0; i<favorLineIds.count; i++) {
             NSString *lineId = favorLineIds[i];
             if([_busLine.lineId isEqualToString:lineId]){
-                [_favorBtn setTitle:@"已收藏" forState:UIControlStateNormal];
+                _favorBtn.selected = true;
                 break;
             }
         }
@@ -234,8 +241,6 @@
     JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
     NSString *lineStatus = [lineDetail.direction isEqualToString:@"下行"]?@"1":@"2";
     
-    
-    
     NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_MSG,stationId,busLineId,lineStatus];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:GetBusLineStatus_URL]];
     [request addValue:@"text/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
@@ -285,6 +290,11 @@
         isRecording = false;
         if (_jsonResult.length==0) {
             [JDOUtils showHUDText:@"没有满足条件的车辆信息" inView:self.view];
+            // 删除掉已经绘制的所有车辆，可能发生的情景是：最后一辆车开过参考站点，则要删除该车辆
+            if (_busIndexSet.count>0) {
+                [_busIndexSet removeAllObjects];
+                [self.tableView reloadData];
+            }
         }else{
             NSArray *list = [_jsonResult objectFromJSONString];
             if (!list) {
@@ -324,11 +334,25 @@
     if ([segue.identifier isEqualToString:@"toRealtimeMap"]) {
         JDORealTimeMapController *rt = segue.destinationViewController;
         rt.stations = _stations;
+        JDOStationModel *startStation;
+        if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
+            // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
+            startStation = [_stations lastObject];
+        }else{
+            startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
+        }
+        startStation.start = true;
+        
+        rt.stationId = startStation.fid;
+        rt.lineId = _busLine.lineId;
+        JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
+        rt.lineStatus = [lineDetail.direction isEqualToString:@"下行"]?@"1":@"2";
     }
 }
 
 - (IBAction)changeDirection:(id)sender{
     if (_busLine.lineDetailPair.count !=2 ) {
+        [JDOUtils showHUDText:@"该条线路为单向线路" inView:self.view];
         return;
     }
     _busLine.showingIndex = (_busLine.showingIndex==0?1:0);
@@ -355,18 +379,16 @@
     }
 }
 
-- (IBAction)clickFavor:(id)sender{
-    NSString *title = [sender titleForState:UIControlStateNormal];
+- (IBAction)clickFavor:(UIButton *)sender{
     NSMutableArray *favorLineIds = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"favor_line"] mutableCopy];
     if(!favorLineIds){
         favorLineIds = [NSMutableArray new];
     }
-    if ([title isEqualToString:@"收藏"]) {
+    sender.selected = !sender.selected;
+    if (sender.selected) {
         [favorLineIds addObject:_busLine.lineId];
-        [_favorBtn setTitle:@"已收藏" forState:UIControlStateNormal];
     }else{
         [favorLineIds removeObject:_busLine.lineId];
-        [_favorBtn setTitle:@"收藏" forState:UIControlStateNormal];
     }
     [[NSUserDefaults standardUserDefaults] setObject:favorLineIds forKey:@"favor_line"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -382,32 +404,65 @@
     return [_stations count];
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+    iv.image = [UIImage imageNamed:@"表格圆角上"];
+    return iv;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+    iv.image = [UIImage imageNamed:@"表格圆角下"];
+    return iv;
+}
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     JDORealTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"lineStation" forIndexPath:indexPath];
     JDOStationModel *station = _stations[indexPath.row];
-
-    [cell.stationName setText:station.name];
+    station.start = false;
     
     if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]){
         JDOStationModel *startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
         if ([station.fid isEqualToString:startStation.fid]) {
-            cell.stationIcon.image = [UIImage imageNamed:@"first"];
             station.start = true;
         }else{
-            cell.stationIcon.image = [UIImage imageNamed:@"second"];
+            station.start = false;
         }
     }else{  // 从线路进入，则无法预知起点
-        cell.stationIcon.image = [UIImage imageNamed:@"second"];
+        station.start = false;
     }
     
-    if (_busIndexSet && [_busIndexSet containsObject:indexPath]) {
-        cell.arrivingBus.image = [UIImage imageNamed:@"近"];
+    if (station.start) {
+        cell.stationIcon.image = [self imageAtPosition:indexPath.row selected:true];
+        cell.stationSeq.textColor = [UIColor whiteColor];
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格选中背景"]];
     }else{
-        cell.arrivingBus.image = nil;
+        cell.stationIcon.image = [self imageAtPosition:indexPath.row selected:false];
+        cell.stationSeq.textColor = GrayColor;
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
     }
     
+    [cell.stationName setText:station.name];
+    [cell.stationSeq setText:[NSString stringWithFormat:@"%d",indexPath.row+1]];
+    if (_busIndexSet && [_busIndexSet containsObject:indexPath]) {
+        cell.arrivedBus.image = [UIImage imageNamed:@"公交"];
+    }else{
+        cell.arrivedBus.image = nil;
+    }
     return cell;
+}
+
+- (UIImage *) imageAtPosition:(int)pos selected:(BOOL)selected{
+    NSString *imageName;
+    if (pos == 0) {
+        imageName = selected?@"起点选中":@"起点";
+    }else if(pos ==_stations.count-1){
+        imageName = selected?@"终点选中":@"终点";
+    }else{
+        imageName = selected?@"中间选中":@"中间";
+    }
+    return [UIImage imageNamed:imageName];
 }
 
 - (void)didReceiveMemoryWarning {

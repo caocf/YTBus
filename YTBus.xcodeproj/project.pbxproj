@@ -40,6 +40,7 @@
 		2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630619F0D92D00DFED0B /* Images.xcassets */; };
 		2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630819F0D92D00DFED0B /* LaunchScreen.xib */; };
 		2DA6631619F0D92E00DFED0B /* YTBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6631519F0D92E00DFED0B /* YTBusTests.m */; };
+		2DAF41671A305491007E60A3 /* JDOBusModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF41661A305491007E60A3 /* JDOBusModel.m */; };
 		2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A119FF2AC80022F60E /* JDOStationModel.m */; };
 		2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A619FF9ABA0022F60E /* FMDatabase.m */; };
 		2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A819FF9ABA0022F60E /* FMResultSet.m */; };
@@ -205,6 +206,8 @@
 		2DA6630F19F0D92E00DFED0B /* YTBusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YTBusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA6631419F0D92E00DFED0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DA6631519F0D92E00DFED0B /* YTBusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTBusTests.m; sourceTree = "<group>"; };
+		2DAF41651A305491007E60A3 /* JDOBusModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOBusModel.h; sourceTree = "<group>"; };
+		2DAF41661A305491007E60A3 /* JDOBusModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOBusModel.m; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -546,6 +549,8 @@
 				2DECC2BC1A00DF7F0022F60E /* JDOBusLineDetail.m */,
 				2DECC2BE1A01D7B20022F60E /* JDOBusLine.h */,
 				2DECC2BF1A01D7B20022F60E /* JDOBusLine.m */,
+				2DAF41651A305491007E60A3 /* JDOBusModel.h */,
+				2DAF41661A305491007E60A3 /* JDOBusModel.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -773,6 +778,7 @@
 				2DECC2B219FF9ABA0022F60E /* FMDatabaseAdditions.m in Sources */,
 				2DECC2BA1A0081710022F60E /* JDOSettingController.m in Sources */,
 				2DECC34E1A032BAF0022F60E /* mztools.c in Sources */,
+				2DAF41671A305491007E60A3 /* JDOBusModel.m in Sources */,
 				2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */,
 				2DECC3351A0324D00022F60E /* AFHTTPClient.m in Sources */,
 				2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */,

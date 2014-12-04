@@ -12,7 +12,10 @@
 @interface JDORealTimeMapController : UIViewController
 
 @property (nonatomic,strong) NSArray *stations;
-@property (nonatomic,strong) NSArray *buses;
+// 以下3个是请求实时数据参数
+@property (nonatomic,strong) NSString *stationId;
+@property (nonatomic,strong) NSString *lineId;
+@property (nonatomic,strong) NSString *lineStatus;
 
 @property (nonatomic,weak) IBOutlet BMKMapView *mapView;
 
