@@ -12,6 +12,31 @@
 #import "JDOConstants.h"
 #import "JSONKit.h"
 #import "JDOBusModel.h"
+#import <objc/runtime.h>
+
+//BMKCircle只有静态构造函数，无法通过继承获得子类的具体类型，只能通过category添加属性
+
+static const void *SelectedKey = &SelectedKey;
+
+@interface BMKCircle (JDOCategory)
+
+@property (nonatomic,assign) NSNumber *selected;
+
+@end
+
+@implementation BMKCircle (JDOCategory)
+
+@dynamic selected;
+
+- (NSNumber *)selected {
+    return objc_getAssociatedObject(self, SelectedKey);
+}
+
+- (void)setSelected:(NSNumber *)selected{
+    objc_setAssociatedObject(self, SelectedKey, selected, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+@end
 
 @interface JDORealTimeMapController () <BMKMapViewDelegate,NSXMLParserDelegate>{
     int count;
@@ -35,10 +60,12 @@
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
-    _mapView.rotateEnabled = false;
+    _mapView.rotateEnabled = true;
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
     _mapView.zoomLevel = 13;
+    _mapView.minZoomLevel = 12;
+    _mapView.maxZoomLevel = 17;
     _mapView.delegate = self;
     
     [self setMapCenter];
@@ -132,7 +159,7 @@
 
 -(void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
-        NSLog(@"%@",_jsonResult);
+//        NSLog(@"%@",_jsonResult);
         isRecording = false;
         if (_jsonResult.length==0) {
             [JDOUtils showHUDText:@"没有满足条件的车辆信息" inView:self.view];
@@ -179,6 +206,9 @@
 
         BMKPointAnnotation *annotation = [[BMKPointAnnotation alloc] init];
         annotation.coordinate = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(bus.gpsY.doubleValue, bus.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+        if (bus.busNo == nil || [bus.busNo isEqualToString:@""]) {
+            NSLog(@"fuck");
+        }
         annotation.title = bus.busNo;
         [_mapView addAnnotation:annotation];
         
@@ -192,12 +222,14 @@
         if (_mapView.overlays.count>0) {
             [_mapView removeOverlays:[NSArray arrayWithArray:_mapView.overlays]];
             [self addStationAnnotation];
+            [self redrawBus]; // 重绘车辆图标，否则车辆图标会被站点图片挡住
         }
     }else{  // 用overlay显示站点
         if (_stationAnnotations.count>0) {
             [_mapView removeAnnotations:_stationAnnotations];
             [_stationAnnotations removeAllObjects];
             [self addStationOverlay];
+            [self redrawBus];
         }
     }
 }
@@ -207,7 +239,12 @@
     count = 1;
     for (int i=0; i<_stations.count; i++) {
         JDOStationModel *station = _stations[i];
-        BMKCircle *circle = [BMKCircle circleWithCenterCoordinate:CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue) radius:300];
+        BMKCircle *circle = [BMKCircle circleWithCenterCoordinate:CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue) radius:250];
+        if (station.isStart || station.isEnd) {
+            circle.selected = [NSNumber numberWithBool:true];
+        }else{
+            circle.selected = [NSNumber numberWithBool:false];
+        }
         [_mapView addOverlay:circle];
     }
 }
@@ -215,14 +252,10 @@
 - (BMKOverlayView *)mapView:(BMKMapView *)mapView viewForOverlay:(id <BMKOverlay>)overlay
 {
     BMKCircleView* circleView = [[BMKCircleView alloc] initWithOverlay:overlay];
-    circleView.fillColor = [UIColor colorWithRed:0.43f green:0.26f blue:0.88f alpha:1.0f];
-    circleView.strokeColor = [UIColor blueColor] ;
-    circleView.lineWidth = 1.0;
-    
-    UILabel *num = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-    num.text = [NSString stringWithFormat:@"%d",count++];
-    num.center = circleView.center;
-    [circleView addSubview:num];
+    BMKCircle *circle = (BMKCircle *)overlay;
+    circleView.fillColor = [circle.selected boolValue]?[UIColor colorWithRed:255/255.0f green:180/255.0f blue:0 alpha:1.0f]:[UIColor colorWithRed:55/255.0f green:170/255.0f blue:50/255.0f alpha:1.0f];
+    circleView.strokeColor = [UIColor colorWithHex:@"FEFEFE"];
+    circleView.lineWidth = 2.0f;
     
     return circleView;
 }
@@ -235,43 +268,67 @@
         annotation.coordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
         annotation.title = station.name;
         annotation.station = station;
+        annotation.index = i+1;
         [_mapView addAnnotation:annotation];
         [_stationAnnotations addObject:annotation];
     }
 }
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
-    static NSString *AnnotationViewID = @"annotationView";
-    BMKAnnotationView *newAnnotation = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
-    
+    BMKAnnotationView *annotationView;
     if ([annotation isKindOfClass:[JDOStationAnnotation class]]) {
-        JDOStationAnnotation *sa = (JDOStationAnnotation *)annotation;
-        if (sa.station.isStart) {
-            newAnnotation.image = [UIImage imageNamed:@"second"];
-        }else if(sa.station.isEnd){
-            newAnnotation.image = [UIImage imageNamed:@"first"];
+        static NSString *AnnotationViewID = @"stationAnnotation";
+        annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:AnnotationViewID];
+        if (!annotationView) {
+            annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = [UIColor whiteColor];
+            label.font = [UIFont systemFontOfSize:11];
+            label.tag = 1001;
+            [annotationView addSubview:label];
         }else{
-            newAnnotation.image = [UIImage imageNamed:@"first"];
+            annotationView.annotation = annotation;
+        }
+        JDOStationAnnotation *sa = (JDOStationAnnotation *)annotation;
+        UILabel *numLabel = (UILabel *)[annotationView viewWithTag:1001];
+        numLabel.text = [NSString stringWithFormat:@"%d",sa.index];
+        [numLabel sizeToFit];
+        numLabel.frame = CGRectMake((18-CGRectGetWidth(numLabel.bounds))/2, (18-CGRectGetHeight(numLabel.bounds))/2, CGRectGetWidth(numLabel.bounds), CGRectGetHeight(numLabel.bounds));
+        
+        if (sa.station.isStart) {
+            annotationView.image = [UIImage imageNamed:@"公交选中"];
+        }else if(sa.station.isEnd){
+            annotationView.image = [UIImage imageNamed:@"公交选中"];
+        }else{
+            annotationView.image = [UIImage imageNamed:@"公交未选中"];
         }
     }else{
-        newAnnotation.image = [UIImage imageNamed:@"公交"];
+        static NSString *AnnotationViewID = @"busAnnotation";
+        annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:AnnotationViewID];
+        if (!annotationView) {
+            annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
+        }else{
+            annotationView.annotation = annotation;
+        }
+        annotationView.image = [UIImage imageNamed:@"公交不透明"];
     }
-    newAnnotation.draggable = false;
-    return newAnnotation;
+    
+    annotationView.draggable = false;
+    return annotationView;
+}
+
+- (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
+    NSLog(@"selected:%@",view.annotation.title);
+}
+
+- (void)mapView:(BMKMapView *)mapView didDeselectAnnotationView:(BMKAnnotationView *)view{
+    NSLog(@"unselected:%@",view.annotation.title);
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

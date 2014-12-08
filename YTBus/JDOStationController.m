@@ -116,7 +116,7 @@
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"toStationMap"]) {
+    if ([segue.identifier isEqualToString:@"toStationMap1"] || [segue.identifier isEqualToString:@"toStationMap2"]) {
         UITableViewCell *cell = sender;
         NSString *stationName = [(UILabel *)[cell viewWithTag:1001] text];
         

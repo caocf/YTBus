@@ -793,7 +793,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="5js-5E-5MP" kind="push" identifier="toStationMap" id="GTt-rF-wbk"/>
+                                    <segue destination="5js-5E-5MP" kind="push" identifier="toStationMap1" id="GTt-rF-wbk"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="stationCell" id="aYx-NU-88V">
@@ -826,7 +826,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="5js-5E-5MP" kind="push" identifier="toStationMap" id="lZc-MO-1ya"/>
+                                    <segue destination="5js-5E-5MP" kind="push" identifier="toStationMap2" id="lZc-MO-1ya"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1004,6 +1004,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="dAS-pt-L3o"/>
-        <segue reference="lZc-MO-1ya"/>
+        <segue reference="GTt-rF-wbk"/>
     </inferredMetricsTieBreakers>
 </document>

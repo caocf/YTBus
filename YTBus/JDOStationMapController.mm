@@ -37,7 +37,7 @@
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
-    _mapView.rotateEnabled = false;
+    _mapView.rotateEnabled = true;
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
     _mapView.delegate = self;
@@ -143,9 +143,14 @@
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     static NSString *AnnotationViewID = @"annotationView";
-    BMKAnnotationView *annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
-    annotationView.centerOffset = CGPointMake(0, -16);
-    annotationView.paopaoView = [[BMKActionPaopaoView alloc] initWithCustomView:[[UIView alloc] initWithFrame:CGRectZero]];
+    BMKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:AnnotationViewID];
+    if (!annotationView) {
+        annotationView = [[BMKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
+        annotationView.centerOffset = CGPointMake(0, -16);
+        annotationView.paopaoView = [[BMKActionPaopaoView alloc] initWithCustomView:[[UIView alloc] initWithFrame:CGRectZero]];
+    }else{
+        annotationView.annotation = annotation;
+    }
     JDOStationAnnotation *sa = (JDOStationAnnotation *)annotation;
     if (sa.selected) {
         annotationView.image = [UIImage imageNamed:[NSString stringWithFormat:@"地图标注蓝%d",sa.index]];

@@ -168,6 +168,7 @@
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.textColor = [UIColor whiteColor];
     label.font = [UIFont boldSystemFontOfSize:16.0];
+    label.backgroundColor = [UIColor clearColor];
     if (section == 0 && _filterFavorLines.count>0) {
         iv.image = [UIImage imageNamed:@"收藏线路顶部"];
         label.text = @"收藏线路";

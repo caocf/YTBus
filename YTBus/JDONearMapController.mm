@@ -12,6 +12,7 @@
 #import "JDOBusLine.h"
 #import "JDOStationAnnotation.h"
 #import "JDORealTimeController.h"
+#import "UIDevice+Hardware.h"
 
 @interface JDOPaoPaoTable : UITableView
 
@@ -46,7 +47,7 @@
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
-    _mapView.rotateEnabled = false;
+    _mapView.rotateEnabled = true;
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
     _mapView.zoomLevel = 17;
@@ -214,18 +215,33 @@
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     static NSString *AnnotationViewID = @"annotationView";
-    BMKPinAnnotationView *newAnnotation = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
-    newAnnotation.pinColor = BMKPinAnnotationColorPurple;
-    newAnnotation.paopaoView = [self createPaoPaoView:[(JDOStationAnnotation *)annotation station]];
-    newAnnotation.animatesDrop = false;
-    newAnnotation.draggable = false;
-    return newAnnotation;
+    
+    BMKPinAnnotationView *annotationView = (BMKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotationViewID];
+    if (!annotationView) {
+        annotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
+        annotationView.pinColor = BMKPinAnnotationColorPurple;
+        annotationView.animatesDrop = false;
+        annotationView.draggable = false;
+    }else{
+        annotationView.annotation = annotation;
+    }
+    annotationView.paopaoView = [self createPaoPaoView:[(JDOStationAnnotation *)annotation station]];
+    return annotationView;
+}
+
+- (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
+    // 选中某个marker后，将此marker移动到地图中心偏下的位置，使其上方弹出的callout能在屏幕内显示全
+    float delta = [[UIDevice currentDevice] isCurrentDeviceHardwareBetterThan:IPHONE_4S]?70:100;
+    [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
+    CGPoint p = [mapView convertCoordinate:view.annotation.coordinate toPointToView:mapView];
+    CLLocationCoordinate2D coor = [mapView convertPoint:CGPointMake(p.x, p.y-delta) toCoordinateFromView:mapView];
+    [mapView setCenterCoordinate:coor animated:YES];
 }
 
 - (BMKActionPaopaoView *)createPaoPaoView:(JDOStationModel *)station{
     NSArray *paopaoLines = station.passLines;
-    // 弹出窗口中的线路数目如果小于220，则有多高就显示多高，否则最多显示220高度，内部表格滚动
-    float tableHeight = paopaoLines.count*40<220?paopaoLines.count*40:220;
+    // 弹出窗口中的线路数目如果小于180，则有多高就显示多高，否则最多显示180高度，内部表格滚动
+    float tableHeight = paopaoLines.count*40<180?paopaoLines.count*40:180;
     UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 189, 35+tableHeight+12)];
     
     UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 189, 35)];
@@ -339,11 +355,6 @@
     }
     return cell;
 }
-
-// 当点击annotation view弹出的泡泡时，调用此接口
-//- (void)mapView:(BMKMapView *)mapView annotationViewForBubble:(BMKAnnotationView *)view {
-//    NSLog(@"paopaoclick");
-//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -59,8 +59,7 @@
     if (![JDODatabase isDBExistInDocument]) {
         // 若document中不存在数据库文件，则下载数据库文件
         hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
-        hud.dimBackground = true;
-        hud.minShowTime = 1.0f;
+//        hud.minShowTime = 1.0f;
         hud.labelText = @"初始化数据";
         NSURL *URL = [NSURL URLWithString:DB_Download_URL];
         NSURLRequest *request = [NSURLRequest requestWithURL:URL];

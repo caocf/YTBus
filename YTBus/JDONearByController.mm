@@ -89,6 +89,7 @@
         if (!_db) {
             dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
                 _db = [JDODatabase sharedDB];
+                [_locService startUserLocationService];
             }];
         }
         
@@ -119,7 +120,9 @@
 -(void)viewWillAppear:(BOOL)animated {
     if (_locService) {
         _locService.delegate = self;
-        [_locService startUserLocationService];
+        if (_db) {
+            [_locService startUserLocationService];
+        }
     }
 }
 
@@ -276,7 +279,7 @@
         if (!hud && _linesInfo.count==0 ) {
             hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
             hud.minShowTime = 1.0f;
-            hud.labelText = @"定位中,请稍后...";
+            hud.labelText = @"定位中,请稍候...";
         }
     }else{
         NSLog(@"location error:%@",error);
