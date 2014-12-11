@@ -175,13 +175,8 @@ static const void *SelectedKey = &SelectedKey;
             }else{
                 [_buses removeAllObjects];
                 for (int i=0; i<list.count; i++){
-                    JDOBusModel *bus = [JDOBusModel new];
                     NSDictionary *dict = [list objectAtIndex:i];
-                    bus.busId = [dict objectForKey:@"ID"];
-                    bus.busNo = [dict objectForKey:@"车牌"];
-                    bus.toStationId = [dict objectForKey:@"站"];
-                    bus.gpsX = [NSNumber numberWithDouble:[(NSString *)[dict objectForKey:@"GPSX"] doubleValue]];
-                    bus.gpsY = [NSNumber numberWithDouble:[(NSString *)[dict objectForKey:@"GPSY"] doubleValue]];
+                    JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
                     [_buses addObject:bus];
                 }
                 [self redrawBus];

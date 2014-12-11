@@ -17,4 +17,6 @@
 @property(nonatomic,strong) NSNumber *gpsX;
 @property(nonatomic,strong) NSNumber *gpsY;
 
+- (id)initWithDictionary:(NSDictionary *)dictionary;
+
 @end

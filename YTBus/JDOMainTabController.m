@@ -12,6 +12,7 @@
 #import "SSZipArchive.h"
 #import "MBProgressHUD.h"
 #import "JDOConstants.h"
+#import "JDOHttpClient.h"
 
 
 @interface JDOMainTabController () <SSZipArchiveDelegate> {
@@ -61,11 +62,8 @@
         hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
 //        hud.minShowTime = 1.0f;
         hud.labelText = @"初始化数据";
-        NSURL *URL = [NSURL URLWithString:DB_Download_URL];
-        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
         NSLog(@"开始下载");
-        AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[JDOHttpClient sharedClient] getPath:Download_Action parameters:@{@"method":@"downloadDb"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSLog(@"下载完成，开始保存");
             NSData *zipData = (NSData *)responseObject;
             BOOL success = [JDODatabase saveZipFile:zipData];
@@ -86,7 +84,6 @@
             [JDODatabase openDB:1];
             [hud hide:true];
         }];
-        [[NSOperationQueue mainQueue] addOperation:op];
     }else{
         //TODO 更新最新数据
         [JDODatabase openDB:2];

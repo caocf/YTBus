@@ -14,6 +14,7 @@
 #import "JDORealTimeMapController.h"
 #import "JDOConstants.h"
 #import "JSONKit.h"
+#import "JDOBusModel.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
 
@@ -314,11 +315,11 @@
     _busIndexSet = [NSMutableSet new];
     for (int i=0; i<list.count; i++){
         NSDictionary *dict = list[i];
-        NSString *stationId = [dict objectForKey:@"站"];
+        JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
         int stationIndex = -1;
         for (int j=0; j<_stations.count; j++) {
             JDOStationModel *aStation = _stations[j];
-            if ([aStation.fid isEqualToString:stationId]) {
+            if ([aStation.fid isEqualToString:bus.toStationId]) {
                 stationIndex = j;
                 break;
             }

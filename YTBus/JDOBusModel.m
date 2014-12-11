@@ -10,4 +10,17 @@
 
 @implementation JDOBusModel
 
+- (id)initWithDictionary:(NSDictionary *)dictionary{
+    self = [self init];
+    if (self == nil) return nil;
+    
+    _busId = [dictionary objectForKey:@"ID"];
+    _busNo = [dictionary objectForKey:@"车牌"];
+    _toStationId = [dictionary objectForKey:@"站"];
+    _gpsX = [NSNumber numberWithDouble:[(NSString *)[dictionary objectForKey:@"GPSX"] doubleValue]];
+    _gpsY = [NSNumber numberWithDouble:[(NSString *)[dictionary objectForKey:@"GPSY"] doubleValue]];
+    
+    return self;
+}
+
 @end
