@@ -17,6 +17,8 @@
 #import "MBProgressHUD.h"
 #import "JDOConstants.h"
 
+#define Auto_Refresh_Distance 200
+
 @interface JDONearByCell : UITableViewCell
 
 @property (nonatomic,strong) JDOBusLine *busLine;
@@ -38,8 +40,14 @@
 
 - (IBAction) onSwitchClicked:(UIButton *)btn{
     self.busLine.showingIndex = self.busLine.showingIndex==0?1:0;
-    
-    [self.tableView reloadRowsAtIndexPaths:@[self.indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView reloadRowsAtIndexPaths:@[self.indexPath] withRowAnimation:UITableViewRowAnimationRight];
+}
+
+- (void) startAnimationWithDelay:(CGFloat) delayTime{
+    self.transform = CGAffineTransformMakeTranslation(320, 0);
+    [UIView animateWithDuration:1 delay:delayTime usingSpringWithDamping:0.6f initialSpringVelocity:0 options:0 animations:^{
+        self.transform = CGAffineTransformIdentity;
+    } completion:nil];
 }
 
 @end
@@ -56,6 +64,7 @@
     id dbObserver;
     int distanceRadius;
     MBProgressHUD *hud;
+    NSMutableSet *animationIndexPath;
 }
 
 @end
@@ -70,7 +79,6 @@
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 5)];   // 填充边距
 //    self.tableView.showsVerticalScrollIndicator = false;
     
-    
     if(![CLLocationManager locationServicesEnabled]){
         // TODO 界面上提示
         NSLog(@"请开启定位:设置 > 隐私 > 位置 > 定位服务");
@@ -80,6 +88,7 @@
         _locService = [[BMKLocationService alloc] init];
         isFirstPosition = true;
         _nearbyStations = [[NSMutableArray alloc] init];
+        animationIndexPath = [NSMutableSet set];
         distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
         if (distanceRadius == 0) {
             distanceRadius = 1000;
@@ -159,7 +168,7 @@
     }else{
         CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(lastSearchCoor),BMKMapPointForCoordinate(currentPosCoor));
 //        NSLog(@"与上一个查询点的距离是:%g",distance);
-        if (distance > 100) {
+        if (distance > Auto_Refresh_Distance) {
             NSLog(@"位移离上一次定位点超过100米");
             lastSearchCoor = currentPosCoor;
         }else{
@@ -270,8 +279,11 @@
             }
         }
     }
-    
+    [animationIndexPath removeAllObjects];
     [self.tableView reloadData];
+    if (_linesInfo.count>0) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:false];
+    }
 }
 
 - (void)didFailToLocateUserWithError:(NSError *)error {
@@ -332,25 +344,15 @@
     return cell;
 }
 
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-//    UIView *bg = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 50)];
-//    bg.backgroundColor = [UIColor lightGrayColor];
-//    
-//    JDOStationModel *model = (JDOStationModel *)_nearbyStations[section];
-//    UILabel *stationName  = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 240, 30)];
-//    stationName.text = model.name;
-//    [bg addSubview:stationName];
-//    
-//    UILabel *distance = [[UILabel alloc] initWithFrame:CGRectMake(260, 10, 50, 30)];
-//    distance.text = [NSString stringWithFormat:@"%d米",[model.distance intValue]];
-//    [bg addSubview:distance];
-//    
-//    return bg;
-//}
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-//    return 50;
-//}
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (After_iOS7) {
+        JDONearByCell *nearbyCell = (JDONearByCell *)cell;
+        if (![animationIndexPath containsObject:indexPath]) {
+            [nearbyCell startAnimationWithDelay:(indexPath.row*0.06f)];
+            [animationIndexPath addObject:indexPath];
+        }
+    }
+}
 
 -(void)dealloc{
     if (distanceObserver) {

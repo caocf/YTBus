@@ -18,7 +18,7 @@
 @interface JDOMainTabController () <SSZipArchiveDelegate> {
     MBProgressHUD *hud;
 }
-//UINavigationBar
+
 @end
 
 @implementation JDOMainTabController
