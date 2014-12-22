@@ -231,9 +231,9 @@
     JDOStationModel *startStation;
     if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
         // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
-//        startStation = [_stations lastObject];
+        startStation = [_stations lastObject];
         // 没有附近站点的时候，不显示实时数据
-        return;
+//        return;
     }else{
         startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
     }

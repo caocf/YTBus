@@ -118,8 +118,8 @@
     _endField.text = @"万达广场";
     _startField.delegate = self;
     _endField.delegate = self;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:nil object:_startField];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:nil object:_endField];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:UITextFieldTextDidChangeNotification object:_startField];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged:) name:UITextFieldTextDidChangeNotification object:_endField];
     transitPolicy = BMK_TRANSIT_TIME_FIRST;
     
     _dropDown1 = [[UITableView alloc] initWithFrame:CGRectZero];
@@ -341,7 +341,7 @@
 }
 
 - (IBAction)setLocation:(UIButton *)sender{
-    [self performSegueWithIdentifier:@"toLocationMap" sender:nil];
+//    [self performSegueWithIdentifier:@"toLocationMap" sender:nil];
 }
 
 - (void)onGetTransitRouteResult:(BMKRouteSearch *)searcher result:(BMKTransitRouteResult *)result errorCode:(BMKSearchErrorCode)error{
@@ -402,7 +402,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView == _tableView) {
-        [self performSegueWithIdentifier:@"toRouteMap" sender:indexPath];
+//        [self performSegueWithIdentifier:@"toRouteMap" sender:indexPath];
     }else if(tableView == _dropDown1){
         BMKPoiInfo *poiInfo = _locations1[indexPath.row];
         _startField.text = poiInfo.name;

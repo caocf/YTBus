@@ -42,6 +42,15 @@
 		2DA6631619F0D92E00DFED0B /* YTBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6631519F0D92E00DFED0B /* YTBusTests.m */; };
 		2DAF41671A305491007E60A3 /* JDOBusModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF41661A305491007E60A3 /* JDOBusModel.m */; };
 		2DAF41731A358239007E60A3 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF41721A358239007E60A3 /* UIDevice+Hardware.m */; };
+		2DC399D11A47C7E400662A33 /* JDOMoreController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC399D01A47C7E400662A33 /* JDOMoreController.m */; };
+		2DC399DA1A47CA9000662A33 /* 打分@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D21A47CA9000662A33 /* 打分@2x.png */; };
+		2DC399DB1A47CA9000662A33 /* 地图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D31A47CA9000662A33 /* 地图@2x.png */; };
+		2DC399DC1A47CA9000662A33 /* 分享@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D41A47CA9000662A33 /* 分享@2x.png */; };
+		2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D51A47CA9000662A33 /* 更新@2x.png */; };
+		2DC399DE1A47CA9000662A33 /* 关于@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D61A47CA9000662A33 /* 关于@2x.png */; };
+		2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D71A47CA9000662A33 /* 意见@2x.png */; };
+		2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D81A47CA9000662A33 /* 指南@2x.png */; };
+		2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D91A47CA9000662A33 /* 资讯@2x.png */; };
 		2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A119FF2AC80022F60E /* JDOStationModel.m */; };
 		2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A619FF9ABA0022F60E /* FMDatabase.m */; };
 		2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A819FF9ABA0022F60E /* FMResultSet.m */; };
@@ -211,6 +220,16 @@
 		2DAF41661A305491007E60A3 /* JDOBusModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOBusModel.m; sourceTree = "<group>"; };
 		2DAF41711A358238007E60A3 /* UIDevice+Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Hardware.h"; sourceTree = "<group>"; };
 		2DAF41721A358239007E60A3 /* UIDevice+Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Hardware.m"; sourceTree = "<group>"; };
+		2DC399CF1A47C7E300662A33 /* JDOMoreController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOMoreController.h; sourceTree = "<group>"; };
+		2DC399D01A47C7E400662A33 /* JDOMoreController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOMoreController.m; sourceTree = "<group>"; };
+		2DC399D21A47CA9000662A33 /* 打分@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "打分@2x.png"; sourceTree = "<group>"; };
+		2DC399D31A47CA9000662A33 /* 地图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图@2x.png"; sourceTree = "<group>"; };
+		2DC399D41A47CA9000662A33 /* 分享@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享@2x.png"; sourceTree = "<group>"; };
+		2DC399D51A47CA9000662A33 /* 更新@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "更新@2x.png"; sourceTree = "<group>"; };
+		2DC399D61A47CA9000662A33 /* 关于@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "关于@2x.png"; sourceTree = "<group>"; };
+		2DC399D71A47CA9000662A33 /* 意见@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "意见@2x.png"; sourceTree = "<group>"; };
+		2DC399D81A47CA9000662A33 /* 指南@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "指南@2x.png"; sourceTree = "<group>"; };
+		2DC399D91A47CA9000662A33 /* 资讯@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "资讯@2x.png"; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -490,6 +509,14 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DC399D21A47CA9000662A33 /* 打分@2x.png */,
+				2DC399D31A47CA9000662A33 /* 地图@2x.png */,
+				2DC399D41A47CA9000662A33 /* 分享@2x.png */,
+				2DC399D51A47CA9000662A33 /* 更新@2x.png */,
+				2DC399D61A47CA9000662A33 /* 关于@2x.png */,
+				2DC399D71A47CA9000662A33 /* 意见@2x.png */,
+				2DC399D81A47CA9000662A33 /* 指南@2x.png */,
+				2DC399D91A47CA9000662A33 /* 资讯@2x.png */,
 				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
 			);
 			name = Resources;
@@ -537,6 +564,8 @@
 				2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */,
 				2D33FB451A26E7CF0024F1ED /* JDOLocationMapController.h */,
 				2D33FB461A26E7D00024F1ED /* JDOLocationMapController.m */,
+				2DC399CF1A47C7E300662A33 /* JDOMoreController.h */,
+				2DC399D01A47C7E400662A33 /* JDOMoreController.m */,
 				2DECC2B81A0081700022F60E /* JDOSettingController.h */,
 				2DECC2B91A0081710022F60E /* JDOSettingController.m */,
 			);
@@ -736,11 +765,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
+				2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */,
+				2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */,
+				2DC399DA1A47CA9000662A33 /* 打分@2x.png in Resources */,
+				2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */,
+				2DC399DB1A47CA9000662A33 /* 地图@2x.png in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
+				2DC399DC1A47CA9000662A33 /* 分享@2x.png in Resources */,
+				2DC399DE1A47CA9000662A33 /* 关于@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -768,6 +805,7 @@
 				2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */,
 				2DECC3391A0324D00022F60E /* AFNetworkActivityIndicatorManager.m in Sources */,
 				2D33FB191A241F850024F1ED /* JDOInterChangeController.m in Sources */,
+				2DC399D11A47C7E400662A33 /* JDOMoreController.m in Sources */,
 				2DECC34F1A032BAF0022F60E /* unzip.c in Sources */,
 				2DECC34D1A032BAF0022F60E /* ioapi.c in Sources */,
 				2DECC2CF1A0310D50022F60E /* JDODatabase.m in Sources */,
@@ -937,6 +975,7 @@
 			buildSettings = {
 				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_INPUT_FILETYPE = automatic;
 				HEADER_SEARCH_PATHS = (
@@ -963,6 +1002,7 @@
 			buildSettings = {
 				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_INPUT_FILETYPE = automatic;
 				HEADER_SEARCH_PATHS = (

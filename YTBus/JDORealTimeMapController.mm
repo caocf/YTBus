@@ -202,7 +202,7 @@ static const void *SelectedKey = &SelectedKey;
         BMKPointAnnotation *annotation = [[BMKPointAnnotation alloc] init];
         annotation.coordinate = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(bus.gpsY.doubleValue, bus.gpsX.doubleValue),BMK_COORDTYPE_GPS));
         if (bus.busNo == nil || [bus.busNo isEqualToString:@""]) {
-            NSLog(@"fuck");
+            NSLog(@"没有车牌号");
         }
         annotation.title = bus.busNo;
         [_mapView addAnnotation:annotation];
