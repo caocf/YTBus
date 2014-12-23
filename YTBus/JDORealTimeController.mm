@@ -43,6 +43,8 @@
     BOOL isRecording;
     NSMutableString *_jsonResult;
     NSMutableSet *_busIndexSet;
+    JDOStationModel *selectedStartStation;
+    BOOL notHintSelectStart;
 }
 
 @property (nonatomic,assign) IBOutlet UILabel *lineDetail;
@@ -99,8 +101,7 @@
             }
         }
     }
-    
-    [self scrollToTargetStation];
+    [self scrollToTargetStation:true];
 }
 
 - (void)loadBothDirectionLineDetailAndTargetStation{
@@ -203,6 +204,7 @@
     [super viewWillAppear:animated];
     _timer = [NSTimer scheduledTimerWithTimeInterval:Bus_Refresh_Interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
     [_timer fire];
+    [self scrollToTargetStation:false];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -214,7 +216,7 @@
 }
 
 - (void) refreshData:(NSTimer *)timer{
-    // 双向站点列表未加载完成
+    // 双向站点列表未加载完成,延迟1秒再刷新
     if( !isLoadFinised ){
         timer.fireDate = [NSDate dateWithTimeInterval:1 sinceDate:[NSDate date]];
         return;
@@ -229,11 +231,17 @@
         return;
     }
     JDOStationModel *startStation;
-    if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
+    if(selectedStartStation){
+        startStation = selectedStartStation;
+    }else if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
         // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
-        startStation = [_stations lastObject];
+//        startStation = [_stations lastObject];
         // 没有附近站点的时候，不显示实时数据
-//        return;
+        if(!notHintSelectStart){
+            [JDOUtils showHUDText:@"请选择起始站点" inView:self.view];
+            notHintSelectStart = true;
+        }
+        return;
     }else{
         startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
     }
@@ -308,7 +316,7 @@
 }
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError{
-    [JDOUtils showHUDText:[NSString stringWithFormat:@"解析实时数据XML时出现错误：%@",parseError] inView:self.view];
+    [JDOUtils showHUDText:[NSString stringWithFormat:@"解析实时数据XML错误：%@",parseError] inView:self.view];
 }
 
 - (void) redrawBus:(NSArray *)list{
@@ -360,23 +368,43 @@
     [self loadCurrentLineInfoAndAllStations];
     [_timer fire];
 
-    [self scrollToTargetStation];
-    
+    // 若换向前有手动选中的站点，则换向后查找同名站点并选中
+    if (selectedStartStation){
+        JDOStationModel *converseStation;
+        for(int i=0; i<_stations.count; i++){
+            JDOStationModel *aStation = _stations[i];
+            if([aStation.name isEqualToString:selectedStartStation.name]){
+                converseStation = aStation;
+                break;
+            }
+        }
+        if(converseStation){
+            selectedStartStation = converseStation;
+        }
+    }
+    [self scrollToTargetStation:true];
 }
 
-- (void) scrollToTargetStation{
-    if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
-        return;
+- (void) scrollToTargetStation:(BOOL) animated{
+    JDOStationModel *station;
+    if (selectedStartStation){
+        station = selectedStartStation;
+    }else if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
+//        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_stations.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    }else{
+        station = _busLine.nearbyStationPair[_busLine.showingIndex];
     }
-    JDOStationModel *station = _busLine.nearbyStationPair[_busLine.showingIndex];
-    NSUInteger index = [_stations indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        if ([((JDOStationModel *)obj).fid isEqualToString:station.fid]) {
-            return true;
+    
+    if(station){
+        NSUInteger index = [_stations indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if ([((JDOStationModel *)obj).fid isEqualToString:station.fid]) {
+                return true;
+            }
+            return false;
+        }];
+        if (index != NSNotFound) {
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animated];
         }
-        return false;
-    }];
-    if (index != NSNotFound) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:true];
     }
 }
 
@@ -423,15 +451,26 @@
     JDOStationModel *station = _stations[indexPath.row];
     station.start = false;
     
-    if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]){
+    if(selectedStartStation){
+        if ([station.fid isEqualToString:selectedStartStation.fid]) {
+            station.start = true;
+        }else{
+            station.start = false;
+        }
+    }else if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]){
         JDOStationModel *startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
         if ([station.fid isEqualToString:startStation.fid]) {
             station.start = true;
         }else{
             station.start = false;
         }
-    }else{  // 从线路进入，则无法预知起点
-        station.start = false;
+    }else{
+        // 从线路进入，则无法预知起点，默认将终点站设置为参考站点
+//        if (indexPath.row == _stations.count-1){
+//            station.start = true;
+//        }else{
+            station.start = false;
+//        }
     }
     
     if (station.start) {
@@ -452,6 +491,12 @@
         cell.arrivedBus.image = nil;
     }
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    selectedStartStation = _stations[indexPath.row];
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    [_timer fire];
 }
 
 - (UIImage *) imageAtPosition:(int)pos selected:(BOOL)selected{

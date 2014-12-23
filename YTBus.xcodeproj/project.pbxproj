@@ -44,7 +44,7 @@
 		2DAF41731A358239007E60A3 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF41721A358239007E60A3 /* UIDevice+Hardware.m */; };
 		2DC399D11A47C7E400662A33 /* JDOMoreController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC399D01A47C7E400662A33 /* JDOMoreController.m */; };
 		2DC399DA1A47CA9000662A33 /* 打分@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D21A47CA9000662A33 /* 打分@2x.png */; };
-		2DC399DB1A47CA9000662A33 /* 地图@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D31A47CA9000662A33 /* 地图@2x.png */; };
+		2DC399DB1A47CA9000662A33 /* 离线@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D31A47CA9000662A33 /* 离线@2x.png */; };
 		2DC399DC1A47CA9000662A33 /* 分享@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D41A47CA9000662A33 /* 分享@2x.png */; };
 		2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D51A47CA9000662A33 /* 更新@2x.png */; };
 		2DC399DE1A47CA9000662A33 /* 关于@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D61A47CA9000662A33 /* 关于@2x.png */; };
@@ -104,7 +104,6 @@
 		2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOBusLineController.m; sourceTree = "<group>"; };
 		2D33FABD1A1472760024F1ED /* JDOUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOUtils.h; sourceTree = "<group>"; };
 		2D33FABE1A1472770024F1ED /* JDOUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOUtils.m; sourceTree = "<group>"; };
-		2D33FAC31A14A6CB0024F1ED /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		2D33FAC41A14A6CB0024F1ED /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		2D33FAC51A15996F0024F1ED /* JDOStationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationController.h; sourceTree = "<group>"; };
 		2D33FAC61A15996F0024F1ED /* JDOStationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationController.m; sourceTree = "<group>"; };
@@ -223,13 +222,14 @@
 		2DC399CF1A47C7E300662A33 /* JDOMoreController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOMoreController.h; sourceTree = "<group>"; };
 		2DC399D01A47C7E400662A33 /* JDOMoreController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOMoreController.m; sourceTree = "<group>"; };
 		2DC399D21A47CA9000662A33 /* 打分@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "打分@2x.png"; sourceTree = "<group>"; };
-		2DC399D31A47CA9000662A33 /* 地图@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图@2x.png"; sourceTree = "<group>"; };
+		2DC399D31A47CA9000662A33 /* 离线@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "离线@2x.png"; sourceTree = "<group>"; };
 		2DC399D41A47CA9000662A33 /* 分享@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享@2x.png"; sourceTree = "<group>"; };
 		2DC399D51A47CA9000662A33 /* 更新@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "更新@2x.png"; sourceTree = "<group>"; };
 		2DC399D61A47CA9000662A33 /* 关于@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "关于@2x.png"; sourceTree = "<group>"; };
 		2DC399D71A47CA9000662A33 /* 意见@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "意见@2x.png"; sourceTree = "<group>"; };
 		2DC399D81A47CA9000662A33 /* 指南@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "指南@2x.png"; sourceTree = "<group>"; };
 		2DC399D91A47CA9000662A33 /* 资讯@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "资讯@2x.png"; sourceTree = "<group>"; };
+		2DC399E31A47E07500662A33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -510,7 +510,7 @@
 			isa = PBXGroup;
 			children = (
 				2DC399D21A47CA9000662A33 /* 打分@2x.png */,
-				2DC399D31A47CA9000662A33 /* 地图@2x.png */,
+				2DC399D31A47CA9000662A33 /* 离线@2x.png */,
 				2DC399D41A47CA9000662A33 /* 分享@2x.png */,
 				2DC399D51A47CA9000662A33 /* 更新@2x.png */,
 				2DC399D61A47CA9000662A33 /* 关于@2x.png */,
@@ -773,7 +773,7 @@
 				2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */,
-				2DC399DB1A47CA9000662A33 /* 地图@2x.png in Resources */,
+				2DC399DB1A47CA9000662A33 /* 离线@2x.png in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
 				2DC399DC1A47CA9000662A33 /* 分享@2x.png in Resources */,
@@ -872,7 +872,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				2DA6630419F0D92D00DFED0B /* Base */,
-				2D33FAC31A14A6CB0024F1ED /* zh-Hans */,
+				2DC399E31A47E07500662A33 /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

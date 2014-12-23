@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="49e-Tb-3d3">
     <dependencies>
-        <deployment version="1536" defaultVersion="1280" identifier="iOS"/>
+        <deployment version="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
@@ -696,7 +696,7 @@
             </objects>
             <point key="canvasLocation" x="-445" y="371"/>
         </scene>
-        <!--更多-->
+        <!--更多内容-->
         <scene sceneID="QlN-Fe-HOg">
             <objects>
                 <tableViewController id="3aU-p2-ieR" customClass="JDOMoreController" sceneMemberID="viewController">
@@ -768,7 +768,7 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="地图.png" id="rsn-yF-xBY">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="离线.png" id="rsn-yF-xBY">
                                                     <rect key="frame" x="35" y="14" width="16" height="16"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
@@ -898,7 +898,7 @@
                             <outlet property="delegate" destination="3aU-p2-ieR" id="AhD-Kc-w6o"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="更多" id="6E7-HP-wKt"/>
+                    <navigationItem key="navigationItem" title="更多内容" id="6E7-HP-wKt"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <nil key="simulatedBottomBarMetrics"/>
                 </tableViewController>
@@ -1204,7 +1204,6 @@
         <image name="圆点" width="10" height="10"/>
         <image name="圆点灰" width="10" height="10"/>
         <image name="地图" width="21" height="18"/>
-        <image name="地图.png" width="16" height="16"/>
         <image name="定位" width="18" height="18"/>
         <image name="实时上矩形" width="320" height="80"/>
         <image name="意见.png" width="16" height="16"/>
@@ -1218,6 +1217,7 @@
         <image name="标签1" width="22" height="42"/>
         <image name="矩形上" width="320" height="171"/>
         <image name="矩形按钮" width="270" height="35"/>
+        <image name="离线.png" width="16" height="16"/>
         <image name="站点底图" width="320" height="42"/>
         <image name="站点箭头" width="12" height="12"/>
         <image name="箭头" width="8" height="16"/>
@@ -1231,7 +1231,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="eZd-qq-MSP"/>
         <segue reference="GTt-rF-wbk"/>
+        <segue reference="dAS-pt-L3o"/>
     </inferredMetricsTieBreakers>
 </document>

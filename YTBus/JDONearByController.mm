@@ -65,6 +65,10 @@
     int distanceRadius;
     MBProgressHUD *hud;
     NSMutableSet *animationIndexPath;
+    UILabel *hintLabel;
+    UIImageView *hintImage;
+    BOOL locServiceEnabled;
+    UILabel *noDataLabel;
 }
 
 @end
@@ -78,35 +82,46 @@
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 5)];   // 填充边距
 //    self.tableView.showsVerticalScrollIndicator = false;
+    hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 80)];
+    hintLabel.backgroundColor = [UIColor clearColor];
+    hintLabel.font = [UIFont systemFontOfSize:15];
+    hintLabel.numberOfLines = 4;
+    hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(20, 120, 280, 300)];
+//    hintImage.image = [UIImage imageNamed:@"公交不透明"];
+    locServiceEnabled = false;
+    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 80)];
+    noDataLabel.backgroundColor = [UIColor clearColor];
+    noDataLabel.font = [UIFont systemFontOfSize:15];
+    noDataLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
+    noDataLabel.text = @"很抱歉，“烟台公交”目前仅覆盖烟台市芝罘区、莱山区范围内的公交数据，您的位置附近没有找到公交线路和站点信息。";
+    noDataLabel.numberOfLines = 3;
+    noDataLabel.hidden = true;
+    [self.tableView addSubview:noDataLabel];
     
-    if(![CLLocationManager locationServicesEnabled]){
-        // TODO 界面上提示
-        NSLog(@"请开启定位:设置 > 隐私 > 位置 > 定位服务");
-    }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied){
-        NSLog(@"定位失败，请开启定位:设置 > 隐私 > 位置 > 定位服务 下 XX应用");
-    }else{
-        _locService = [[BMKLocationService alloc] init];
-        isFirstPosition = true;
-        _nearbyStations = [[NSMutableArray alloc] init];
-        animationIndexPath = [NSMutableSet set];
-        distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
-        if (distanceRadius == 0) {
-            distanceRadius = 1000;
-        }
-        
-        _db = [JDODatabase sharedDB];
-        if (!_db) {
-            dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
-                _db = [JDODatabase sharedDB];
-                [_locService startUserLocationService];
-            }];
-        }
-        
-        distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-            isFirstPosition = true;
-            distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+    _locService = [[BMKLocationService alloc] init];
+    isFirstPosition = true;
+    _nearbyStations = [[NSMutableArray alloc] init];
+    animationIndexPath = [NSMutableSet set];
+    distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+    if (distanceRadius == 0) {
+        distanceRadius = 1000;
+    }
+    
+    _db = [JDODatabase sharedDB];
+    if (!_db) {
+        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
+            _db = [JDODatabase sharedDB];
+            [_locService startUserLocationService];
         }];
     }
+    
+    distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
+        isFirstPosition = true;
+        distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+    }];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkLocServiceState) name:UIApplicationWillEnterForegroundNotification object:nil];
+    
 }
 
 #pragma mark - Navigation
@@ -126,8 +141,25 @@
     }
 }
 
--(void)viewWillAppear:(BOOL)animated {
-    if (_locService) {
+- (void) checkLocServiceState {
+    if(![CLLocationManager locationServicesEnabled]){
+        if(!locServiceEnabled){
+            hintLabel.text = @"您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
+            hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
+            [self.tableView addSubview:hintLabel];
+            [self.tableView addSubview:hintImage];
+        }
+    }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied || [CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){
+        if(!locServiceEnabled){
+            hintLabel.text = @"您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
+            hintLabel.textColor = [UIColor colorWithHex:@"8f8e89"];
+            [self.tableView addSubview:hintLabel];
+            [self.tableView addSubview:hintImage];
+        }
+    }else{
+        locServiceEnabled = true;
+        [hintLabel removeFromSuperview];
+        [hintImage removeFromSuperview];
         _locService.delegate = self;
         if (_db) {
             [_locService startUserLocationService];
@@ -135,11 +167,13 @@
     }
 }
 
+-(void)viewWillAppear:(BOOL)animated {
+    [self checkLocServiceState];
+}
+
 -(void)viewWillDisappear:(BOOL)animated {
-    if (_locService) {
-        [_locService stopUserLocationService];
-        _locService.delegate = nil;
-    }
+    [_locService stopUserLocationService];
+    _locService.delegate = nil;
 }
 
 - (void)willStartLocatingUser{
@@ -158,9 +192,9 @@
     if (!_db) {
         return;
     }
-    
+    // 测试超出烟台范围无公交站点的情况
+//    currentPosCoor = CLLocationCoordinate2DMake(userLocation.location.coordinate.latitude+10, userLocation.location.coordinate.longitude+10) ;
     currentPosCoor = userLocation.location.coordinate;
-    self.navigationItem.rightBarButtonItem.enabled = true;
     
     if (isFirstPosition) {
         lastSearchCoor = currentPosCoor;
@@ -282,7 +316,12 @@
     [animationIndexPath removeAllObjects];
     [self.tableView reloadData];
     if (_linesInfo.count>0) {
+        noDataLabel.hidden = true;
+        self.navigationItem.rightBarButtonItem.enabled = true;
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:false];
+    }else{
+        noDataLabel.hidden = false;
+        self.navigationItem.rightBarButtonItem.enabled = false;
     }
 }
 
@@ -361,6 +400,7 @@
     if (dbObserver) {
         [[NSNotificationCenter defaultCenter] removeObserver:dbObserver];
     }
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 
