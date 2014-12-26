@@ -11,6 +11,7 @@
 
 @interface JDOHttpClient : AFHTTPClient
 
-+ (JDOHttpClient *)sharedClient;
++ (JDOHttpClient *)sharedDFEClient;
++ (JDOHttpClient *)sharedJDOClient;
 
 @end

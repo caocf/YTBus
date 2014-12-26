@@ -51,6 +51,35 @@
 		2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D71A47CA9000662A33 /* 意见@2x.png */; };
 		2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D81A47CA9000662A33 /* 指南@2x.png */; };
 		2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D91A47CA9000662A33 /* 资讯@2x.png */; };
+		2DC399E71A4BA60800662A33 /* 不允许使用定位@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399E41A4BA60600662A33 /* 不允许使用定位@2x.png */; };
+		2DC399E81A4BA60800662A33 /* 超出范围@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399E51A4BA60700662A33 /* 超出范围@2x.png */; };
+		2DC399E91A4BA60800662A33 /* 关闭定位@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399E61A4BA60700662A33 /* 关闭定位@2x.png */; };
+		2DC399EC1A4D2A5400662A33 /* JDONewsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC399EB1A4D2A5400662A33 /* JDONewsController.m */; };
+		2DC399F31A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC399F01A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m */; };
+		2DC399F41A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC399F21A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m */; };
+		2DC399F91A4D32BA00662A33 /* status_no_data@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399F51A4D32BA00662A33 /* status_no_data@2x.png */; };
+		2DC399FA1A4D32BA00662A33 /* status_logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399F61A4D32BA00662A33 /* status_logo@2x.png */; };
+		2DC399FB1A4D32BA00662A33 /* status_no_network@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399F71A4D32BA00662A33 /* status_no_network@2x.png */; };
+		2DC399FC1A4D32BA00662A33 /* status_retry@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399F81A4D32BA00662A33 /* status_retry@2x.png */; };
+		2DC399FF1A4D49CA00662A33 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC399FE1A4D49C900662A33 /* Reachability.m */; };
+		2DC39A041A4D4A8200662A33 /* JDONewsTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A011A4D4A8200662A33 /* JDONewsTableCell.m */; };
+		2DC39A051A4D4A8200662A33 /* JDONewsHeadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A031A4D4A8200662A33 /* JDONewsHeadCell.m */; };
+		2DC39A0A1A4D4AA300662A33 /* JDONewsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A071A4D4AA300662A33 /* JDONewsModel.m */; };
+		2DC39A0B1A4D4AA300662A33 /* JDONewsDetailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A091A4D4AA300662A33 /* JDONewsDetailModel.m */; };
+		2DC39A1E1A4D4AFF00662A33 /* ICUTemplateMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A0E1A4D4AFF00662A33 /* ICUTemplateMatcher.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A1F1A4D4AFF00662A33 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A101A4D4AFF00662A33 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A201A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A131A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A211A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A151A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A221A4D4AFF00662A33 /* MGTemplateEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A171A4D4AFF00662A33 /* MGTemplateEngine.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A231A4D4AFF00662A33 /* MGTemplateStandardMarkers.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A1B1A4D4AFF00662A33 /* MGTemplateStandardMarkers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A241A4D4AFF00662A33 /* MGTemplateStandardFilters.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A1D1A4D4AFF00662A33 /* MGTemplateStandardFilters.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2DC39A271A4D4BFB00662A33 /* news_head_placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A251A4D4BFB00662A33 /* news_head_placeholder@2x.png */; };
+		2DC39A281A4D4BFB00662A33 /* news_head_title_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A261A4D4BFB00662A33 /* news_head_title_background@2x.png */; };
+		2DC39A2B1A4D4C7000662A33 /* StyledPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A2A1A4D4C7000662A33 /* StyledPageControl.m */; };
+		2DC39A2E1A4D50CD00662A33 /* news_content_background_selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A2C1A4D50CD00662A33 /* news_content_background_selected@2x.png */; };
+		2DC39A2F1A4D50CD00662A33 /* news_content_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A2D1A4D50CD00662A33 /* news_content_background@2x.png */; };
+		2DC39A311A4D57FE00662A33 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC39A301A4D57FE00662A33 /* libicucore.dylib */; };
+		2DC39A331A4D64B400662A33 /* news_image_placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */; };
 		2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A119FF2AC80022F60E /* JDOStationModel.m */; };
 		2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A619FF9ABA0022F60E /* FMDatabase.m */; };
 		2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A819FF9ABA0022F60E /* FMResultSet.m */; };
@@ -230,6 +259,55 @@
 		2DC399D81A47CA9000662A33 /* 指南@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "指南@2x.png"; sourceTree = "<group>"; };
 		2DC399D91A47CA9000662A33 /* 资讯@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "资讯@2x.png"; sourceTree = "<group>"; };
 		2DC399E31A47E07500662A33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		2DC399E41A4BA60600662A33 /* 不允许使用定位@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "不允许使用定位@2x.png"; sourceTree = "<group>"; };
+		2DC399E51A4BA60700662A33 /* 超出范围@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "超出范围@2x.png"; sourceTree = "<group>"; };
+		2DC399E61A4BA60700662A33 /* 关闭定位@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "关闭定位@2x.png"; sourceTree = "<group>"; };
+		2DC399EA1A4D2A5300662A33 /* JDONewsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONewsController.h; sourceTree = "<group>"; };
+		2DC399EB1A4D2A5400662A33 /* JDONewsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONewsController.m; sourceTree = "<group>"; };
+		2DC399EE1A4D2D4600662A33 /* SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPullToRefresh.h; sourceTree = "<group>"; };
+		2DC399EF1A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVInfiniteScrolling.h"; sourceTree = "<group>"; };
+		2DC399F01A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVInfiniteScrolling.m"; sourceTree = "<group>"; };
+		2DC399F11A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
+		2DC399F21A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
+		2DC399F51A4D32BA00662A33 /* status_no_data@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status_no_data@2x.png"; sourceTree = "<group>"; };
+		2DC399F61A4D32BA00662A33 /* status_logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status_logo@2x.png"; sourceTree = "<group>"; };
+		2DC399F71A4D32BA00662A33 /* status_no_network@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status_no_network@2x.png"; sourceTree = "<group>"; };
+		2DC399F81A4D32BA00662A33 /* status_retry@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status_retry@2x.png"; sourceTree = "<group>"; };
+		2DC399FD1A4D49C900662A33 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		2DC399FE1A4D49C900662A33 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		2DC39A001A4D4A8200662A33 /* JDONewsTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONewsTableCell.h; sourceTree = "<group>"; };
+		2DC39A011A4D4A8200662A33 /* JDONewsTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONewsTableCell.m; sourceTree = "<group>"; };
+		2DC39A021A4D4A8200662A33 /* JDONewsHeadCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONewsHeadCell.h; sourceTree = "<group>"; };
+		2DC39A031A4D4A8200662A33 /* JDONewsHeadCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONewsHeadCell.m; sourceTree = "<group>"; };
+		2DC39A061A4D4AA300662A33 /* JDONewsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONewsModel.h; sourceTree = "<group>"; };
+		2DC39A071A4D4AA300662A33 /* JDONewsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONewsModel.m; sourceTree = "<group>"; };
+		2DC39A081A4D4AA300662A33 /* JDONewsDetailModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONewsDetailModel.h; sourceTree = "<group>"; };
+		2DC39A091A4D4AA300662A33 /* JDONewsDetailModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDONewsDetailModel.m; sourceTree = "<group>"; };
+		2DC39A0D1A4D4AFF00662A33 /* ICUTemplateMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICUTemplateMatcher.h; sourceTree = "<group>"; };
+		2DC39A0E1A4D4AFF00662A33 /* ICUTemplateMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICUTemplateMatcher.m; sourceTree = "<group>"; };
+		2DC39A0F1A4D4AFF00662A33 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
+		2DC39A101A4D4AFF00662A33 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		2DC39A111A4D4AFF00662A33 /* DeepMutableCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeepMutableCopy.h; sourceTree = "<group>"; };
+		2DC39A121A4D4AFF00662A33 /* NSArray_DeepMutableCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArray_DeepMutableCopy.h; sourceTree = "<group>"; };
+		2DC39A131A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArray_DeepMutableCopy.m; sourceTree = "<group>"; };
+		2DC39A141A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionary_DeepMutableCopy.h; sourceTree = "<group>"; };
+		2DC39A151A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionary_DeepMutableCopy.m; sourceTree = "<group>"; };
+		2DC39A161A4D4AFF00662A33 /* MGTemplateEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTemplateEngine.h; sourceTree = "<group>"; };
+		2DC39A171A4D4AFF00662A33 /* MGTemplateEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTemplateEngine.m; sourceTree = "<group>"; };
+		2DC39A181A4D4AFF00662A33 /* MGTemplateMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTemplateMarker.h; sourceTree = "<group>"; };
+		2DC39A191A4D4AFF00662A33 /* MGTemplateFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTemplateFilter.h; sourceTree = "<group>"; };
+		2DC39A1A1A4D4AFF00662A33 /* MGTemplateStandardMarkers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTemplateStandardMarkers.h; sourceTree = "<group>"; };
+		2DC39A1B1A4D4AFF00662A33 /* MGTemplateStandardMarkers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTemplateStandardMarkers.m; sourceTree = "<group>"; };
+		2DC39A1C1A4D4AFF00662A33 /* MGTemplateStandardFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTemplateStandardFilters.h; sourceTree = "<group>"; };
+		2DC39A1D1A4D4AFF00662A33 /* MGTemplateStandardFilters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTemplateStandardFilters.m; sourceTree = "<group>"; };
+		2DC39A251A4D4BFB00662A33 /* news_head_placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_head_placeholder@2x.png"; sourceTree = "<group>"; };
+		2DC39A261A4D4BFB00662A33 /* news_head_title_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_head_title_background@2x.png"; sourceTree = "<group>"; };
+		2DC39A291A4D4C7000662A33 /* StyledPageControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyledPageControl.h; sourceTree = "<group>"; };
+		2DC39A2A1A4D4C7000662A33 /* StyledPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StyledPageControl.m; sourceTree = "<group>"; };
+		2DC39A2C1A4D50CD00662A33 /* news_content_background_selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_content_background_selected@2x.png"; sourceTree = "<group>"; };
+		2DC39A2D1A4D50CD00662A33 /* news_content_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_content_background@2x.png"; sourceTree = "<group>"; };
+		2DC39A301A4D57FE00662A33 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_image_placeholder@2x.png"; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -300,6 +378,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC39A311A4D57FE00662A33 /* libicucore.dylib in Frameworks */,
 				2D884B9C19F6269B00C83F71 /* SystemConfiguration.framework in Frameworks */,
 				2DECC3421A032B2E0022F60E /* libz.dylib in Frameworks */,
 				2DECC2B719FF9D2C0022F60E /* libsqlite3.dylib in Frameworks */,
@@ -495,6 +574,8 @@
 		2DA6632019F0D97100DFED0B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				2DC39A0C1A4D4AEC00662A33 /* MGTemplateEngine */,
+				2DC399ED1A4D2D3300662A33 /* SVPullToRefresh */,
 				2D33FB111A22F0C00024F1ED /* JSONKit */,
 				2D33FAC81A1983540024F1ED /* SSToolkit */,
 				2DECC3431A032B7A0022F60E /* SSZipArchive */,
@@ -509,6 +590,18 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */,
+				2DC39A2C1A4D50CD00662A33 /* news_content_background_selected@2x.png */,
+				2DC39A2D1A4D50CD00662A33 /* news_content_background@2x.png */,
+				2DC39A251A4D4BFB00662A33 /* news_head_placeholder@2x.png */,
+				2DC39A261A4D4BFB00662A33 /* news_head_title_background@2x.png */,
+				2DC399F51A4D32BA00662A33 /* status_no_data@2x.png */,
+				2DC399F61A4D32BA00662A33 /* status_logo@2x.png */,
+				2DC399F71A4D32BA00662A33 /* status_no_network@2x.png */,
+				2DC399F81A4D32BA00662A33 /* status_retry@2x.png */,
+				2DC399E41A4BA60600662A33 /* 不允许使用定位@2x.png */,
+				2DC399E51A4BA60700662A33 /* 超出范围@2x.png */,
+				2DC399E61A4BA60700662A33 /* 关闭定位@2x.png */,
 				2DC399D21A47CA9000662A33 /* 打分@2x.png */,
 				2DC399D31A47CA9000662A33 /* 离线@2x.png */,
 				2DC399D41A47CA9000662A33 /* 分享@2x.png */,
@@ -525,6 +618,7 @@
 		2DA6632219F0D9A000DFED0B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2DC39A301A4D57FE00662A33 /* libicucore.dylib */,
 				2DECC3411A032B2D0022F60E /* libz.dylib */,
 				2DECC2B619FF9D2B0022F60E /* libsqlite3.dylib */,
 				2D4BB88719F661F900AC3941 /* Foundation.framework */,
@@ -537,6 +631,42 @@
 				2D884B9519F6268100C83F71 /* CoreLocation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2DC399ED1A4D2D3300662A33 /* SVPullToRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				2DC399EE1A4D2D4600662A33 /* SVPullToRefresh.h */,
+				2DC399EF1A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.h */,
+				2DC399F01A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m */,
+				2DC399F11A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.h */,
+				2DC399F21A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m */,
+			);
+			name = SVPullToRefresh;
+			sourceTree = "<group>";
+		};
+		2DC39A0C1A4D4AEC00662A33 /* MGTemplateEngine */ = {
+			isa = PBXGroup;
+			children = (
+				2DC39A0D1A4D4AFF00662A33 /* ICUTemplateMatcher.h */,
+				2DC39A0E1A4D4AFF00662A33 /* ICUTemplateMatcher.m */,
+				2DC39A0F1A4D4AFF00662A33 /* RegexKitLite.h */,
+				2DC39A101A4D4AFF00662A33 /* RegexKitLite.m */,
+				2DC39A111A4D4AFF00662A33 /* DeepMutableCopy.h */,
+				2DC39A121A4D4AFF00662A33 /* NSArray_DeepMutableCopy.h */,
+				2DC39A131A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m */,
+				2DC39A141A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.h */,
+				2DC39A151A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m */,
+				2DC39A161A4D4AFF00662A33 /* MGTemplateEngine.h */,
+				2DC39A171A4D4AFF00662A33 /* MGTemplateEngine.m */,
+				2DC39A181A4D4AFF00662A33 /* MGTemplateMarker.h */,
+				2DC39A191A4D4AFF00662A33 /* MGTemplateFilter.h */,
+				2DC39A1A1A4D4AFF00662A33 /* MGTemplateStandardMarkers.h */,
+				2DC39A1B1A4D4AFF00662A33 /* MGTemplateStandardMarkers.m */,
+				2DC39A1C1A4D4AFF00662A33 /* MGTemplateStandardFilters.h */,
+				2DC39A1D1A4D4AFF00662A33 /* MGTemplateStandardFilters.m */,
+			);
+			name = MGTemplateEngine;
 			sourceTree = "<group>";
 		};
 		2DECC29E19FF2A840022F60E /* Controllers */ = {
@@ -568,6 +698,8 @@
 				2DC399D01A47C7E400662A33 /* JDOMoreController.m */,
 				2DECC2B81A0081700022F60E /* JDOSettingController.h */,
 				2DECC2B91A0081710022F60E /* JDOSettingController.m */,
+				2DC399EA1A4D2A5300662A33 /* JDONewsController.h */,
+				2DC399EB1A4D2A5400662A33 /* JDONewsController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -583,6 +715,10 @@
 				2DECC2BF1A01D7B20022F60E /* JDOBusLine.m */,
 				2DAF41651A305491007E60A3 /* JDOBusModel.h */,
 				2DAF41661A305491007E60A3 /* JDOBusModel.m */,
+				2DC39A061A4D4AA300662A33 /* JDONewsModel.h */,
+				2DC39A071A4D4AA300662A33 /* JDONewsModel.m */,
+				2DC39A081A4D4AA300662A33 /* JDONewsDetailModel.h */,
+				2DC39A091A4D4AA300662A33 /* JDONewsDetailModel.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -612,6 +748,12 @@
 				2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */,
 				2D33FAF51A1C47BE0024F1ED /* JDONavigationBar.h */,
 				2D33FAF61A1C47BE0024F1ED /* JDONavigationBar.m */,
+				2DC39A001A4D4A8200662A33 /* JDONewsTableCell.h */,
+				2DC39A011A4D4A8200662A33 /* JDONewsTableCell.m */,
+				2DC39A021A4D4A8200662A33 /* JDONewsHeadCell.h */,
+				2DC39A031A4D4A8200662A33 /* JDONewsHeadCell.m */,
+				2DC39A291A4D4C7000662A33 /* StyledPageControl.h */,
+				2DC39A2A1A4D4C7000662A33 /* StyledPageControl.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -628,6 +770,8 @@
 		2DECC2CC1A0310850022F60E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2DC399FD1A4D49C900662A33 /* Reachability.h */,
+				2DC399FE1A4D49C900662A33 /* Reachability.m */,
 				2DECC2CD1A0310D50022F60E /* JDODatabase.h */,
 				2DECC2CE1A0310D50022F60E /* JDODatabase.m */,
 				2DECC33E1A0325B40022F60E /* JDOHttpClient.h */,
@@ -765,11 +909,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC39A281A4D4BFB00662A33 /* news_head_title_background@2x.png in Resources */,
+				2DC39A2F1A4D50CD00662A33 /* news_content_background@2x.png in Resources */,
 				2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */,
+				2DC399FC1A4D32BA00662A33 /* status_retry@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
 				2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */,
+				2DC399F91A4D32BA00662A33 /* status_no_data@2x.png in Resources */,
 				2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */,
+				2DC399FA1A4D32BA00662A33 /* status_logo@2x.png in Resources */,
+				2DC399E81A4BA60800662A33 /* 超出范围@2x.png in Resources */,
 				2DC399DA1A47CA9000662A33 /* 打分@2x.png in Resources */,
+				2DC39A331A4D64B400662A33 /* news_image_placeholder@2x.png in Resources */,
+				2DC399FB1A4D32BA00662A33 /* status_no_network@2x.png in Resources */,
 				2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D4BB8C119F6654100AC3941 /* mapapi.bundle in Resources */,
@@ -777,7 +929,11 @@
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
 				2DC399DC1A47CA9000662A33 /* 分享@2x.png in Resources */,
+				2DC39A271A4D4BFB00662A33 /* news_head_placeholder@2x.png in Resources */,
 				2DC399DE1A47CA9000662A33 /* 关于@2x.png in Resources */,
+				2DC399E71A4BA60800662A33 /* 不允许使用定位@2x.png in Resources */,
+				2DC39A2E1A4D50CD00662A33 /* news_content_background_selected@2x.png in Resources */,
+				2DC399E91A4BA60800662A33 /* 关闭定位@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -797,35 +953,50 @@
 			files = (
 				2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */,
 				2DECC33D1A0324D00022F60E /* UIImageView+AFNetworking.m in Sources */,
+				2DC39A201A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m in Sources */,
 				2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */,
 				2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */,
 				2DECC2B119FF9ABA0022F60E /* FMDatabaseQueue.m in Sources */,
 				2DECC3361A0324D00022F60E /* AFHTTPRequestOperation.m in Sources */,
 				2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */,
+				2DC39A041A4D4A8200662A33 /* JDONewsTableCell.m in Sources */,
+				2DC39A0B1A4D4AA300662A33 /* JDONewsDetailModel.m in Sources */,
 				2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */,
 				2DECC3391A0324D00022F60E /* AFNetworkActivityIndicatorManager.m in Sources */,
 				2D33FB191A241F850024F1ED /* JDOInterChangeController.m in Sources */,
+				2DC39A1F1A4D4AFF00662A33 /* RegexKitLite.m in Sources */,
+				2DC39A241A4D4AFF00662A33 /* MGTemplateStandardFilters.m in Sources */,
 				2DC399D11A47C7E400662A33 /* JDOMoreController.m in Sources */,
 				2DECC34F1A032BAF0022F60E /* unzip.c in Sources */,
 				2DECC34D1A032BAF0022F60E /* ioapi.c in Sources */,
 				2DECC2CF1A0310D50022F60E /* JDODatabase.m in Sources */,
+				2DC399FF1A4D49CA00662A33 /* Reachability.m in Sources */,
+				2DC39A221A4D4AFF00662A33 /* MGTemplateEngine.m in Sources */,
 				2D33FAD51A19836E0024F1ED /* NSData+SSToolkitAdditions.m in Sources */,
 				2DECC3401A0325B40022F60E /* JDOHttpClient.m in Sources */,
 				2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */,
 				2DECC2BD1A00DF7F0022F60E /* JDOBusLineDetail.m in Sources */,
 				2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */,
 				2DECC2C01A01D7B20022F60E /* JDOBusLine.m in Sources */,
+				2DC39A051A4D4A8200662A33 /* JDONewsHeadCell.m in Sources */,
+				2DC39A1E1A4D4AFF00662A33 /* ICUTemplateMatcher.m in Sources */,
 				2DECC2C71A0218FC0022F60E /* JDONearMapController.mm in Sources */,
 				2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */,
 				2DA662F919F0D92D00DFED0B /* main.m in Sources */,
 				2DECC2B219FF9ABA0022F60E /* FMDatabaseAdditions.m in Sources */,
+				2DC39A2B1A4D4C7000662A33 /* StyledPageControl.m in Sources */,
+				2DC399EC1A4D2A5400662A33 /* JDONewsController.m in Sources */,
+				2DC39A0A1A4D4AA300662A33 /* JDONewsModel.m in Sources */,
 				2DECC2BA1A0081710022F60E /* JDOSettingController.m in Sources */,
 				2DECC34E1A032BAF0022F60E /* mztools.c in Sources */,
 				2DAF41731A358239007E60A3 /* UIDevice+Hardware.m in Sources */,
+				2DC39A211A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m in Sources */,
 				2DAF41671A305491007E60A3 /* JDOBusModel.m in Sources */,
 				2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */,
+				2DC39A231A4D4AFF00662A33 /* MGTemplateStandardMarkers.m in Sources */,
 				2DECC3351A0324D00022F60E /* AFHTTPClient.m in Sources */,
 				2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */,
+				2DC399F41A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m in Sources */,
 				2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */,
 				2D33FB471A26E7D00024F1ED /* JDOLocationMapController.m in Sources */,
 				2DECC3501A032BAF0022F60E /* zip.c in Sources */,
@@ -838,6 +1009,7 @@
 				2DECC2B319FF9ABA0022F60E /* FMDatabasePool.m in Sources */,
 				2D33FB141A22F0F00024F1ED /* JSONKit.m in Sources */,
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
+				2DC399F31A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
 				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,
 				2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */,

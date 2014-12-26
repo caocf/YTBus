@@ -285,6 +285,7 @@
         NSIndexPath *indexPath = [(NSArray *)sender objectAtIndex:1];
         NSArray *paopaoLines = paopaoTable.station.passLines;
         rt.busLine = paopaoLines[indexPath.row];
+        rt.busLine.nearbyStationPair = [NSMutableArray arrayWithArray:@[paopaoTable.station]];
     }
 }
 

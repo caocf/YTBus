@@ -12,11 +12,20 @@
 
 @implementation JDOHttpClient 
 
-+ (JDOHttpClient *)sharedClient {
++ (JDOHttpClient *)sharedDFEClient {
     static JDOHttpClient *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedClient = [[JDOHttpClient alloc] initWithBaseURL:[NSURL URLWithString:Server_URL]];
+        _sharedClient = [[JDOHttpClient alloc] initWithBaseURL:[NSURL URLWithString:DFE_Server_URL]];
+    });
+    return _sharedClient;
+}
+
++ (JDOHttpClient *)sharedJDOClient {
+    static JDOHttpClient *_sharedClient = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedClient = [[JDOHttpClient alloc] initWithBaseURL:[NSURL URLWithString:JDO_Server_URL]];
     });
     return _sharedClient;
 }

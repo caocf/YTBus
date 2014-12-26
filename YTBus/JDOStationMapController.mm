@@ -42,6 +42,8 @@
     _mapView.showMapScaleBar = false;
     _mapView.delegate = self;
     _mapView.minZoomLevel = 15;
+    self.navigationItem.title = _stationName;
+
     
     _db = [JDODatabase sharedDB];
     if (_db) {

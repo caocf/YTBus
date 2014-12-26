@@ -9,10 +9,24 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+typedef enum{
+    DateFormatYMD,
+    DateFormatMD,
+    DateFormatYMDHM,
+    DateFormatYMDHMS,
+    DateFormatYMDHMS2,
+    DateFormatMDHM,
+    DateFormatHM,
+    DateFormatHMS
+}DateFormatType;
+
 @interface JDOUtils : NSObject
 
 + (NSString *) getJDOCacheDirectory;
 + (void) showHUDText:(NSString *)text inView:(UIView *)view;
 + (BOOL) isEmptyString:(NSString *)str;
+
++ (NSString *)formatDate:(NSDate *) date withFormatter:(DateFormatType) format;
++ (NSDate *)formatString:(NSString *)date withFormatter:(DateFormatType) format;
 
 @end

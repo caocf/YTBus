@@ -69,6 +69,7 @@
     UIImageView *hintImage;
     BOOL locServiceEnabled;
     UILabel *noDataLabel;
+    UIImageView *noDataImage;
 }
 
 @end
@@ -86,17 +87,20 @@
     hintLabel.backgroundColor = [UIColor clearColor];
     hintLabel.font = [UIFont systemFontOfSize:15];
     hintLabel.numberOfLines = 4;
-    hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(20, 120, 280, 300)];
-//    hintImage.image = [UIImage imageNamed:@"公交不透明"];
+    hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(61, 140, 197, 180)];
     locServiceEnabled = false;
-    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 80)];
+    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 100)];
     noDataLabel.backgroundColor = [UIColor clearColor];
     noDataLabel.font = [UIFont systemFontOfSize:15];
     noDataLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
-    noDataLabel.text = @"很抱歉，“烟台公交”目前仅覆盖烟台市芝罘区、莱山区范围内的公交数据，您的位置附近没有找到公交线路和站点信息。";
-    noDataLabel.numberOfLines = 3;
+    noDataLabel.text = @"很抱歉，“烟台公交”仅覆盖烟台市辖区范围内的公交数据，您的位置附近没有找到公交线路和站点信息。若您在烟台市区范围内，请尝试在“更多->系统设置->附近半径”中增加查询范围。";
+    noDataLabel.numberOfLines = 5;
     noDataLabel.hidden = true;
     [self.tableView addSubview:noDataLabel];
+    noDataImage = [[UIImageView alloc] initWithFrame:CGRectMake(61, 140, 197, 180)];
+    noDataImage.image = [UIImage imageNamed:@"超出范围"];
+    noDataImage.hidden = true;
+    [self.tableView addSubview:noDataImage];
     
     _locService = [[BMKLocationService alloc] init];
     isFirstPosition = true;
@@ -146,6 +150,7 @@
         if(!locServiceEnabled){
             hintLabel.text = @"您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
             hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
+            hintImage.image = [UIImage imageNamed:@"关闭定位"];
             [self.tableView addSubview:hintLabel];
             [self.tableView addSubview:hintImage];
         }
@@ -153,6 +158,7 @@
         if(!locServiceEnabled){
             hintLabel.text = @"您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
             hintLabel.textColor = [UIColor colorWithHex:@"8f8e89"];
+            hintImage.image = [UIImage imageNamed:@"不允许使用定位"];
             [self.tableView addSubview:hintLabel];
             [self.tableView addSubview:hintImage];
         }
@@ -317,10 +323,12 @@
     [self.tableView reloadData];
     if (_linesInfo.count>0) {
         noDataLabel.hidden = true;
+        noDataImage.hidden = true;
         self.navigationItem.rightBarButtonItem.enabled = true;
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:false];
     }else{
         noDataLabel.hidden = false;
+        noDataImage.hidden = false;
         self.navigationItem.rightBarButtonItem.enabled = false;
     }
 }

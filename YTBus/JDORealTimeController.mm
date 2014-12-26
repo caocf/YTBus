@@ -344,11 +344,12 @@
         JDORealTimeMapController *rt = segue.destinationViewController;
         rt.stations = _stations;
         JDOStationModel *startStation;
-        if (_busLine.nearbyStationPair[_busLine.showingIndex] == [NSNull null]) {
-            // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
-            startStation = [_stations lastObject];
-        }else{
+        if(selectedStartStation){
+            startStation = selectedStartStation;
+        }else if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]) {
             startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
+        }else{
+            return;
         }
         startStation.start = true;
         
@@ -473,7 +474,7 @@
 //        }
     }
     
-    if (station.start) {
+    if (station.isStart) {
         cell.stationIcon.image = [self imageAtPosition:indexPath.row selected:true];
         cell.stationSeq.textColor = [UIColor whiteColor];
         cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格选中背景"]];
@@ -495,7 +496,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     selectedStartStation = _stations[indexPath.row];
-    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    [tableView reloadData];
     [_timer fire];
 }
 

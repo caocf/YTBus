@@ -11,6 +11,8 @@
 
 @implementation JDOUtils
 
+static NSDateFormatter *dateFormatter;
+
 + (NSString *) getJDOCacheDirectory{
     NSString *diskCachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *JDOCacheDirectory = [diskCachePath stringByAppendingPathComponent:@"JDOCache"];
@@ -46,6 +48,46 @@
 
 + (BOOL) isEmptyString:(NSString *)str{
     return str==nil || [[str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqualToString:@""];
+}
+
+
++ (NSString *)formatDate:(NSDate *) date withFormatter:(DateFormatType) format{
+    if(dateFormatter == nil){
+        dateFormatter = [[NSDateFormatter alloc] init];
+    }
+    NSString *formatString;
+    switch (format) {
+        case DateFormatYMD:    formatString = @"yyyy/MM/dd";  break;
+        case DateFormatMD:     formatString = @"MM/dd";  break;
+        case DateFormatYMDHM:  formatString = @"yyyy/MM/dd HH:mm";  break;
+        case DateFormatYMDHMS: formatString = @"yyyy/MM/dd HH:mm:ss";  break;
+        case DateFormatYMDHMS2:formatString = @"yyyy-MM-dd HH:mm:ss";  break;
+        case DateFormatMDHM:   formatString = @"MM-dd HH:mm";  break;
+        case DateFormatHM:     formatString = @"HH:mm";  break;
+        case DateFormatHMS:    formatString = @"HH:mm:ss";  break;
+        default:    break;
+    }
+    [dateFormatter setDateFormat:formatString];
+    return [dateFormatter stringFromDate:date];
+}
++ (NSDate *)formatString:(NSString *)date withFormatter:(DateFormatType) format{
+    if(dateFormatter == nil){
+        dateFormatter = [[NSDateFormatter alloc] init];
+    }
+    NSString *formatString;
+    switch (format) {
+        case DateFormatYMD:    formatString = @"yyyy/MM/dd";  break;
+        case DateFormatMD:     formatString = @"MM/dd";  break;
+        case DateFormatYMDHM:  formatString = @"yyyy/MM/dd HH:mm";  break;
+        case DateFormatYMDHMS: formatString = @"yyyy-MM-dd HH:mm:ss"; break;
+        case DateFormatYMDHMS2:formatString = @"yyyy-MM-dd HH:mm:ss"; break;
+        case DateFormatMDHM:   formatString = @"MM/dd HH:mm";  break;
+        case DateFormatHM:     formatString = @"HH:mm";  break;
+        case DateFormatHMS:    formatString = @"HH:mm:ss";  break;
+        default:    break;
+    }
+    [dateFormatter setDateFormat:formatString];
+    return [dateFormatter dateFromString:date];
 }
 
 @end

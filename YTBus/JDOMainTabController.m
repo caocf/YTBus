@@ -63,7 +63,7 @@
 //        hud.minShowTime = 1.0f;
         hud.labelText = @"初始化数据";
         NSLog(@"开始下载");
-        [[JDOHttpClient sharedClient] getPath:Download_Action parameters:@{@"method":@"downloadDb"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[JDOHttpClient sharedDFEClient] getPath:Download_Action parameters:@{@"method":@"downloadDb"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSLog(@"下载完成，开始保存");
             NSData *zipData = (NSData *)responseObject;
             BOOL success = [JDODatabase saveZipFile:zipData];

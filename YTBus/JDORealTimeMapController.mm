@@ -116,6 +116,10 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 - (void) refreshData:(NSTimer *)timer{
+    // 最有可能的是从线路未选起始站点进入该界面，此时_stationId==nil
+    if (!_stationId || !_lineId || !_lineStatus) {
+        return;
+    }
     NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_MSG,_stationId,_lineId,_lineStatus];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:GetBusLineStatus_URL]];
     [request addValue:@"text/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
