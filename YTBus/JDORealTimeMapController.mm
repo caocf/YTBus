@@ -163,7 +163,7 @@ static const void *SelectedKey = &SelectedKey;
 
 -(void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
-//        NSLog(@"%@",_jsonResult);
+        NSLog(@"%@",_jsonResult);
         isRecording = false;
         if (_jsonResult.length==0) {
             [JDOUtils showHUDText:@"没有满足条件的车辆信息" inView:self.view];

@@ -116,25 +116,25 @@
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"toStationMap1"] || [segue.identifier isEqualToString:@"toStationMap2"]) {
-        UITableViewCell *cell = sender;
-        NSString *stationName = [(UILabel *)[cell viewWithTag:1001] text];
-        
-        JDOStationMapController *controller = segue.destinationViewController;
-        controller.stationName = stationName;
-        
-        // 加入历史记录
-        _historyStations = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"] mutableCopy];
-        if(!_historyStations){
-            _historyStations = [NSMutableArray new];
-        }
-        if (![_historyStations containsObject:stationName]) {
-            [_historyStations addObject:stationName];
-            [[NSUserDefaults standardUserDefaults] setObject:_historyStations forKey:@"history_station"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
-        
-    }
+//    if ([segue.identifier isEqualToString:@"toStationMap1"] || [segue.identifier isEqualToString:@"toStationMap2"]) {
+//        UITableViewCell *cell = sender;
+//        NSString *stationName = [(UILabel *)[cell viewWithTag:1001] text];
+//        
+//        JDOStationMapController *controller = segue.destinationViewController;
+//        controller.stationName = stationName;
+//        
+//        // 加入历史记录
+//        _historyStations = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"] mutableCopy];
+//        if(!_historyStations){
+//            _historyStations = [NSMutableArray new];
+//        }
+//        if (![_historyStations containsObject:stationName]) {
+//            [_historyStations addObject:stationName];
+//            [[NSUserDefaults standardUserDefaults] setObject:_historyStations forKey:@"history_station"];
+//            [[NSUserDefaults standardUserDefaults] synchronize];
+//        }
+//        
+//    }
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{

@@ -80,6 +80,10 @@
 		2DC39A2F1A4D50CD00662A33 /* news_content_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A2D1A4D50CD00662A33 /* news_content_background@2x.png */; };
 		2DC39A311A4D57FE00662A33 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC39A301A4D57FE00662A33 /* libicucore.dylib */; };
 		2DC39A331A4D64B400662A33 /* news_image_placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */; };
+		2DC39A3F1A527E5B00662A33 /* TBQuadTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A361A527E5B00662A33 /* TBQuadTree.m */; };
+		2DC39A401A527E5B00662A33 /* TBCoordinateQuadTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A381A527E5B00662A33 /* TBCoordinateQuadTree.m */; };
+		2DC39A421A527E5B00662A33 /* TBClusterAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A3C1A527E5B00662A33 /* TBClusterAnnotation.m */; };
+		2DC39A431A527E5B00662A33 /* TBClusterAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC39A3E1A527E5B00662A33 /* TBClusterAnnotationView.m */; };
 		2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A119FF2AC80022F60E /* JDOStationModel.m */; };
 		2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A619FF9ABA0022F60E /* FMDatabase.m */; };
 		2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC2A819FF9ABA0022F60E /* FMResultSet.m */; };
@@ -308,6 +312,14 @@
 		2DC39A2D1A4D50CD00662A33 /* news_content_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_content_background@2x.png"; sourceTree = "<group>"; };
 		2DC39A301A4D57FE00662A33 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "news_image_placeholder@2x.png"; sourceTree = "<group>"; };
+		2DC39A351A527E5B00662A33 /* TBQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBQuadTree.h; sourceTree = "<group>"; };
+		2DC39A361A527E5B00662A33 /* TBQuadTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBQuadTree.m; sourceTree = "<group>"; };
+		2DC39A371A527E5B00662A33 /* TBCoordinateQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBCoordinateQuadTree.h; sourceTree = "<group>"; };
+		2DC39A381A527E5B00662A33 /* TBCoordinateQuadTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBCoordinateQuadTree.m; sourceTree = "<group>"; };
+		2DC39A3B1A527E5B00662A33 /* TBClusterAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBClusterAnnotation.h; sourceTree = "<group>"; };
+		2DC39A3C1A527E5B00662A33 /* TBClusterAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBClusterAnnotation.m; sourceTree = "<group>"; };
+		2DC39A3D1A527E5B00662A33 /* TBClusterAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBClusterAnnotationView.h; sourceTree = "<group>"; };
+		2DC39A3E1A527E5B00662A33 /* TBClusterAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBClusterAnnotationView.m; sourceTree = "<group>"; };
 		2DECC2A019FF2AC80022F60E /* JDOStationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationModel.h; sourceTree = "<group>"; };
 		2DECC2A119FF2AC80022F60E /* JDOStationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationModel.m; sourceTree = "<group>"; };
 		2DECC2A419FF9ABA0022F60E /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
@@ -574,6 +586,7 @@
 		2DA6632019F0D97100DFED0B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				2DC39A341A527E3000662A33 /* TBAnnotationCluster */,
 				2DC39A0C1A4D4AEC00662A33 /* MGTemplateEngine */,
 				2DC399ED1A4D2D3300662A33 /* SVPullToRefresh */,
 				2D33FB111A22F0C00024F1ED /* JSONKit */,
@@ -667,6 +680,21 @@
 				2DC39A1D1A4D4AFF00662A33 /* MGTemplateStandardFilters.m */,
 			);
 			name = MGTemplateEngine;
+			sourceTree = "<group>";
+		};
+		2DC39A341A527E3000662A33 /* TBAnnotationCluster */ = {
+			isa = PBXGroup;
+			children = (
+				2DC39A351A527E5B00662A33 /* TBQuadTree.h */,
+				2DC39A361A527E5B00662A33 /* TBQuadTree.m */,
+				2DC39A371A527E5B00662A33 /* TBCoordinateQuadTree.h */,
+				2DC39A381A527E5B00662A33 /* TBCoordinateQuadTree.m */,
+				2DC39A3B1A527E5B00662A33 /* TBClusterAnnotation.h */,
+				2DC39A3C1A527E5B00662A33 /* TBClusterAnnotation.m */,
+				2DC39A3D1A527E5B00662A33 /* TBClusterAnnotationView.h */,
+				2DC39A3E1A527E5B00662A33 /* TBClusterAnnotationView.m */,
+			);
+			name = TBAnnotationCluster;
 			sourceTree = "<group>";
 		};
 		2DECC29E19FF2A840022F60E /* Controllers */ = {
@@ -957,6 +985,7 @@
 				2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */,
 				2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */,
 				2DECC2B119FF9ABA0022F60E /* FMDatabaseQueue.m in Sources */,
+				2DC39A421A527E5B00662A33 /* TBClusterAnnotation.m in Sources */,
 				2DECC3361A0324D00022F60E /* AFHTTPRequestOperation.m in Sources */,
 				2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */,
 				2DC39A041A4D4A8200662A33 /* JDONewsTableCell.m in Sources */,
@@ -974,6 +1003,7 @@
 				2DC39A221A4D4AFF00662A33 /* MGTemplateEngine.m in Sources */,
 				2D33FAD51A19836E0024F1ED /* NSData+SSToolkitAdditions.m in Sources */,
 				2DECC3401A0325B40022F60E /* JDOHttpClient.m in Sources */,
+				2DC39A401A527E5B00662A33 /* TBCoordinateQuadTree.m in Sources */,
 				2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */,
 				2DECC2BD1A00DF7F0022F60E /* JDOBusLineDetail.m in Sources */,
 				2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */,
@@ -999,6 +1029,7 @@
 				2DC399F41A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m in Sources */,
 				2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */,
 				2D33FB471A26E7D00024F1ED /* JDOLocationMapController.m in Sources */,
+				2DC39A431A527E5B00662A33 /* TBClusterAnnotationView.m in Sources */,
 				2DECC3501A032BAF0022F60E /* zip.c in Sources */,
 				2DECC33C1A0324D00022F60E /* AFXMLRequestOperation.m in Sources */,
 				2DECC33B1A0324D00022F60E /* AFURLConnectionOperation.m in Sources */,
@@ -1015,6 +1046,7 @@
 				2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */,
 				2DECC33A1A0324D00022F60E /* AFPropertyListRequestOperation.m in Sources */,
 				2D884B4E19F61C3200C83F71 /* JDORealTimeController.mm in Sources */,
+				2DC39A3F1A527E5B00662A33 /* TBQuadTree.m in Sources */,
 				2D884B4B19F60ACE00C83F71 /* JDONearByController.mm in Sources */,
 				2D33FB1C1A247C4C0024F1ED /* JDORouteMapController.m in Sources */,
 				2DECC2CB1A0224E10022F60E /* MBProgressHUD.m in Sources */,
