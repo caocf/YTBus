@@ -66,7 +66,6 @@ static const void *SelectedKey = &SelectedKey;
     _mapView.zoomLevel = 13;
     _mapView.minZoomLevel = 12;
     _mapView.maxZoomLevel = 17;
-    _mapView.delegate = self;
     
     [self setMapCenter];
     [self addStationOverlay];
@@ -102,6 +101,7 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    _mapView.delegate = self;
     [_mapView viewWillAppear];
     _timer = [NSTimer scheduledTimerWithTimeInterval:Bus_Refresh_Interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
     [_timer fire];
@@ -109,6 +109,7 @@ static const void *SelectedKey = &SelectedKey;
 
 -(void)viewWillDisappear:(BOOL)animated {
     [_mapView viewWillDisappear];
+    _mapView.delegate = nil;
     if ( _timer && _timer.valid) {
         [_timer invalidate];
         _timer = nil;
@@ -116,6 +117,9 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 - (void) refreshData:(NSTimer *)timer{
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+        return;
+    }
     // 最有可能的是从线路未选起始站点进入该界面，此时_stationId==nil
     if (!_stationId || !_lineId || !_lineStatus) {
         return;

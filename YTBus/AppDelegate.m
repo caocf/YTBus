@@ -19,12 +19,24 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    //友盟统计
+    //Crashlytics和友盟的错误报告不能同时用，关闭友盟日志要把[MobClick setCrashReportEnabled:NO]；写在友盟appkey的前面
+    [MobClick setCrashReportEnabled:true];
+    [MobClick setLogEnabled:true];
+    [MobClick setAppVersion:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+    [MobClick startWithAppkey:@"54a8b1c7fd98c5d5850008c5" reportPolicy:BATCH channelId:nil];
+    
     // 要使用百度地图，请先启动BaiduMapManager
     _mapManager = [[BMKMapManager alloc]init];
     BOOL ret = [_mapManager start:@"BI3iLNMvqHHWiELxAi5kkbn2" generalDelegate:self];
     if (!ret) {
         NSLog(@"manager start failed!");
+    }else{
+        [BMKLocationService setLocationDesiredAccuracy:kCLLocationAccuracyBestForNavigation];
+        [BMKLocationService setLocationDistanceFilter:Location_Auto_Refresh_Distance];    //kCLDistanceFilterNone
     }
+    
     application.statusBarStyle = UIStatusBarStyleLightContent;
     if (After_iOS7) {
         [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
@@ -33,12 +45,19 @@
         [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithHex:@"233247"]];
     }
     
+//    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+//        [application registerForRemoteNotifications];
+//        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound categories:nil];
+//        [application registerUserNotificationSettings:settings];
+//    } else {
+//        [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeBadge| UIRemoteNotificationTypeSound];
+//    }
+    
     return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    [BMKMapView willBackGround];//当应用即将后台时调用，停止一切调用opengl相关的操作
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -51,7 +70,7 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [BMKMapView didForeGround];//当应用恢复前台状态时调用，回复地图的渲染和opengl相关的操作
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

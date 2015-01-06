@@ -11,7 +11,7 @@
 
 @interface JDONearMapController : UIViewController
 
-@property (nonatomic,assign) CLLocationCoordinate2D myselfCoor;
+@property (nonatomic,assign) BMKUserLocation *myselfLocation;
 @property (nonatomic,strong) NSMutableArray *nearbyStations;
 
 @property (nonatomic,weak) IBOutlet BMKMapView *mapView;

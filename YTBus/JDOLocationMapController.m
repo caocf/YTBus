@@ -54,7 +54,7 @@
     }
 }
 
-- (void)didUpdateUserLocation:(BMKUserLocation *)userLocation{
+- (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation{
     [_mapView updateLocationData:userLocation];
 }
 

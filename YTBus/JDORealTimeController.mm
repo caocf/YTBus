@@ -209,13 +209,17 @@
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    if ( _timer && _timer.valid) {
+    if ( _timer && [_timer isValid]) {
         [_timer invalidate];
         _timer = nil;
     }
 }
 
 - (void) refreshData:(NSTimer *)timer{
+    // 若开启到站提醒，也可以在后台运行时继续执行定时器，一直到程序进程超时被关闭时再请求后台推送
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+        return;
+    }
     // 双向站点列表未加载完成,延迟1秒再刷新
     if( !isLoadFinised ){
         timer.fireDate = [NSDate dateWithTimeInterval:1 sinceDate:[NSDate date]];

@@ -59,7 +59,6 @@
     _mapView.rotateEnabled = true;
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
-    _mapView.delegate = self;
     _mapView.minZoomLevel = 12; // 覆盖当前全部站点的范围
     _mapView.zoomLevel = 13;
     _mapView.centerCoordinate = CLLocationCoordinate2DMake( 37.4698,121.454);   // 市政府的位置
@@ -67,11 +66,14 @@
     self.coordinateQuadTree = [[TBCoordinateQuadTree alloc] init];
     self.coordinateQuadTree.mapView = self.mapView;
     _queryQueue = [NSOperationQueue new];
+    _queryQueue.maxConcurrentOperationCount = 1;
     
     _stations = [NSMutableArray new];
     _db = [JDODatabase sharedDB];
     if (_db) {
-        [self loadData2];
+        [_queryQueue addOperationWithBlock:^{
+            [self loadData2];
+        }];
     }
     
     self.tableView.sectionHeaderHeight = 15;
@@ -98,16 +100,23 @@
     }
     [self.coordinateQuadTree buildTree:_stations];
     [_stations removeAllObjects];
-    //初始时候的mapView.visibleRect位置在北京，无法获取visibleRect变化完成的事件，即使在viewDidAppear直接调用也不行。
-    [self performSelector:@selector(mapView:regionDidChangeAnimated:) withObject:_mapView afterDelay:0.1];
+    // 初始时候的mapView.visibleRect位置在北京，无法获取visibleRect变化完成的事件，即使在viewDidAppear直接调用也不行。
+    // Fixed on BMK 2.6.0，mapViewDidFinishLoading事件中直接调用
+//    [self performSelector:@selector(mapView:regionDidChangeAnimated:) withObject:_mapView afterDelay:0.1];
+}
+
+- (void)mapViewDidFinishLoading:(BMKMapView *)mapView{
+    [self mapView:mapView regionDidChangeAnimated:false];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    _mapView.delegate = self;
     [_mapView viewWillAppear];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
     [_mapView viewWillDisappear];
+    _mapView.delegate = nil;
 }
 
 
@@ -158,13 +167,11 @@
 
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
-    if (self.coordinateQuadTree.root) {
-        [_queryQueue addOperationWithBlock:^{
-            double scale = mapView.bounds.size.width / mapView.visibleMapRect.size.width;
-            NSArray *annotations = [self.coordinateQuadTree clusteredAnnotationsWithinMapRect:mapView.visibleMapRect withZoomScale:scale];
-            [self updateMapViewAnnotationsWithAnnotations:annotations];
-        }];
-    }
+    [_queryQueue addOperationWithBlock:^{
+        double scale = mapView.bounds.size.width / mapView.visibleMapRect.size.width;
+        NSArray *annotations = [self.coordinateQuadTree clusteredAnnotationsWithinMapRect:mapView.visibleMapRect withZoomScale:scale];
+        [self updateMapViewAnnotationsWithAnnotations:annotations];
+    }];
 }
 
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{

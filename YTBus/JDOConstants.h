@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "UIColor+SSToolkitAdditions.h"
 #import "JDOUtils.h"
+#import "MobClick.h"
 
 typedef enum {
     ViewStatusNormal = 0,   //显示正常视图
@@ -18,8 +19,10 @@ typedef enum {
     ViewStatusRetry,        //服务器错误,点击重试
 } ViewStatusType;   //需要从网络加载的视图的几种状态变化
 
+#define Location_Auto_Refresh_Distance 200
 #define After_iOS6 [[[UIDevice currentDevice] systemVersion] floatValue]>=6.0
 #define After_iOS7 [[[UIDevice currentDevice] systemVersion] floatValue]>=7.0
+#define After_iOS8 [[[UIDevice currentDevice] systemVersion] floatValue]>=8.0
 #define DFE_Server_URL @"http://218.56.32.7:1030"
 #define JDO_Server_URL @"http://p.jiaodong.net/mobileQuery/V11"
 #define JDO_RESOURCE_URL @"http://p.jiaodong.net/jdmsys/"

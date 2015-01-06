@@ -13,6 +13,8 @@
 #import "JDOStationAnnotation.h"
 #import "JDORealTimeController.h"
 #import "UIDevice+Hardware.h"
+#import "JDOConstants.h"
+#import "JDOUtils.h"
 
 @interface JDOPaoPaoTable : UITableView
 
@@ -26,7 +28,7 @@
 
 @interface JDONearMapController () <BMKMapViewDelegate,BMKLocationServiceDelegate,UITableViewDataSource,UITableViewDelegate> {
     BMKLocationService *_locService;
-    CLLocationCoordinate2D lastSearchCoor;
+    BMKUserLocation *currentUserLocation;
     int distanceRadius;
     NSMutableArray *_stations;
     NSMutableArray *_linesOfFoundNearestStation;
@@ -43,7 +45,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _mapView.centerCoordinate = self.myselfCoor;
+    _mapView.centerCoordinate = self.myselfLocation.location.coordinate;
     _mapView.zoomEnabled = true;
     _mapView.zoomEnabledWithTap = true;
     _mapView.scrollEnabled = true;
@@ -52,7 +54,6 @@
     _mapView.showMapScaleBar = false;
     _mapView.zoomLevel = 17;
     _mapView.minZoomLevel = 15;
-    _mapView.delegate = self;
     
     _locService = [[BMKLocationService alloc] init];
     distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
@@ -60,18 +61,11 @@
         distanceRadius = 1000;
     }
     
-    lastSearchCoor = CLLocationCoordinate2DMake(self.myselfCoor.latitude, self.myselfCoor.longitude) ;
     _db = [JDODatabase sharedDB];
-    if (_db) {
-        [self loadData];
-    }else{
-        dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
-            _db = [JDODatabase sharedDB];
-        }];
-    }
-    
+
     distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
         distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+        // 在这里直接调用refreshData会造成地图显示问题(marker不能下落、不能变色)，故通过标志位设置在viewVillAppear中执行
         needRefresh = true;
     }];
 }
@@ -105,7 +99,10 @@
             [_stations addObject:station];
         }
     }
-    [self addAnnotations];
+}
+
+- (void)mapViewDidFinishLoading:(BMKMapView *)mapView{
+    [self didUpdateBMKUserLocation:self.myselfLocation];
 }
 
 - (void)didUpdateUserHeading:(BMKUserLocation *)userLocation{
@@ -113,22 +110,37 @@
 }
 
 - (void)didFailToLocateUserWithError:(NSError *)error{
-    
+    NSLog(@"location error:%@",error);
+    if (error.code == kCLErrorDenied){
+//        NSLog(@"定位服务被关闭");
+//        [JDOUtils showHUDText:@"定位服务被关闭" inView:self.view];
+    }
 }
 
-- (void)didUpdateUserLocation:(BMKUserLocation *)userLocation{
+- (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation{
     [_mapView updateLocationData:userLocation];
     
     if (!_db) {
         return;
     }
     
-    _myselfCoor = userLocation.location.coordinate;
-    CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(lastSearchCoor),BMKMapPointForCoordinate(_myselfCoor));
-    if (distance > 100 || needRefresh) {
-        lastSearchCoor = _myselfCoor;
-        needRefresh = false;
-    }else{
+    if (currentUserLocation) {
+        // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
+        double moveDistance = [userLocation.location distanceFromLocation:currentUserLocation.location];
+        // currentUserLocation为nil时返回-1
+        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance/2) {
+//            NSLog(@"移动距离%g，不足刷新条件",moveDistance);
+            return;
+        }
+    }
+    
+    currentUserLocation = userLocation;
+    
+    [self refreshData];
+}
+
+- (void) refreshData{
+    if (!currentUserLocation) {
         return;
     }
     [_nearbyStations removeAllObjects];
@@ -136,7 +148,8 @@
     double longitudeDelta = distanceRadius/85390.0;
     double latitudeDelta = distanceRadius/111000.0;
     NSString *sql = @"select * from STATION where gpsx2>? and gpsx2<? and gpsy2>? and gpsy2<? and stationname not like 't_%'";
-    NSArray *argu = @[@(_myselfCoor.longitude-longitudeDelta),@(_myselfCoor.longitude+longitudeDelta),@(_myselfCoor.latitude-latitudeDelta),@(_myselfCoor.latitude+latitudeDelta)];
+    CLLocationCoordinate2D currentCoor = currentUserLocation.location.coordinate;
+    NSArray *argu = @[@(currentCoor.longitude-longitudeDelta),@(currentCoor.longitude+longitudeDelta),@(currentCoor.latitude-latitudeDelta),@(currentCoor.latitude+latitudeDelta)];
     FMResultSet *s = [_db executeQuery:sql withArgumentsInArray:argu];
     while ([s next]) {
         JDOStationModel *station = [JDOStationModel new];
@@ -148,9 +161,9 @@
         // 对比与当前地理位置的距离小于1000的站点
         CLLocationCoordinate2D bdStation = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
         // gps坐标转百度坐标
-//        CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+        //        CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
         // 转化为直角坐标测距
-        CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(_myselfCoor),BMKMapPointForCoordinate(bdStation));
+        CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(currentCoor),BMKMapPointForCoordinate(bdStation));
         if (distance < distanceRadius) {  // 附近站点
             station.distance = @(distance);
             [_nearbyStations addObject:station];
@@ -168,50 +181,75 @@
     }];
     
     [self loadData];
+    [self addAnnotations];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"nearbymap"];
+    [MobClick event:@"nearbymap"];
+    [MobClick beginEvent:@"nearbymap"];
+    
+    _mapView.delegate = self;
     [_mapView viewWillAppear];
-    if (_locService) {
-        _locService.delegate = self;
-        [_locService startUserLocationService];
-        _mapView.showsUserLocation = NO;
-        _mapView.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
-        _mapView.showsUserLocation = YES;
-        BMKLocationViewDisplayParam *param = [BMKLocationViewDisplayParam new];
-//        param.locationViewImgName = @"";
-        param.isAccuracyCircleShow = false;
-        [_mapView updateLocationViewWithParam:param];
+    
+    _locService.delegate = self;
+    [_locService startUserLocationService];
+    _mapView.showsUserLocation = NO;
+    _mapView.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
+    _mapView.showsUserLocation = YES;
+    BMKLocationViewDisplayParam *param = [BMKLocationViewDisplayParam new];
+//    param.locationViewImgName = @"";
+    param.isAccuracyCircleShow = false;
+    [_mapView updateLocationViewWithParam:param];
+    // TODO 设置跟随状态切换按钮
+    
+    if (needRefresh) {
+        needRefresh = false;
+        [self refreshData];
     }
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"nearbymap"];
+    [MobClick endEvent:@"nearbymap"];
+    
     [_mapView viewWillDisappear];
-    if (_locService) {
-        [_locService stopUserLocationService];
-        _locService.delegate = nil;
-        _mapView.showsUserLocation = NO;
-    }
+    _mapView.delegate = nil;
+    
+    [_locService stopUserLocationService];
+    _locService.delegate = nil;
+    _mapView.showsUserLocation = NO;
 }
 
 -(void)addAnnotations{
-    if (self.mapView.annotations.count>0) {
-        [self.mapView removeAnnotations:[NSArray arrayWithArray:self.mapView.annotations]];
-    }
+    
+    NSMutableSet *before = [NSMutableSet setWithArray:self.mapView.annotations];
+    NSMutableSet *after = [NSMutableSet new];
     for (int i=0; i<_stations.count; i++) {
-        [self addPointAnnotation:_stations[i]];
+        JDOStationModel *station = _stations[i];
+        JDOStationAnnotation *pointAnnotation = [[JDOStationAnnotation alloc] init];
+        // GPS坐标转百度坐标
+        //    CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+        //    pointAnnotation.coordinate = bdStation;
+        pointAnnotation.coordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
+        pointAnnotation.station = station;
+        [after addObject:pointAnnotation];
     }
+    
+    NSMutableSet *toKeep = [NSMutableSet setWithSet:before];
+    [toKeep intersectSet:after];
+    
+    NSMutableSet *toAdd = [NSMutableSet setWithSet:after];
+    [toAdd minusSet:toKeep];
+    
+    NSMutableSet *toRemove = [NSMutableSet setWithSet:before];
+    [toRemove minusSet:after];
+    
+    [self.mapView addAnnotations:[toAdd allObjects]];
+    [self.mapView removeAnnotations:[toRemove allObjects]];
+    
 }
 
-- (void)addPointAnnotation:(JDOStationModel *) station{
-    JDOStationAnnotation *pointAnnotation = [[JDOStationAnnotation alloc] init];
-    // GPS坐标转百度坐标
-//    CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
-//    pointAnnotation.coordinate = bdStation;
-    pointAnnotation.coordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
-    pointAnnotation.station = station;
-    [_mapView addAnnotation:pointAnnotation];
-}
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation{
     static NSString *AnnotationViewID = @"annotationView";
@@ -219,8 +257,8 @@
     BMKPinAnnotationView *annotationView = (BMKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotationViewID];
     if (!annotationView) {
         annotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID];
-        annotationView.pinColor = BMKPinAnnotationColorPurple;
-        annotationView.animatesDrop = false;
+        annotationView.pinColor = BMKPinAnnotationColorGreen;
+        annotationView.animatesDrop = true;
         annotationView.draggable = false;
     }else{
         annotationView.annotation = annotation;

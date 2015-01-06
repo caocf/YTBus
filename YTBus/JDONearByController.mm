@@ -17,8 +17,6 @@
 #import "MBProgressHUD.h"
 #import "JDOConstants.h"
 
-#define Auto_Refresh_Distance 200
-
 @interface JDONearByCell : UITableViewCell
 
 @property (nonatomic,strong) JDOBusLine *busLine;
@@ -52,11 +50,9 @@
 
 @end
 
-@interface JDONearByController () <BMKLocationServiceDelegate> {
+@interface JDONearByController () <BMKLocationServiceDelegate,CLLocationManagerDelegate> {
     BMKLocationService *_locService;
-    CLLocationCoordinate2D lastSearchCoor;
-    CLLocationCoordinate2D currentPosCoor;
-    BOOL isFirstPosition;
+    BMKUserLocation *currentUserLocation;
     NSMutableArray *_nearbyStations;
     FMDatabase *_db;
     NSMutableArray *_linesInfo;
@@ -67,9 +63,9 @@
     NSMutableSet *animationIndexPath;
     UILabel *hintLabel;
     UIImageView *hintImage;
-    BOOL locServiceEnabled;
     UILabel *noDataLabel;
     UIImageView *noDataImage;
+    CLLocationManager *locationManger;
 }
 
 @end
@@ -88,7 +84,6 @@
     hintLabel.font = [UIFont systemFontOfSize:15];
     hintLabel.numberOfLines = 4;
     hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(61, 140, 197, 180)];
-    locServiceEnabled = false;
     noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 100)];
     noDataLabel.backgroundColor = [UIColor clearColor];
     noDataLabel.font = [UIFont systemFontOfSize:15];
@@ -102,8 +97,15 @@
     noDataImage.hidden = true;
     [self.tableView addSubview:noDataImage];
     
+    // 另外启用一个定位服务，因为百度定位无法获取授权状态变化的回调
+    locationManger = [[CLLocationManager alloc]init];
+    locationManger.delegate = self;
+    if (After_iOS8) {
+        [locationManger requestWhenInUseAuthorization];
+    }
+//    [locationManger startUpdatingLocation];
+    
     _locService = [[BMKLocationService alloc] init];
-    isFirstPosition = true;
     _nearbyStations = [[NSMutableArray alloc] init];
     animationIndexPath = [NSMutableSet set];
     distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
@@ -115,17 +117,44 @@
     if (!_db) {
         dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
             _db = [JDODatabase sharedDB];
-            [_locService startUserLocationService];
+            [self refreshData];
         }];
     }
-    
     distanceObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"nearby_distance_changed" object:nil queue:nil usingBlock:^(NSNotification *note) {
-        isFirstPosition = true;
         distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
+        [self refreshData];
     }];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkLocServiceState) name:UIApplicationWillEnterForegroundNotification object:nil];
-    
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    if(![CLLocationManager locationServicesEnabled]){
+        [_linesInfo removeAllObjects];
+        [self.tableView reloadData];
+        self.navigationItem.rightBarButtonItem.enabled = false;
+        
+        hintLabel.text = @"您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
+        hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
+        hintImage.image = [UIImage imageNamed:@"关闭定位"];
+        [self.tableView addSubview:hintLabel];
+        [self.tableView addSubview:hintImage];
+    }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied || [CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){
+        [_linesInfo removeAllObjects];
+        [self.tableView reloadData];
+        self.navigationItem.rightBarButtonItem.enabled = false;
+        
+        hintLabel.text = @"您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
+        hintLabel.textColor = [UIColor colorWithHex:@"8f8e89"];
+        hintImage.image = [UIImage imageNamed:@"不允许使用定位"];
+        [self.tableView addSubview:hintLabel];
+        [self.tableView addSubview:hintImage];
+    }else{
+        self.navigationItem.rightBarButtonItem.enabled = true;
+        
+        [hintLabel removeFromSuperview];
+        [hintImage removeFromSuperview];
+        [self refreshData];
+    }
 }
 
 #pragma mark - Navigation
@@ -139,81 +168,68 @@
         self.navigationItem.backBarButtonItem.title = @"附近";
     }else if([segue.identifier isEqualToString:@"toNearMap"]){
         JDONearMapController *nm = segue.destinationViewController;
-        nm.myselfCoor = currentPosCoor;
+        nm.myselfLocation = currentUserLocation;
         nm.nearbyStations = _nearbyStations;
         self.navigationItem.backBarButtonItem.title = @"返回";
     }
 }
 
-- (void) checkLocServiceState {
-    if(![CLLocationManager locationServicesEnabled]){
-        if(!locServiceEnabled){
-            hintLabel.text = @"您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
-            hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
-            hintImage.image = [UIImage imageNamed:@"关闭定位"];
-            [self.tableView addSubview:hintLabel];
-            [self.tableView addSubview:hintImage];
-        }
-    }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied || [CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){
-        if(!locServiceEnabled){
-            hintLabel.text = @"您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
-            hintLabel.textColor = [UIColor colorWithHex:@"8f8e89"];
-            hintImage.image = [UIImage imageNamed:@"不允许使用定位"];
-            [self.tableView addSubview:hintLabel];
-            [self.tableView addSubview:hintImage];
-        }
-    }else{
-        locServiceEnabled = true;
-        [hintLabel removeFromSuperview];
-        [hintImage removeFromSuperview];
-        _locService.delegate = self;
-        if (_db) {
-            [_locService startUserLocationService];
-        }
-    }
-}
-
 -(void)viewWillAppear:(BOOL)animated {
-    [self checkLocServiceState];
+    [MobClick beginLogPageView:@"nearby"];
+    [MobClick event:@"nearby"];
+    [MobClick beginEvent:@"nearby"];
+    _locService.delegate = self;
+    [_locService startUserLocationService];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"nearby"];
+    [MobClick endEvent:@"nearby"];
     [_locService stopUserLocationService];
     _locService.delegate = nil;
 }
 
-- (void)willStartLocatingUser{
-
+- (void)didFailToLocateUserWithError:(NSError *)error {
+    NSLog(@"location error:%@",error);
+    if (error.code == kCLErrorLocationUnknown) {
+        if (!hud && _linesInfo.count==0 ) {
+            hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
+            hud.minShowTime = 1.0f;
+            hud.labelText = @"定位中,请稍候...";
+        }
+    }else if (error.code == kCLErrorDenied){    // 启动的时候不允许，或运行过程中从系统设置里关闭
+        NSLog(@"didFailToLocateUserWithError：kCLErrorDenied");
+    }
 }
-- (void)didStopLocatingUser{
 
-}
-
-- (void)didUpdateUserLocation:(BMKUserLocation *)userLocation
+- (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation
 {
     if (hud) {
         [hud hide:true];
         hud = nil;
     }
+    
+    if (currentUserLocation) {
+        // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
+        double moveDistance = [userLocation.location distanceFromLocation:currentUserLocation.location];
+        // currentUserLocation为nil时返回-1
+        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance/2) {
+//            NSLog(@"移动距离%g，不足刷新条件",moveDistance);
+            return;
+        }
+    }
+    
+    currentUserLocation = userLocation;
+    
+    [self refreshData];
+}
+
+- (void) refreshData{
     if (!_db) {
         return;
     }
-    // 测试超出烟台范围无公交站点的情况
-//    currentPosCoor = CLLocationCoordinate2DMake(userLocation.location.coordinate.latitude+10, userLocation.location.coordinate.longitude+10) ;
-    currentPosCoor = userLocation.location.coordinate;
-    
-    if (isFirstPosition) {
-        lastSearchCoor = currentPosCoor;
-        isFirstPosition = false;
-    }else{
-        CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(lastSearchCoor),BMKMapPointForCoordinate(currentPosCoor));
-//        NSLog(@"与上一个查询点的距离是:%g",distance);
-        if (distance > Auto_Refresh_Distance) {
-            NSLog(@"位移离上一次定位点超过100米");
-            lastSearchCoor = currentPosCoor;
-        }else{
-            return;
-        }
+    if (!currentUserLocation) {
+        return;
     }
     [_nearbyStations removeAllObjects];
     
@@ -227,7 +243,8 @@
     double latitudeDelta = distanceRadius/111000.0;
     // stationname like '%广播电视台%' or stationname like '%汽车东站%' or stationname like '%体育公园%'
     NSString *sql = @"select * from STATION where gpsx2>? and gpsx2<? and gpsy2>? and gpsy2<? and stationname not like 't_%'";
-    NSArray *argu = @[@(currentPosCoor.longitude-longitudeDelta),@(currentPosCoor.longitude+longitudeDelta),@(currentPosCoor.latitude-latitudeDelta),@(currentPosCoor.latitude+latitudeDelta)];
+    CLLocationCoordinate2D currentCoor = currentUserLocation.location.coordinate;
+    NSArray *argu = @[@(currentCoor.longitude-longitudeDelta),@(currentCoor.longitude+longitudeDelta),@(currentCoor.latitude-latitudeDelta),@(currentCoor.latitude+latitudeDelta)];
     FMResultSet *s = [_db executeQuery:sql withArgumentsInArray:argu];
     while ([s next]) {
         JDOStationModel *station = [JDOStationModel new];
@@ -236,21 +253,16 @@
         station.direction = [s stringForColumn:@"GEOGRAPHICALDIRECTION"];
         station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSX2"]];
         station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSY2"]];
-//        NSLog(@"%@ gps2原始 x=%@,y=%@",station.name,station.gpsX,station.gpsY);
         
         // 对比与当前地理位置的距离小于1000的站点
         CLLocationCoordinate2D bdStation = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
         // gps坐标转百度坐标
-//        CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+        //        CLLocationCoordinate2D bdStation = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue),BMK_COORDTYPE_GPS));
         // 转化为直角坐标测距
-        CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(currentPosCoor),BMKMapPointForCoordinate(bdStation));
-//        NSLog(@"distance:%g",distance);
-        
+        CLLocationDistance distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(currentCoor),BMKMapPointForCoordinate(bdStation));
         if (distance < distanceRadius) {  // 附近站点
             station.distance = @(distance);
             [_nearbyStations addObject:station];
-        }else{
-//            NSLog(@"%@:距离超过1000米",station.name);
         }
     }
     
@@ -263,6 +275,9 @@
         }
         return NSOrderedDescending;
     }];
+    
+    // 测试超出烟台范围无公交站点的情况
+    //    [_nearbyStations removeAllObjects];
     
     // 将同一线路的上下行两个方向分别离当前最近的站点合并成一个数组，距离近的在前，保存在busLine的nearbyStation中
     _linesInfo = [[NSMutableArray alloc] init];
@@ -280,7 +295,7 @@
                     break;
                 }
             }
-
+            
             if(!busLine) {
                 busLine = [JDOBusLine new];
                 busLine.lineId = lineId;
@@ -330,18 +345,6 @@
         noDataLabel.hidden = false;
         noDataImage.hidden = false;
         self.navigationItem.rightBarButtonItem.enabled = false;
-    }
-}
-
-- (void)didFailToLocateUserWithError:(NSError *)error {
-    if (error.code == kCLErrorLocationUnknown) {
-        if (!hud && _linesInfo.count==0 ) {
-            hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
-            hud.minShowTime = 1.0f;
-            hud.labelText = @"定位中,请稍候...";
-        }
-    }else{
-        NSLog(@"location error:%@",error);
     }
 }
 
@@ -408,7 +411,7 @@
     if (dbObserver) {
         [[NSNotificationCenter defaultCenter] removeObserver:dbObserver];
     }
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 
