@@ -23,7 +23,6 @@
 
     _locService = [[BMKLocationService alloc] init];
     _mapView = (BMKMapView *)self.view;
-    _mapView.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -32,26 +31,26 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    _mapView.delegate = self;
     [_mapView viewWillAppear];
-    if (_locService) {
-        _locService.delegate = self;
-        [_locService startUserLocationService];
-        _mapView.showsUserLocation = NO;
-        _mapView.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
-        _mapView.showsUserLocation = YES;
-        BMKLocationViewDisplayParam *param = [BMKLocationViewDisplayParam new];
-        param.isAccuracyCircleShow = false;
-        [_mapView updateLocationViewWithParam:param];
-    }
+    
+    _locService.delegate = self;
+    [_locService startUserLocationService];
+    _mapView.showsUserLocation = NO;
+    _mapView.userTrackingMode = BMKUserTrackingModeNone;//设置定位的状态
+    _mapView.showsUserLocation = YES;
+    BMKLocationViewDisplayParam *param = [BMKLocationViewDisplayParam new];
+    param.isAccuracyCircleShow = false;
+    [_mapView updateLocationViewWithParam:param];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
     [_mapView viewWillDisappear];
-    if (_locService) {
-        [_locService stopUserLocationService];
-        _locService.delegate = nil;
-        _mapView.showsUserLocation = NO;
-    }
+    _mapView.delegate = nil;
+    
+    [_locService stopUserLocationService];
+    _locService.delegate = nil;
+    _mapView.showsUserLocation = NO;
 }
 
 - (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation{
