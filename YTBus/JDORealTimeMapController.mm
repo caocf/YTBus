@@ -101,6 +101,10 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"realtimemap"];
+    [MobClick event:@"realtimemap"];
+    [MobClick beginEvent:@"realtimemap"];
+    
     _mapView.delegate = self;
     [_mapView viewWillAppear];
     _timer = [NSTimer scheduledTimerWithTimeInterval:Bus_Refresh_Interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
@@ -108,6 +112,9 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"realtimemap"];
+    [MobClick endEvent:@"realtimemap"];
+    
     [_mapView viewWillDisappear];
     _mapView.delegate = nil;
     if ( _timer && _timer.valid) {
@@ -242,7 +249,7 @@ static const void *SelectedKey = &SelectedKey;
     count = 1;
     for (int i=0; i<_stations.count; i++) {
         JDOStationModel *station = _stations[i];
-        BMKCircle *circle = [BMKCircle circleWithCenterCoordinate:CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue) radius:250];
+        BMKCircle *circle = [BMKCircle circleWithCenterCoordinate:CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue) radius:220];
         if (station.isStart || station.isEnd) {
             circle.selected = [NSNumber numberWithBool:true];
         }else{
@@ -258,7 +265,7 @@ static const void *SelectedKey = &SelectedKey;
     BMKCircle *circle = (BMKCircle *)overlay;
     circleView.fillColor = [circle.selected boolValue]?[UIColor colorWithRed:255/255.0f green:180/255.0f blue:0 alpha:1.0f]:[UIColor colorWithRed:55/255.0f green:170/255.0f blue:50/255.0f alpha:1.0f];
     circleView.strokeColor = [UIColor colorWithHex:@"FEFEFE"];
-    circleView.lineWidth = 2.0f;
+    circleView.lineWidth = 1.0f;
     
     return circleView;
 }

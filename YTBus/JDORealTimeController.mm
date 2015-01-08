@@ -201,14 +201,19 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
+    [MobClick beginLogPageView:@"realtime"];
+    [MobClick event:@"realtime"];
+    [MobClick beginEvent:@"realtime"];
+    
     _timer = [NSTimer scheduledTimerWithTimeInterval:Bus_Refresh_Interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
     [_timer fire];
     [self scrollToTargetStation:false];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"realtime"];
+    [MobClick endEvent:@"realtime"];
+    
     if ( _timer && [_timer isValid]) {
         [_timer invalidate];
         _timer = nil;

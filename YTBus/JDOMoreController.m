@@ -8,6 +8,7 @@
 
 #import "JDOMoreController.h"
 #import "JDOConstants.h"
+#import "iVersion.h"
 
 @interface JDOMoreCell : UITableViewCell
 
@@ -25,17 +26,58 @@
 
 @end
 
-@interface JDOMoreController ()
+@interface JDOMoreController () <iVersionDelegate>
 
 @end
 
-@implementation JDOMoreController
+@implementation JDOMoreController{
+    BOOL hasNewVersion;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.tableView.bounces = false;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+    
+    hasNewVersion = false;
+    [iVersion sharedInstance].delegate = self;
+    [[iVersion sharedInstance] checkForNewVersion];
+}
+
+- (void)iVersionDidNotDetectNewVersion{
+    UITableViewCell *checkUpdateCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
+    UILabel *hintLabel = (UILabel *)[checkUpdateCell.contentView viewWithTag:1002];
+    hintLabel.text = @"当前已是最新版本";
+    hasNewVersion = false;
+}
+
+- (void)iVersionVersionCheckDidFailWithError:(NSError *)error{
+    UITableViewCell *checkUpdateCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
+    UILabel *hintLabel = (UILabel *)[checkUpdateCell.contentView viewWithTag:1002];
+    hintLabel.text = @"无法检查新版本";
+    hasNewVersion = false;
+}
+
+- (void)iVersionDidDetectNewVersion:(NSString *)version details:(NSString *)versionDetails{
+    UITableViewCell *checkUpdateCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
+    UILabel *hintLabel = (UILabel *)[checkUpdateCell.contentView viewWithTag:1002];
+    hintLabel.text = [NSString stringWithFormat:@"发现新版本%@",version];
+    hasNewVersion = true;
+}
+
+- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails{
+    return false;   // 不使用弹出Alert的方式提示新版本
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.row == 6) {   // 检查更新
+        if (hasNewVersion) {
+            [[iVersion sharedInstance] openAppPageInAppStore];
+        }else{
+            [[iVersion sharedInstance] checkForNewVersion];
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -70,39 +112,7 @@
 //    return cell;
 //}
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 /*
 #pragma mark - Navigation

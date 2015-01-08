@@ -108,10 +108,7 @@
     _locService = [[BMKLocationService alloc] init];
     _nearbyStations = [[NSMutableArray alloc] init];
     animationIndexPath = [NSMutableSet set];
-    distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
-    if (distanceRadius == 0) {
-        distanceRadius = 1000;
-    }
+    distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
     
     _db = [JDODatabase sharedDB];
     if (!_db) {
@@ -191,6 +188,7 @@
 
 - (void)didFailToLocateUserWithError:(NSError *)error {
     NSLog(@"location error:%@",error);
+    // 若启动时候无网络，使用GPS定位可能需要定位很久，iPhone下及时关闭移动数据和启用飞行模式都可以定位成功
     if (error.code == kCLErrorLocationUnknown) {
         if (!hud && _linesInfo.count==0 ) {
             hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];

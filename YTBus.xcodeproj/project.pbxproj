@@ -33,6 +33,10 @@
 		2D884B9C19F6269B00C83F71 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D884B9B19F6269B00C83F71 /* SystemConfiguration.framework */; };
 		2D884B9E19F626AC00C83F71 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D884B9D19F626AC00C83F71 /* CoreGraphics.framework */; };
 		2D884BA019F626B100C83F71 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D884B9F19F626B100C83F71 /* Security.framework */; };
+		2D9F90811A5E179000B7A70E /* JDOAboutUsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F90801A5E179000B7A70E /* JDOAboutUsController.m */; };
+		2D9F90861A5E197E00B7A70E /* V8HorizontalPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F90841A5E197E00B7A70E /* V8HorizontalPickerView.m */; };
+		2D9F908B1A5E1E6B00B7A70E /* setting_count_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F90891A5E1E6B00B7A70E /* setting_count_bg@2x.png */; };
+		2D9F908C1A5E1E6B00B7A70E /* setting_count_indicator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F908A1A5E1E6B00B7A70E /* setting_count_indicator@2x.png */; };
 		2DA662F919F0D92D00DFED0B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662F819F0D92D00DFED0B /* main.m */; };
 		2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662FB19F0D92D00DFED0B /* AppDelegate.m */; };
 		2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630319F0D92D00DFED0B /* Main.storyboard */; };
@@ -116,6 +120,7 @@
 		2DF717371A58ED2000EEDC1E /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DF717341A58ED2000EEDC1E /* libMobClickLibrary.a */; };
 		2DF7173A1A5923DF00EEDC1E /* libbaidumapapi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DF717381A5923DF00EEDC1E /* libbaidumapapi.a */; };
 		2DF7173B1A5923DF00EEDC1E /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2DF717391A5923DF00EEDC1E /* mapapi.bundle */; };
+		2DF7177E1A5BBA0500EEDC1E /* iVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF7177D1A5BBA0500EEDC1E /* iVersion.m */; };
 		2DFF46FB1A034F8000AFB6DB /* JDOMainTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF46FA1A034F8000AFB6DB /* JDOMainTabController.m */; };
 /* End PBXBuildFile section */
 
@@ -176,6 +181,13 @@
 		2D884B9B19F6269B00C83F71 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2D884B9D19F626AC00C83F71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2D884B9F19F626B100C83F71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		2D9F907F1A5E179000B7A70E /* JDOAboutUsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOAboutUsController.h; sourceTree = "<group>"; };
+		2D9F90801A5E179000B7A70E /* JDOAboutUsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOAboutUsController.m; sourceTree = "<group>"; };
+		2D9F90831A5E197E00B7A70E /* V8HorizontalPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = V8HorizontalPickerView.h; sourceTree = "<group>"; };
+		2D9F90841A5E197E00B7A70E /* V8HorizontalPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = V8HorizontalPickerView.m; sourceTree = "<group>"; };
+		2D9F90851A5E197E00B7A70E /* V8HorizontalPickerViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = V8HorizontalPickerViewProtocol.h; sourceTree = "<group>"; };
+		2D9F90891A5E1E6B00B7A70E /* setting_count_bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting_count_bg@2x.png"; sourceTree = "<group>"; };
+		2D9F908A1A5E1E6B00B7A70E /* setting_count_indicator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting_count_indicator@2x.png"; sourceTree = "<group>"; };
 		2DA662F319F0D92D00DFED0B /* YTBus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YTBus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA662F719F0D92D00DFED0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DA662F819F0D92D00DFED0B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -385,6 +397,8 @@
 		2DF717761A5923F000EEDC1E /* BMKUserLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKUserLocation.h; sourceTree = "<group>"; };
 		2DF717771A5923F000EEDC1E /* BMKUtilsComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKUtilsComponent.h; sourceTree = "<group>"; };
 		2DF717781A5923F000EEDC1E /* BMKVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMKVersion.h; sourceTree = "<group>"; };
+		2DF7177C1A5BBA0500EEDC1E /* iVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iVersion.h; sourceTree = "<group>"; };
+		2DF7177D1A5BBA0500EEDC1E /* iVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iVersion.m; sourceTree = "<group>"; };
 		2DFF46F91A034F8000AFB6DB /* JDOMainTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOMainTabController.h; sourceTree = "<group>"; };
 		2DFF46FA1A034F8000AFB6DB /* JDOMainTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOMainTabController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -516,6 +530,16 @@
 			name = "BaiduMap-2.6.0";
 			sourceTree = "<group>";
 		};
+		2D9F90821A5E196900B7A70E /* V8HorizontalPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				2D9F90831A5E197E00B7A70E /* V8HorizontalPickerView.h */,
+				2D9F90841A5E197E00B7A70E /* V8HorizontalPickerView.m */,
+				2D9F90851A5E197E00B7A70E /* V8HorizontalPickerViewProtocol.h */,
+			);
+			name = V8HorizontalPickerView;
+			sourceTree = "<group>";
+		};
 		2DA662EA19F0D92C00DFED0B = {
 			isa = PBXGroup;
 			children = (
@@ -591,6 +615,7 @@
 		2DA6632019F0D97100DFED0B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				2D9F90821A5E196900B7A70E /* V8HorizontalPickerView */,
 				2DF717331A58ECFE00EEDC1E /* UMeng_IDFA */,
 				2DC39A341A527E3000662A33 /* TBAnnotationCluster */,
 				2DC39A0C1A4D4AEC00662A33 /* MGTemplateEngine */,
@@ -609,6 +634,8 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2D9F90891A5E1E6B00B7A70E /* setting_count_bg@2x.png */,
+				2D9F908A1A5E1E6B00B7A70E /* setting_count_indicator@2x.png */,
 				2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */,
 				2DC39A2C1A4D50CD00662A33 /* news_content_background_selected@2x.png */,
 				2DC39A2D1A4D50CD00662A33 /* news_content_background@2x.png */,
@@ -732,6 +759,8 @@
 				2DC399D01A47C7E400662A33 /* JDOMoreController.m */,
 				2DECC2B81A0081700022F60E /* JDOSettingController.h */,
 				2DECC2B91A0081710022F60E /* JDOSettingController.m */,
+				2D9F907F1A5E179000B7A70E /* JDOAboutUsController.h */,
+				2D9F90801A5E179000B7A70E /* JDOAboutUsController.m */,
 				2DC399EA1A4D2A5300662A33 /* JDONewsController.h */,
 				2DC399EB1A4D2A5400662A33 /* JDONewsController.m */,
 			);
@@ -804,6 +833,8 @@
 		2DECC2CC1A0310850022F60E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2DF7177C1A5BBA0500EEDC1E /* iVersion.h */,
+				2DF7177D1A5BBA0500EEDC1E /* iVersion.m */,
 				2DC399FD1A4D49C900662A33 /* Reachability.h */,
 				2DC399FE1A4D49C900662A33 /* Reachability.m */,
 				2DECC2CD1A0310D50022F60E /* JDODatabase.h */,
@@ -957,9 +988,11 @@
 				2DC39A2F1A4D50CD00662A33 /* news_content_background@2x.png in Resources */,
 				2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */,
 				2DC399FC1A4D32BA00662A33 /* status_retry@2x.png in Resources */,
+				2D9F908C1A5E1E6B00B7A70E /* setting_count_indicator@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
 				2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */,
 				2DC399F91A4D32BA00662A33 /* status_no_data@2x.png in Resources */,
+				2D9F908B1A5E1E6B00B7A70E /* setting_count_bg@2x.png in Resources */,
 				2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */,
 				2DC399FA1A4D32BA00662A33 /* status_logo@2x.png in Resources */,
 				2DC399E81A4BA60800662A33 /* 超出范围@2x.png in Resources */,
@@ -999,6 +1032,7 @@
 				2DECC33D1A0324D00022F60E /* UIImageView+AFNetworking.m in Sources */,
 				2DC39A201A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m in Sources */,
 				2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */,
+				2DF7177E1A5BBA0500EEDC1E /* iVersion.m in Sources */,
 				2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */,
 				2DECC2B119FF9ABA0022F60E /* FMDatabaseQueue.m in Sources */,
 				2DC39A421A527E5B00662A33 /* TBClusterAnnotation.m in Sources */,
@@ -1029,6 +1063,7 @@
 				2DECC2C71A0218FC0022F60E /* JDONearMapController.mm in Sources */,
 				2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */,
 				2DA662F919F0D92D00DFED0B /* main.m in Sources */,
+				2D9F90811A5E179000B7A70E /* JDOAboutUsController.m in Sources */,
 				2DECC2B219FF9ABA0022F60E /* FMDatabaseAdditions.m in Sources */,
 				2DC39A2B1A4D4C7000662A33 /* StyledPageControl.m in Sources */,
 				2DC399EC1A4D2A5400662A33 /* JDONewsController.m in Sources */,
@@ -1057,6 +1092,7 @@
 				2D33FB141A22F0F00024F1ED /* JSONKit.m in Sources */,
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
 				2DC399F31A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
+				2D9F90861A5E197E00B7A70E /* V8HorizontalPickerView.m in Sources */,
 				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,
 				2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */,

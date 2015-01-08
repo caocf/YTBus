@@ -63,6 +63,17 @@
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
 }
 
+-(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"sites"];
+    [MobClick event:@"sites"];
+    [MobClick beginEvent:@"sites"];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"sites"];
+    [MobClick endEvent:@"sites"];
+}
+
 - (void) clearHistory:(UIButton *)btn{
     [_historyStations removeAllObjects];
     [self.tableView reloadData];

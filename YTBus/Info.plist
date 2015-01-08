@@ -26,12 +26,14 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>你的位置信息仅用来获取附近的公交站点</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
 		<key>UINavigationBar</key>
@@ -48,5 +50,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIViewEdgeAntialiasing</key>
+	<true/>
 </dict>
 </plist>

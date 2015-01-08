@@ -7,6 +7,7 @@
 //
 
 #import "JDORouteMapController.h"
+#import "JDOConstants.h"
 
 @interface JDORouteMapController () <BMKMapViewDelegate,UITableViewDelegate,UITableViewDataSource>
 
@@ -19,12 +20,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+-(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"transfermap"];
+    [MobClick event:@"transfermap"];
+    [MobClick beginEvent:@"transfermap"];
+    
+    _mapView.delegate = self;
+    [_mapView viewWillAppear];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"transfermap"];
+    [MobClick endEvent:@"transfermap"];
+    
+    [_mapView viewWillDisappear];
+    _mapView.delegate = nil;
 }
 
 @end

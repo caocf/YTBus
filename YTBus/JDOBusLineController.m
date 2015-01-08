@@ -56,6 +56,17 @@
     }];
 }
 
+-(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"route"];
+    [MobClick event:@"route"];
+    [MobClick beginEvent:@"route"];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"route"];
+    [MobClick endEvent:@"route"];
+}
+
 - (void)loadData{
     [self loadFavorLines];
     [self loadAllLines];

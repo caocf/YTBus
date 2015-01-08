@@ -82,10 +82,19 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [MobClick beginLogPageView:@"newslist"];
+    [MobClick event:@"newslist"];
+    [MobClick beginEvent:@"newslist"];
+    
     self.noNetWorkView.frame = self.view.bounds;
     self.retryView.frame = self.view.bounds;
     self.logoView.frame = self.view.bounds;
     self.activityIndicator.center = CGPointMake(self.logoView.center.x,self.logoView.center.y-80);
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [MobClick endLogPageView:@"newslist"];
+    [MobClick endEvent:@"newslist"];
 }
 
 - (void)didReceiveMemoryWarning {

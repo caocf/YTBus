@@ -110,11 +110,18 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"sitesmap"];
+    [MobClick event:@"sitesmap"];
+    [MobClick beginEvent:@"sitesmap"];
+    
     _mapView.delegate = self;
     [_mapView viewWillAppear];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"sitesmap"];
+    [MobClick endEvent:@"sitesmap"];
+    
     [_mapView viewWillDisappear];
     _mapView.delegate = nil;
 }

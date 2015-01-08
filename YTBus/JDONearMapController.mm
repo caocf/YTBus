@@ -56,10 +56,7 @@
     _mapView.minZoomLevel = 15;
     
     _locService = [[BMKLocationService alloc] init];
-    distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"];
-    if (distanceRadius == 0) {
-        distanceRadius = 1000;
-    }
+    distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
     
     _db = [JDODatabase sharedDB];
 
@@ -269,7 +266,8 @@
 
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
     // 选中某个marker后，将此marker移动到地图中心偏下的位置，使其上方弹出的callout能在屏幕内显示全
-    float delta = [[UIDevice currentDevice] isCurrentDeviceHardwareBetterThan:IPHONE_4S]?70:100;
+    float screenHeight = CGRectGetHeight([UIScreen mainScreen].bounds);
+    float delta = screenHeight>480?70:100;
     [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
     CGPoint p = [mapView convertCoordinate:view.annotation.coordinate toPointToView:mapView];
     CLLocationCoordinate2D coor = [mapView convertPoint:CGPointMake(p.x, p.y-delta) toCoordinateFromView:mapView];

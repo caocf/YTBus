@@ -141,6 +141,17 @@
 
 }
 
+-(void)viewWillAppear:(BOOL)animated {
+    [MobClick beginLogPageView:@"transfer"];
+    [MobClick event:@"transfer"];
+    [MobClick beginEvent:@"transfer"];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [MobClick endLogPageView:@"transfer"];
+    [MobClick endEvent:@"transfer"];
+}
+
 - (IBAction)directionChanged:(UIButton *)sender {
     NSString *tmp = _startField.text;
     _startField.text = _endField.text;
