@@ -15,13 +15,9 @@
 @property (nonatomic,assign) IBOutlet UISegmentedControl *intervalSegment;
 @property (nonatomic,assign) IBOutlet V8HorizontalPickerView *pickerView;
 
--(IBAction)onDistanceChanged:(id)sender;
-
 @end
 
 @implementation JDOSettingController{
-    int distance;
-    int hintNumber;
     UILabel *indicatorLabel;
 }
 
@@ -30,10 +26,19 @@
     
     self.tableView.bounces = false;
     
-    distance = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
-    hintNumber = [[NSUserDefaults standardUserDefaults] integerForKey:@"station_hint_number"]?:3;
+    int distance = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
+    int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
+    int hintNumber = [[NSUserDefaults standardUserDefaults] integerForKey:@"station_hint_number"]?:3;
     
-//    self.distanceSlider.value = distance;
+    self.distanceSegment.selectedSegmentIndex = distance/1000;
+    self.intervalSegment.selectedSegmentIndex = interval/30;
+//    switch (distance) {
+//        case 500:    self.distanceSegment.selectedSegmentIndex = 0;  break;
+//        case 1000:   self.distanceSegment.selectedSegmentIndex = 1;  break;
+//        case 2000:   self.distanceSegment.selectedSegmentIndex = 2;  break;
+//        case 3000:   self.distanceSegment.selectedSegmentIndex = 3;  break;
+//        default:    break;
+//    }
     
     UIImageView *background = [[UIImageView alloc] initWithFrame:self.pickerView.bounds];
     background.image = [UIImage imageNamed:@"setting_count_bg"];
@@ -62,16 +67,19 @@
 }
 
 -(IBAction)onDistanceChanged:(UISegmentedControl *)sender{
-//    distance = [[NSNumber numberWithFloat:sender.value] intValue];
-//    self.distanceLabel.text = [NSString stringWithFormat:@"%d米",distance];
+    NSString *value = [sender titleForSegmentAtIndex:sender.selectedSegmentIndex];
     
-    [[NSUserDefaults standardUserDefaults] setInteger:distance forKey:@"nearby_distance"];
-}
-
--(IBAction)onDistanceFinished:(UISegmentedControl *)sender{
+    [[NSUserDefaults standardUserDefaults] setInteger:[value intValue] forKey:@"nearby_distance"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"nearby_distance_changed" object:nil];
+}
+
+-(IBAction)onIntervalChanged:(UISegmentedControl *)sender{
+    NSString *value = [sender titleForSegmentAtIndex:sender.selectedSegmentIndex];
     
+    [[NSUserDefaults standardUserDefaults] setInteger:[value intValue] forKey:@"refresh_interval"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh_interval_changed" object:nil];
 }
 
 - (NSInteger)numberOfElementsInHorizontalPickerView:(V8HorizontalPickerView *)picker{
@@ -99,15 +107,13 @@
     [indicatorLabel setText:[NSString stringWithFormat:@"%d", index+1]];
 }
 
-- (void)horizontalPickerView:(V8HorizontalPickerView *)picker didSelectElementAtIndex:(NSInteger)index{
-//    self.currentSelectedCount = index;
-    [indicatorLabel setText:[NSString stringWithFormat:@"%d", index+1]];
-}
+//- (void)horizontalPickerView:(V8HorizontalPickerView *)picker didSelectElementAtIndex:(NSInteger)index{
+//    [indicatorLabel setText:[NSString stringWithFormat:@"%d", index+1]];
+//}
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 

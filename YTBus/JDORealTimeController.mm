@@ -60,7 +60,9 @@
 
 @end
 
-@implementation JDORealTimeController
+@implementation JDORealTimeController{
+
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -83,6 +85,7 @@
     self.tableView.sectionHeaderHeight = 15;
     self.tableView.sectionFooterHeight = 15;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+
 }
 
 - (void)loadData{
@@ -205,7 +208,8 @@
     [MobClick event:@"realtime"];
     [MobClick beginEvent:@"realtime"];
     
-    _timer = [NSTimer scheduledTimerWithTimeInterval:Bus_Refresh_Interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
+    int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
+    _timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
     [_timer fire];
     [self scrollToTargetStation:false];
 }

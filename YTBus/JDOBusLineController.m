@@ -213,17 +213,31 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier = @"busLine";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
-    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
+    if (indexPath.row%2==0) {
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
+    }else{
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景灰"]];
+    }
     
     JDOBusLine *busLine;
+    NSString *barImgName, *p1ImgName, *p2ImgName;
     if (indexPath.section == 0 && _filterFavorLines.count>0) {
         busLine =  (JDOBusLine *)_filterFavorLines[indexPath.row];
+        barImgName = @"路牌-收藏";
+        p1ImgName = @"始";
+        p2ImgName = @"终";
     }else{
         busLine =  (JDOBusLine *)_filterAllLines[indexPath.row];
+        barImgName = @"路牌-线路";
+        p1ImgName = @"线路圆点";
+        p2ImgName = @"线路圆点";
     }
     [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
     [(UILabel *)[cell viewWithTag:1002] setText:(busLine.stationA==nil?@"未知站点":busLine.stationA)];
     [(UILabel *)[cell viewWithTag:1003] setText:(busLine.stationB==nil?@"未知站点":busLine.stationB)];
+    [(UIImageView *)[cell viewWithTag:1004] setImage:[UIImage imageNamed:barImgName]];
+    [(UIImageView *)[cell viewWithTag:1005] setImage:[UIImage imageNamed:p1ImgName]];
+    [(UIImageView *)[cell viewWithTag:1006] setImage:[UIImage imageNamed:p2ImgName]];
     
     return cell;
 }

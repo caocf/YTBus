@@ -37,6 +37,10 @@
 		2D9F90861A5E197E00B7A70E /* V8HorizontalPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F90841A5E197E00B7A70E /* V8HorizontalPickerView.m */; };
 		2D9F908B1A5E1E6B00B7A70E /* setting_count_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F90891A5E1E6B00B7A70E /* setting_count_bg@2x.png */; };
 		2D9F908C1A5E1E6B00B7A70E /* setting_count_indicator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F908A1A5E1E6B00B7A70E /* setting_count_indicator@2x.png */; };
+		2D9F90971A5E6DC900B7A70E /* 路牌-收藏@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F90931A5E6DC900B7A70E /* 路牌-收藏@2x.png */; };
+		2D9F90981A5E6DC900B7A70E /* 路牌-线路@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F90941A5E6DC900B7A70E /* 路牌-线路@2x.png */; };
+		2D9F90991A5E6DC900B7A70E /* 始@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F90951A5E6DC900B7A70E /* 始@2x.png */; };
+		2D9F909A1A5E6DC900B7A70E /* 终@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F90961A5E6DC900B7A70E /* 终@2x.png */; };
 		2DA662F919F0D92D00DFED0B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662F819F0D92D00DFED0B /* main.m */; };
 		2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662FB19F0D92D00DFED0B /* AppDelegate.m */; };
 		2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630319F0D92D00DFED0B /* Main.storyboard */; };
@@ -188,6 +192,11 @@
 		2D9F90851A5E197E00B7A70E /* V8HorizontalPickerViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = V8HorizontalPickerViewProtocol.h; sourceTree = "<group>"; };
 		2D9F90891A5E1E6B00B7A70E /* setting_count_bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting_count_bg@2x.png"; sourceTree = "<group>"; };
 		2D9F908A1A5E1E6B00B7A70E /* setting_count_indicator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting_count_indicator@2x.png"; sourceTree = "<group>"; };
+		2D9F90921A5E6AA900B7A70E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		2D9F90931A5E6DC900B7A70E /* 路牌-收藏@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "路牌-收藏@2x.png"; sourceTree = "<group>"; };
+		2D9F90941A5E6DC900B7A70E /* 路牌-线路@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "路牌-线路@2x.png"; sourceTree = "<group>"; };
+		2D9F90951A5E6DC900B7A70E /* 始@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "始@2x.png"; sourceTree = "<group>"; };
+		2D9F90961A5E6DC900B7A70E /* 终@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "终@2x.png"; sourceTree = "<group>"; };
 		2DA662F319F0D92D00DFED0B /* YTBus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YTBus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA662F719F0D92D00DFED0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DA662F819F0D92D00DFED0B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -213,7 +222,6 @@
 		2DC399D71A47CA9000662A33 /* 意见@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "意见@2x.png"; sourceTree = "<group>"; };
 		2DC399D81A47CA9000662A33 /* 指南@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "指南@2x.png"; sourceTree = "<group>"; };
 		2DC399D91A47CA9000662A33 /* 资讯@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "资讯@2x.png"; sourceTree = "<group>"; };
-		2DC399E31A47E07500662A33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		2DC399E41A4BA60600662A33 /* 不允许使用定位@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "不允许使用定位@2x.png"; sourceTree = "<group>"; };
 		2DC399E51A4BA60700662A33 /* 超出范围@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "超出范围@2x.png"; sourceTree = "<group>"; };
 		2DC399E61A4BA60700662A33 /* 关闭定位@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "关闭定位@2x.png"; sourceTree = "<group>"; };
@@ -634,6 +642,10 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2D9F90931A5E6DC900B7A70E /* 路牌-收藏@2x.png */,
+				2D9F90941A5E6DC900B7A70E /* 路牌-线路@2x.png */,
+				2D9F90951A5E6DC900B7A70E /* 始@2x.png */,
+				2D9F90961A5E6DC900B7A70E /* 终@2x.png */,
 				2D9F90891A5E1E6B00B7A70E /* setting_count_bg@2x.png */,
 				2D9F908A1A5E1E6B00B7A70E /* setting_count_indicator@2x.png */,
 				2DC39A321A4D64B300662A33 /* news_image_placeholder@2x.png */,
@@ -953,6 +965,7 @@
 				TargetAttributes = {
 					2DA662F219F0D92D00DFED0B = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = 5BA6RP6GDL;
 					};
 					2DA6630E19F0D92E00DFED0B = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -987,9 +1000,13 @@
 				2DC39A281A4D4BFB00662A33 /* news_head_title_background@2x.png in Resources */,
 				2DC39A2F1A4D50CD00662A33 /* news_content_background@2x.png in Resources */,
 				2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */,
+				2D9F90991A5E6DC900B7A70E /* 始@2x.png in Resources */,
 				2DC399FC1A4D32BA00662A33 /* status_retry@2x.png in Resources */,
+				2D9F909A1A5E6DC900B7A70E /* 终@2x.png in Resources */,
 				2D9F908C1A5E1E6B00B7A70E /* setting_count_indicator@2x.png in Resources */,
+				2D9F90971A5E6DC900B7A70E /* 路牌-收藏@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
+				2D9F90981A5E6DC900B7A70E /* 路牌-线路@2x.png in Resources */,
 				2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */,
 				2DC399F91A4D32BA00662A33 /* status_no_data@2x.png in Resources */,
 				2D9F908B1A5E1E6B00B7A70E /* setting_count_bg@2x.png in Resources */,
@@ -1128,7 +1145,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				2DA6630419F0D92D00DFED0B /* Base */,
-				2DC399E31A47E07500662A33 /* zh-Hans */,
+				2D9F90921A5E6AA900B7A70E /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1232,6 +1249,8 @@
 				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_INPUT_FILETYPE = automatic;
 				HEADER_SEARCH_PATHS = (
@@ -1248,6 +1267,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = armv7;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1259,6 +1279,8 @@
 				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_INPUT_FILETYPE = automatic;
 				HEADER_SEARCH_PATHS = (
@@ -1275,6 +1297,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = armv7;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
