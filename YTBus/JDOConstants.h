@@ -26,6 +26,7 @@ typedef enum {
 #define DFE_Server_URL @"http://218.56.32.7:1030"
 #define JDO_Server_URL @"http://p.jiaodong.net/mobileQuery/V11"
 #define JDO_RESOURCE_URL @"http://p.jiaodong.net/jdmsys/"
+#define JDO_Bus_Server @"http://p.jiaodong.net/ytbus/V10"
 #define Download_Action @"SynBusSoftWebservice/DownloadServlet"
 #define DB_Download_URL @"http://218.56.32.7:1030/SynBusSoftWebservice/DownloadServlet?method=downloadDb"
 #define GetBusLineStatus_URL @"http://218.56.32.7:4999/BusPosition.asmx"
@@ -37,6 +38,9 @@ typedef enum {
 #define Adv_Cell_Height 60.0f
 #define News_Cell_Height 70.0f
 #define Review_Font_Size 14
+
+#define Screen_Height [[UIScreen mainScreen] bounds].size.height
+#define Screen_Width [[UIScreen mainScreen] bounds].size.width
 
 // From here to end of file added by Injection Plugin //
 //#ifdef DEBUG

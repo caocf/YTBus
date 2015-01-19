@@ -83,10 +83,15 @@
         FMResultSet *rs = [_db executeQuery:[GetLineById stringByReplacingOccurrencesOfString:@"?" withString:ids]];
         while ([rs next]) {
             JDOBusLine *busLine = [JDOBusLine new];
-            busLine.lineId = [rs stringForColumn:@"ID"];
+            busLine.lineId = [rs stringForColumn:@"LINEID"];
             busLine.lineName = [rs stringForColumn:@"BUSLINENAME"];
-            busLine.stationA = [rs stringForColumn:@"STATIONANAME"];
-            busLine.stationB = [rs stringForColumn:@"STATIONBNAME"];
+            
+            JDOBusLineDetail *busLineDetail = [JDOBusLineDetail new];
+            busLineDetail.detailId = [rs stringForColumn:@"DETAILID"];
+            busLineDetail.lineDetail = [rs stringForColumn:@"LINEDETAILNAME"];
+            busLineDetail.direction = [rs stringForColumn:@"DIRECTION"];
+            
+            busLine.lineDetailPair = [NSMutableArray arrayWithObject:busLineDetail];
             [_favorLines addObject:busLine];
         }
     }
@@ -126,7 +131,13 @@
 //            return NSOrderedAscending;
 //        }
 //        return NSOrderedDescending;
-        return [line1.lineName compare:line2.lineName options:NSNumericSearch];
+        NSComparisonResult result = [line1.lineName compare:line2.lineName options:NSNumericSearch];
+        if (result != NSOrderedSame) {
+            return result;
+        }
+        JDOBusLineDetail *detail1 = line1.lineDetailPair[0];
+        JDOBusLineDetail *detail2 = line2.lineDetailPair[0];
+        return [detail1.direction compare:detail2.direction];
     }];
 }
 
@@ -220,24 +231,26 @@
     }
     
     JDOBusLine *busLine;
-    NSString *barImgName, *p1ImgName, *p2ImgName;
     if (indexPath.section == 0 && _filterFavorLines.count>0) {
         busLine =  (JDOBusLine *)_filterFavorLines[indexPath.row];
-        barImgName = @"路牌-收藏";
-        p1ImgName = @"始";
-        p2ImgName = @"终";
+        [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
+        JDOBusLineDetail *lineDetail = busLine.lineDetailPair[0];
+        NSArray *lineNamePair = [lineDetail.lineDetail componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"－-"]];
+        [(UILabel *)[cell viewWithTag:1002] setText:lineNamePair[0]];
+        [(UILabel *)[cell viewWithTag:1003] setText:lineNamePair.count>1?lineNamePair[1]:lineNamePair[0]];
+        [(UIImageView *)[cell viewWithTag:1004] setImage:[UIImage imageNamed:@"路牌-收藏"]];
+        [(UIImageView *)[cell viewWithTag:1005] setImage:[UIImage imageNamed:@"始"]];
+        [(UIImageView *)[cell viewWithTag:1006] setImage:[UIImage imageNamed:@"终"]];
     }else{
         busLine =  (JDOBusLine *)_filterAllLines[indexPath.row];
-        barImgName = @"路牌-线路";
-        p1ImgName = @"线路圆点";
-        p2ImgName = @"线路圆点";
+        [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
+        [(UILabel *)[cell viewWithTag:1002] setText:(busLine.stationA==nil?@"未知站点":busLine.stationA)];
+        [(UILabel *)[cell viewWithTag:1003] setText:(busLine.stationB==nil?@"未知站点":busLine.stationB)];
+        [(UIImageView *)[cell viewWithTag:1004] setImage:[UIImage imageNamed:@"路牌-线路"]];
+        [(UIImageView *)[cell viewWithTag:1005] setImage:[UIImage imageNamed:@"线路圆点"]];
+        [(UIImageView *)[cell viewWithTag:1006] setImage:[UIImage imageNamed:@"线路圆点"]];
     }
-    [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
-    [(UILabel *)[cell viewWithTag:1002] setText:(busLine.stationA==nil?@"未知站点":busLine.stationA)];
-    [(UILabel *)[cell viewWithTag:1003] setText:(busLine.stationB==nil?@"未知站点":busLine.stationB)];
-    [(UIImageView *)[cell viewWithTag:1004] setImage:[UIImage imageNamed:barImgName]];
-    [(UIImageView *)[cell viewWithTag:1005] setImage:[UIImage imageNamed:p1ImgName]];
-    [(UIImageView *)[cell viewWithTag:1006] setImage:[UIImage imageNamed:p2ImgName]];
+    
     
     return cell;
 }

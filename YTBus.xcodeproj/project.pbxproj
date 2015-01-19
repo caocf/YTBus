@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D0DEF1F1A677D680096B419 /* MJPopupBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DEF1C1A677D680096B419 /* MJPopupBackgroundView.m */; };
+		2D0DEF201A677D680096B419 /* UIViewController+MJPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0DEF1E1A677D680096B419 /* UIViewController+MJPopupViewController.m */; };
 		2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */; };
 		2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FAB51A109D3C0024F1ED /* JDORealTimeMapController.mm */; };
 		2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FABB1A1458F50024F1ED /* JDOBusLineController.m */; };
@@ -23,6 +25,10 @@
 		2D33FB191A241F850024F1ED /* JDOInterChangeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB181A241F850024F1ED /* JDOInterChangeController.m */; };
 		2D33FB1C1A247C4C0024F1ED /* JDORouteMapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */; };
 		2D33FB471A26E7D00024F1ED /* JDOLocationMapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D33FB461A26E7D00024F1ED /* JDOLocationMapController.m */; };
+		2D4713F71A68B66C00F2DE04 /* 常见问题@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D4713F51A68B66B00F2DE04 /* 常见问题@2x.png */; };
+		2D4713F81A68B66C00F2DE04 /* 指南@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D4713F61A68B66C00F2DE04 /* 指南@2x.png */; };
+		2D4713FA1A68B70900F2DE04 /* 设置@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D4713F91A68B70900F2DE04 /* 设置@2x.png */; };
+		2D4713FC1A68B79600F2DE04 /* new@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D4713FB1A68B79600F2DE04 /* new@2x.png */; };
 		2D4BB88619F661F200AC3941 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88519F661F200AC3941 /* UIKit.framework */; };
 		2D4BB88819F661F900AC3941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4BB88719F661F900AC3941 /* Foundation.framework */; };
 		2D884B4B19F60ACE00C83F71 /* JDONearByController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D884B4A19F60ACE00C83F71 /* JDONearByController.mm */; };
@@ -56,7 +62,6 @@
 		2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D51A47CA9000662A33 /* 更新@2x.png */; };
 		2DC399DE1A47CA9000662A33 /* 关于@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D61A47CA9000662A33 /* 关于@2x.png */; };
 		2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D71A47CA9000662A33 /* 意见@2x.png */; };
-		2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D81A47CA9000662A33 /* 指南@2x.png */; };
 		2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399D91A47CA9000662A33 /* 资讯@2x.png */; };
 		2DC399E71A4BA60800662A33 /* 不允许使用定位@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399E41A4BA60600662A33 /* 不允许使用定位@2x.png */; };
 		2DC399E81A4BA60800662A33 /* 超出范围@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC399E51A4BA60700662A33 /* 超出范围@2x.png */; };
@@ -139,6 +144,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D0DEF1B1A677D680096B419 /* MJPopupBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJPopupBackgroundView.h; sourceTree = "<group>"; };
+		2D0DEF1C1A677D680096B419 /* MJPopupBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJPopupBackgroundView.m; sourceTree = "<group>"; };
+		2D0DEF1D1A677D680096B419 /* UIViewController+MJPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MJPopupViewController.h"; sourceTree = "<group>"; };
+		2D0DEF1E1A677D680096B419 /* UIViewController+MJPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MJPopupViewController.m"; sourceTree = "<group>"; };
 		2D33FAAE1A0CB2AE0024F1ED /* JDOStationAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOStationAnnotation.h; sourceTree = "<group>"; };
 		2D33FAAF1A0CB2AF0024F1ED /* JDOStationAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOStationAnnotation.m; sourceTree = "<group>"; };
 		2D33FAB41A109D3B0024F1ED /* JDORealTimeMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDORealTimeMapController.h; sourceTree = "<group>"; };
@@ -173,6 +182,10 @@
 		2D33FB1B1A247C4C0024F1ED /* JDORouteMapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDORouteMapController.m; sourceTree = "<group>"; };
 		2D33FB451A26E7CF0024F1ED /* JDOLocationMapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOLocationMapController.h; sourceTree = "<group>"; };
 		2D33FB461A26E7D00024F1ED /* JDOLocationMapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOLocationMapController.m; sourceTree = "<group>"; };
+		2D4713F51A68B66B00F2DE04 /* 常见问题@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "常见问题@2x.png"; sourceTree = "<group>"; };
+		2D4713F61A68B66C00F2DE04 /* 指南@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "指南@2x.png"; sourceTree = "<group>"; };
+		2D4713F91A68B70900F2DE04 /* 设置@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "设置@2x.png"; sourceTree = "<group>"; };
+		2D4713FB1A68B79600F2DE04 /* new@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "new@2x.png"; sourceTree = "<group>"; };
 		2D4BB88519F661F200AC3941 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2D4BB88719F661F900AC3941 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2D884B4919F60ACE00C83F71 /* JDONearByController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDONearByController.h; sourceTree = "<group>"; };
@@ -220,7 +233,6 @@
 		2DC399D51A47CA9000662A33 /* 更新@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "更新@2x.png"; sourceTree = "<group>"; };
 		2DC399D61A47CA9000662A33 /* 关于@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "关于@2x.png"; sourceTree = "<group>"; };
 		2DC399D71A47CA9000662A33 /* 意见@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "意见@2x.png"; sourceTree = "<group>"; };
-		2DC399D81A47CA9000662A33 /* 指南@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "指南@2x.png"; sourceTree = "<group>"; };
 		2DC399D91A47CA9000662A33 /* 资讯@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "资讯@2x.png"; sourceTree = "<group>"; };
 		2DC399E41A4BA60600662A33 /* 不允许使用定位@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "不允许使用定位@2x.png"; sourceTree = "<group>"; };
 		2DC399E51A4BA60700662A33 /* 超出范围@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "超出范围@2x.png"; sourceTree = "<group>"; };
@@ -442,6 +454,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D0DEF1A1A677D540096B419 /* MJPopupViewController */ = {
+			isa = PBXGroup;
+			children = (
+				2D0DEF1B1A677D680096B419 /* MJPopupBackgroundView.h */,
+				2D0DEF1C1A677D680096B419 /* MJPopupBackgroundView.m */,
+				2D0DEF1D1A677D680096B419 /* UIViewController+MJPopupViewController.h */,
+				2D0DEF1E1A677D680096B419 /* UIViewController+MJPopupViewController.m */,
+			);
+			name = MJPopupViewController;
+			sourceTree = "<group>";
+		};
 		2D33FAC81A1983540024F1ED /* SSToolkit */ = {
 			isa = PBXGroup;
 			children = (
@@ -623,8 +646,9 @@
 		2DA6632019F0D97100DFED0B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				2D0DEF1A1A677D540096B419 /* MJPopupViewController */,
 				2D9F90821A5E196900B7A70E /* V8HorizontalPickerView */,
-				2DF717331A58ECFE00EEDC1E /* UMeng_IDFA */,
+				2DF717331A58ECFE00EEDC1E /* UMeng_IDFA-3.1.8 */,
 				2DC39A341A527E3000662A33 /* TBAnnotationCluster */,
 				2DC39A0C1A4D4AEC00662A33 /* MGTemplateEngine */,
 				2DC399ED1A4D2D3300662A33 /* SVPullToRefresh */,
@@ -666,8 +690,11 @@
 				2DC399D51A47CA9000662A33 /* 更新@2x.png */,
 				2DC399D61A47CA9000662A33 /* 关于@2x.png */,
 				2DC399D71A47CA9000662A33 /* 意见@2x.png */,
-				2DC399D81A47CA9000662A33 /* 指南@2x.png */,
 				2DC399D91A47CA9000662A33 /* 资讯@2x.png */,
+				2D4713F51A68B66B00F2DE04 /* 常见问题@2x.png */,
+				2D4713F61A68B66C00F2DE04 /* 指南@2x.png */,
+				2D4713F91A68B70900F2DE04 /* 设置@2x.png */,
+				2D4713FB1A68B79600F2DE04 /* new@2x.png */,
 				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
 			);
 			name = Resources;
@@ -906,14 +933,14 @@
 			name = SSZipArchive;
 			sourceTree = "<group>";
 		};
-		2DF717331A58ECFE00EEDC1E /* UMeng_IDFA */ = {
+		2DF717331A58ECFE00EEDC1E /* UMeng_IDFA-3.1.8 */ = {
 			isa = PBXGroup;
 			children = (
 				2DF717341A58ED2000EEDC1E /* libMobClickLibrary.a */,
 				2DF717351A58ED2000EEDC1E /* MobClick.h */,
 				2DF717361A58ED2000EEDC1E /* MobClickSocialAnalytics.h */,
 			);
-			name = UMeng_IDFA;
+			name = "UMeng_IDFA-3.1.8";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -966,6 +993,11 @@
 					2DA662F219F0D92D00DFED0B = {
 						CreatedOnToolsVersion = 6.0.1;
 						DevelopmentTeam = 5BA6RP6GDL;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
 					};
 					2DA6630E19F0D92E00DFED0B = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -999,16 +1031,17 @@
 			files = (
 				2DC39A281A4D4BFB00662A33 /* news_head_title_background@2x.png in Resources */,
 				2DC39A2F1A4D50CD00662A33 /* news_content_background@2x.png in Resources */,
-				2DC399E01A47CA9000662A33 /* 指南@2x.png in Resources */,
 				2D9F90991A5E6DC900B7A70E /* 始@2x.png in Resources */,
 				2DC399FC1A4D32BA00662A33 /* status_retry@2x.png in Resources */,
 				2D9F909A1A5E6DC900B7A70E /* 终@2x.png in Resources */,
 				2D9F908C1A5E1E6B00B7A70E /* setting_count_indicator@2x.png in Resources */,
 				2D9F90971A5E6DC900B7A70E /* 路牌-收藏@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
+				2D4713F71A68B66C00F2DE04 /* 常见问题@2x.png in Resources */,
 				2D9F90981A5E6DC900B7A70E /* 路牌-线路@2x.png in Resources */,
 				2DC399DF1A47CA9000662A33 /* 意见@2x.png in Resources */,
 				2DC399F91A4D32BA00662A33 /* status_no_data@2x.png in Resources */,
+				2D4713FA1A68B70900F2DE04 /* 设置@2x.png in Resources */,
 				2D9F908B1A5E1E6B00B7A70E /* setting_count_bg@2x.png in Resources */,
 				2DC399DD1A47CA9000662A33 /* 更新@2x.png in Resources */,
 				2DC399FA1A4D32BA00662A33 /* status_logo@2x.png in Resources */,
@@ -1020,8 +1053,10 @@
 				2DC399E11A47CA9000662A33 /* 资讯@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2DC399DB1A47CA9000662A33 /* 离线@2x.png in Resources */,
+				2D4713F81A68B66C00F2DE04 /* 指南@2x.png in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
+				2D4713FC1A68B79600F2DE04 /* new@2x.png in Resources */,
 				2DC399DC1A47CA9000662A33 /* 分享@2x.png in Resources */,
 				2DC39A271A4D4BFB00662A33 /* news_head_placeholder@2x.png in Resources */,
 				2DC399DE1A47CA9000662A33 /* 关于@2x.png in Resources */,
@@ -1089,6 +1124,7 @@
 				2DECC34E1A032BAF0022F60E /* mztools.c in Sources */,
 				2DAF41731A358239007E60A3 /* UIDevice+Hardware.m in Sources */,
 				2DC39A211A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m in Sources */,
+				2D0DEF1F1A677D680096B419 /* MJPopupBackgroundView.m in Sources */,
 				2DAF41671A305491007E60A3 /* JDOBusModel.m in Sources */,
 				2D33FABC1A1458F50024F1ED /* JDOBusLineController.m in Sources */,
 				2DC39A231A4D4AFF00662A33 /* MGTemplateStandardMarkers.m in Sources */,
@@ -1109,6 +1145,7 @@
 				2D33FB141A22F0F00024F1ED /* JSONKit.m in Sources */,
 				2DECC3371A0324D00022F60E /* AFImageRequestOperation.m in Sources */,
 				2DC399F31A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
+				2D0DEF201A677D680096B419 /* UIViewController+MJPopupViewController.m in Sources */,
 				2D9F90861A5E197E00B7A70E /* V8HorizontalPickerView.m in Sources */,
 				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,

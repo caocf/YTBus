@@ -13,9 +13,10 @@
 @interface TBCoordinateQuadTree : NSObject
 
 @property (assign, nonatomic) TBQuadTreeNode* root;
-@property (strong, nonatomic) BMKMapView *mapView;
+//@property (strong, nonatomic) BMKMapView *mapView;
 
 - (void)buildTree:(NSArray *)stations;
 - (NSArray *)clusteredAnnotationsWithinMapRect:(BMKMapRect)rect withZoomScale:(double)zoomScale;
+- (NSArray *)clusteredAnnotationsWithinMapView:(BMKMapView *)mapView;
 
 @end

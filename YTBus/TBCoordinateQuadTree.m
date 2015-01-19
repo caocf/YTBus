@@ -10,6 +10,12 @@
 #import "TBClusterAnnotation.h"
 #import "JDOStationModel.h"
 
+// 当前站点范围121.23495  121.598595  37.341312   37.62461
+#define MIN_X 121.1
+#define MAX_X 121.7
+#define MIN_Y 37.2
+#define MAX_Y 37.7
+
 typedef struct JDOStationInfo {
     char* stationId;
     char* stationName;
@@ -108,12 +114,96 @@ float TBCellSizeForZoomScale(BMKZoomScale zoomScale)
         for (NSInteger i = 0; i < stations.count; i++) {
             dataArray[i] = TBDataFromModel(stations[i]);
         }
-        // 当前站点范围121.23495  121.598595  37.341312   37.62461
-        TBBoundingBox world = TBBoundingBoxMake(37.2, 121.1, 37.7, 121.7);
+        TBBoundingBox world = TBBoundingBoxMake(MIN_Y, MIN_X, MAX_Y, MAX_X);
         _root = TBQuadTreeBuildWithData(dataArray, stations.count, world, 4);
     }
 }
 
+- (NSArray *)clusteredAnnotationsWithinMapView:(BMKMapView *)mapView{
+    double TBCellSize;
+    if (mapView.zoomLevel < 13.0f) {
+        TBCellSize = 0.06f;
+    }else if(mapView.zoomLevel < 13.5f){
+        TBCellSize = 0.04f;
+    }else if(mapView.zoomLevel < 14.0f){
+        TBCellSize = 0.025f;
+    }else if(mapView.zoomLevel < 14.5f){
+        TBCellSize = 0.016f;
+    }else if(mapView.zoomLevel < 15.0f){
+        TBCellSize = 0.012f;
+    }else if(mapView.zoomLevel < 15.5f){
+        TBCellSize = 0.008f;
+    }else if(mapView.zoomLevel < 16.0f){
+        TBCellSize = 0.006f;
+    }else if(mapView.zoomLevel < 16.5f){
+        TBCellSize = 0.004f;
+    }else if(mapView.zoomLevel < 17.0f){
+        TBCellSize = 0.003f;
+    }else if(mapView.zoomLevel < 18.0f){
+        TBCellSize = 0.002f;
+    }else if(mapView.zoomLevel < 18.5f){
+        TBCellSize = 0.001f;
+    }else{
+        TBCellSize = 0.0005f;
+    }
+//    NSLog(@"level:%g,size:%g",mapView.zoomLevel,TBCellSize);
+    
+    double leftX = mapView.region.center.longitude - mapView.region.span.longitudeDelta/2;
+    double rightX = mapView.region.center.longitude + mapView.region.span.longitudeDelta/2;
+    double bottomY = mapView.region.center.latitude - mapView.region.span.latitudeDelta/2;
+    double topY = mapView.region.center.latitude + mapView.region.span.latitudeDelta/2;
+    
+    double minX = MIN_X, maxX = rightX, minY = bottomY, maxY = MAX_Y;
+    while (minX < leftX) {
+        minX += TBCellSize;
+    }
+    minX -= TBCellSize;
+    while (maxY > topY) {
+        maxY -= TBCellSize;
+    }
+    maxY += TBCellSize;
+    
+    NSMutableArray *clusteredAnnotations = [[NSMutableArray alloc] init];
+    for (double x = minX; x <= maxX; x+=TBCellSize) {
+        for (double y = maxY; y >= minY; y-=TBCellSize) {
+            
+            __block double totalX = 0;
+            __block double totalY = 0;
+            __block int count = 0;
+            
+            NSMutableArray *stations = [[NSMutableArray alloc] initWithCapacity:6];
+            TBQuadTreeGatherDataInRange(self.root, TBBoundingBoxMake(y-TBCellSize, x, y, x+TBCellSize), ^(TBQuadTreeNodeData data) {
+                totalX += data.x;
+                totalY += data.y;
+                count++;
+                
+                if (count<=4) { //4个站点以下的集群，点击后以列表的形式显示
+                    JDOStationInfo stationInfo = *(JDOStationInfo *)data.data;
+                    JDOStationModel *sModel = [JDOStationModel new];
+                    sModel.fid = [NSString stringWithUTF8String:stationInfo.stationId];
+                    sModel.name = [NSString stringWithUTF8String:stationInfo.stationName];
+                    sModel.gpsX = [NSNumber numberWithDouble:data.y];
+                    sModel.gpsY = [NSNumber numberWithDouble:data.x];
+                    [stations addObject:sModel];
+                }else{
+                    [stations removeAllObjects];
+                }
+            });
+            
+            if(count>0){
+                CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(totalX / count, totalY / count);
+                TBClusterAnnotation *annotation = [[TBClusterAnnotation alloc] initWithCoordinate:coordinate count:count];
+                annotation.stations = stations;
+                [clusteredAnnotations addObject:annotation];
+            }
+            
+        }
+    }
+    
+    return [NSArray arrayWithArray:clusteredAnnotations];
+}
+
+// 地图平移时，瓦片切分会变动。。不知道是什么原因，把直角坐标替换为经纬度坐标划分区域不会有该问题。。方法见上
 - (NSArray *)clusteredAnnotationsWithinMapRect:(BMKMapRect)rect withZoomScale:(double)zoomScale
 {
     double TBCellSize = TBCellSizeForZoomScale(zoomScale);

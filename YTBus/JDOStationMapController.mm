@@ -61,10 +61,10 @@
     _mapView.showMapScaleBar = false;
     _mapView.minZoomLevel = 12; // 覆盖当前全部站点的范围
     _mapView.zoomLevel = 13;
+    // TODO 进入时候根据传入的定位位置进行设置(定位位置保存为全局变量)，并相应增大初始化时候的缩放级别
     _mapView.centerCoordinate = CLLocationCoordinate2DMake( 37.4698,121.454);   // 市政府的位置
     
     self.coordinateQuadTree = [[TBCoordinateQuadTree alloc] init];
-    self.coordinateQuadTree.mapView = self.mapView;
     _queryQueue = [NSOperationQueue new];
     _queryQueue.maxConcurrentOperationCount = 1;
     
@@ -176,7 +176,8 @@
 {
     [_queryQueue addOperationWithBlock:^{
         double scale = mapView.bounds.size.width / mapView.visibleMapRect.size.width;
-        NSArray *annotations = [self.coordinateQuadTree clusteredAnnotationsWithinMapRect:mapView.visibleMapRect withZoomScale:scale];
+//        NSArray *annotations = [self.coordinateQuadTree clusteredAnnotationsWithinMapRect:mapView.visibleMapRect withZoomScale:scale];
+        NSArray *annotations = [self.coordinateQuadTree clusteredAnnotationsWithinMapView:mapView];
         [self updateMapViewAnnotationsWithAnnotations:annotations];
     }];
 }

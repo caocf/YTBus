@@ -53,7 +53,7 @@
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
     _mapView.zoomLevel = 17;
-    _mapView.minZoomLevel = 15;
+    _mapView.minZoomLevel = 15.5f;
     
     _locService = [[BMKLocationService alloc] init];
     distanceRadius = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
@@ -125,7 +125,7 @@
         // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
         double moveDistance = [userLocation.location distanceFromLocation:currentUserLocation.location];
         // currentUserLocation为nil时返回-1
-        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance/2) {
+        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance) {
 //            NSLog(@"移动距离%g，不足刷新条件",moveDistance);
             return;
         }
@@ -266,8 +266,7 @@
 
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
     // 选中某个marker后，将此marker移动到地图中心偏下的位置，使其上方弹出的callout能在屏幕内显示全
-    float screenHeight = CGRectGetHeight([UIScreen mainScreen].bounds);
-    float delta = screenHeight>480?70:100;
+    float delta = Screen_Height>480?70:100;
     [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
     CGPoint p = [mapView convertCoordinate:view.annotation.coordinate toPointToView:mapView];
     CLLocationCoordinate2D coor = [mapView convertPoint:CGPointMake(p.x, p.y-delta) toCoordinateFromView:mapView];

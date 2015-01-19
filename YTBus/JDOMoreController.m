@@ -9,6 +9,31 @@
 #import "JDOMoreController.h"
 #import "JDOConstants.h"
 #import "iVersion.h"
+#import "UIViewController+MJPopupViewController.h"
+
+@interface JDOUmengAdvController : UIViewController <UIWebViewDelegate>
+
+@end
+
+@implementation JDOUmengAdvController
+
+- (void)loadView{
+    [super loadView];
+
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectInset([UIScreen mainScreen].bounds, 20, 80)];
+    webView.delegate = self;
+    webView.scalesPageToFit = true;
+    NSString *advURL = [[MobClick getAdURL] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [webView loadRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:advURL] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:5]];
+    
+    self.view = webView;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView{
+    
+}
+
+@end
 
 @interface JDOMoreCell : UITableViewCell
 
@@ -43,6 +68,36 @@
     hasNewVersion = false;
     [iVersion sharedInstance].delegate = self;
     [[iVersion sharedInstance] checkForNewVersion];
+    
+    // 友盟IDFA广告
+//    UIButton *advBtn = [UIButton buttonWithType:UIButtonTypeInfoLight];
+//    advBtn.frame = CGRectMake(10, 10, 60, 30);
+//    [advBtn setTitle:@"广告" forState:UIControlStateNormal];
+//    [advBtn addTarget:self action:@selector(showAdvView) forControlEvents:UIControlEventTouchUpInside];
+//    self.tableView.tableHeaderView = advBtn;
+    
+//    ADBannerView *bannerView = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
+//    bannerView.delegate = self;
+//    bannerView.alpha = 0;
+//    self.tableView.tableHeaderView = bannerView;
+}
+
+//- (void) bannerViewDidLoadAd:(ADBannerView *)banner {
+//    [UIView animateWithDuration:0.5 animations:^{
+//        bannerView.alpha = 1.0;
+//    }];
+//}
+//
+//- (void) bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error{
+//    NSLog(@"加载iAd错误:%@",error);
+//    [UIView animateWithDuration:0.5 animations:^{
+//        bannerView.alpha = 0.0;
+//    }];
+//}
+
+- (void)showAdvView {
+    JDOUmengAdvController *advController = [[JDOUmengAdvController alloc] init];
+    [self presentPopupViewController:advController animationType:MJPopupViewAnimationFade];
 }
 
 - (void)iVersionDidNotDetectNewVersion{

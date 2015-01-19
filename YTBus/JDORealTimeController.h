@@ -11,6 +11,6 @@
 
 @interface JDORealTimeController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
-@property (nonatomic,strong) JDOBusLine *busLine;
+@property (nonatomic,copy) JDOBusLine *busLine;
 
 @end

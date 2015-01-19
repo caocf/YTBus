@@ -18,7 +18,9 @@
 #define GetStationsByLineDetail @"select t0.buslinename as LINEDETAIL,t1.BUSLINEID as LINEID ,t1.buslinedetail as LINEDETAILID,t2.ID as STATIONID, t2.STATIONNAME as STATIONNAME,t2.GEOGRAPHICALDIRECTION as DIRECTION,t2.GPSX2 as GPSX,t2.GPSY2 as GPSY from BUSLINEDETAIL t0 inner join LINESTATION t1 on t0.id = t1.buslinedetail inner join STATION t2 on t1.stationid = t2.id where t0.id = ? order by t1.SEQUENCE"
 
 // 某条线路名称及其起点站和终点站，在“线路查询”的收藏中使用
-#define GetLineById @"select ID,BUSLINENAME,(select stationname from STATION where id=t0.STATIONA) as STATIONANAME,(select stationname from STATION where id=t0.STATIONB) as STATIONBNAME from BusLine t0 where ID in (?)"
+//#define GetLineById @"select ID,BUSLINENAME,(select stationname from STATION where id=t0.STATIONA) as STATIONANAME,(select stationname from STATION where id=t0.STATIONB) as STATIONBNAME from BusLine t0 where ID in (?)"
+// 收藏的基本单元从线路改为线路详情
+#define GetLineById @"select t0.ID as LINEID, t1.ID as DETAILID, t0.BUSLINENAME as BUSLINENAME, t1.BUSLINENAME as LINEDETAILNAME, t1.DIRECTION as DIRECTION from BusLine t0 inner join BusLineDetail t1 on t0.ID = t1.BUSLINEID where t1.ID in (?)"
 
 // 所有线路名称及其起点站和终点站，在“线路查询”的所有线路中使用
 #define GetAllLines @"select ID,BUSLINENAME,(select stationname from STATION where id=t0.STATIONA) as STATIONANAME,(select stationname from STATION where id=t0.STATIONB) as STATIONBNAME from BusLine t0 order by ID"
@@ -37,6 +39,10 @@
 
 // 查询所有的站点，用来填充四叉树
 #define GetAllStationsInfo @"SELECT distinct t0.ID AS STATIONID,t0.stationname as STATIONNAME,t0.GEOGRAPHICALDIRECTION as DIRECTION,t0.GPSX2 as GPSX,t0.GPSY2 as GPSY FROM STATION t0 INNER JOIN LINESTATION t1 ON t0.ID = t1.STATIONID INNER JOIN BusLineDetail t2 ON t1.BUSLINEDETAIL = t2.ID INNER JOIN BusLine t3 ON t2.BUSLINEID = t3.ID WHERE t0.GPSX2 <> 0 AND t0.GPSY2 <> 0"
+
+// 附近的站点，跟上面的只有where条件不同
+#define GetNearbyStations @"SELECT distinct t0.ID AS ID,t0.stationname as STATIONNAME,t0.GEOGRAPHICALDIRECTION as DIRECTION,t0.GPSX2 as GPSX,t0.GPSY2 as GPSY FROM STATION t0 INNER JOIN LINESTATION t1 ON t0.ID = t1.STATIONID INNER JOIN BusLineDetail t2 ON t1.BUSLINEDETAIL = t2.ID INNER JOIN BusLine t3 ON t2.BUSLINEID = t3.ID WHERE t0.gpsx2>? and t0.gpsx2<? and t0.gpsy2>? and t0.gpsy2<?"
+
 
 @interface JDODatabase : NSObject
 

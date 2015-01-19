@@ -53,6 +53,7 @@
 @interface JDONearByController () <BMKLocationServiceDelegate,CLLocationManagerDelegate> {
     BMKLocationService *_locService;
     BMKUserLocation *currentUserLocation;
+    CLLocation *currentLocation;
     NSMutableArray *_nearbyStations;
     FMDatabase *_db;
     NSMutableArray *_linesInfo;
@@ -66,6 +67,7 @@
     UILabel *noDataLabel;
     UIImageView *noDataImage;
     CLLocationManager *locationManger;
+    BOOL showLocationErrorHint;
 }
 
 @end
@@ -77,6 +79,7 @@
     
     self.navigationItem.rightBarButtonItem.enabled = false;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+    // TODO 增加当前位置和移动距离横幅条，在设置中增加移动xx距离后刷新附近站点的选项
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 5)];   // 填充边距
 //    self.tableView.showsVerticalScrollIndicator = false;
     hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 80)];
@@ -114,6 +117,7 @@
     if (!_db) {
         dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
             _db = [JDODatabase sharedDB];
+            [self checkLocationState];
             [self refreshData];
         }];
     }
@@ -124,12 +128,21 @@
     
 }
 
+- (void) checkLocationState{
+    if (showLocationErrorHint) {
+        hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
+        hud.minShowTime = 1.0f;
+        hud.labelText = @"定位中,请稍候";
+    }
+}
+
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(![CLLocationManager locationServicesEnabled]){
         [_linesInfo removeAllObjects];
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
         
+        //TODO 调整提示的显示样式
         hintLabel.text = @"您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
         hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
         hintImage.image = [UIImage imageNamed:@"关闭定位"];
@@ -145,6 +158,8 @@
         hintImage.image = [UIImage imageNamed:@"不允许使用定位"];
         [self.tableView addSubview:hintLabel];
         [self.tableView addSubview:hintImage];
+        //TODO 直接进入设置页面
+//        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
     }else{
         self.navigationItem.rightBarButtonItem.enabled = true;
         
@@ -191,33 +206,37 @@
     // 若启动时候无网络，使用GPS定位可能需要定位很久，iPhone下及时关闭移动数据和启用飞行模式都可以定位成功
     if (error.code == kCLErrorLocationUnknown) {
         if (!hud && _linesInfo.count==0 ) {
-            hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
-            hud.minShowTime = 1.0f;
-            hud.labelText = @"定位中,请稍候...";
+            showLocationErrorHint = true;
+            if (_db) {
+                [self checkLocationState];
+            }
         }
     }else if (error.code == kCLErrorDenied){    // 启动的时候不允许，或运行过程中从系统设置里关闭
         NSLog(@"didFailToLocateUserWithError：kCLErrorDenied");
     }
 }
 
+// 每次回调的userLocation是同一个，只改变里其中的内容，所以不能直接用userLocation跟currentUserLocation进行比较
 - (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation
 {
     if (hud) {
         [hud hide:true];
         hud = nil;
     }
+    showLocationErrorHint = false;
     
     if (currentUserLocation) {
         // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
-        double moveDistance = [userLocation.location distanceFromLocation:currentUserLocation.location];
-        // currentUserLocation为nil时返回-1
-        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance/2) {
+        double moveDistance = [userLocation.location distanceFromLocation:currentLocation];
+        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance) {
 //            NSLog(@"移动距离%g，不足刷新条件",moveDistance);
+//            [JDOUtils showHUDText:[NSString stringWithFormat:@"距离上次刷新位置:%g米",moveDistance] inView:self.view];
             return;
         }
     }
     
     currentUserLocation = userLocation;
+    currentLocation = userLocation.location;
     
     [self refreshData];
 }
@@ -239,18 +258,17 @@
     
     double longitudeDelta = distanceRadius/85390.0;
     double latitudeDelta = distanceRadius/111000.0;
-    // stationname like '%广播电视台%' or stationname like '%汽车东站%' or stationname like '%体育公园%'
-    NSString *sql = @"select * from STATION where gpsx2>? and gpsx2<? and gpsy2>? and gpsy2<? and stationname not like 't_%'";
+
     CLLocationCoordinate2D currentCoor = currentUserLocation.location.coordinate;
     NSArray *argu = @[@(currentCoor.longitude-longitudeDelta),@(currentCoor.longitude+longitudeDelta),@(currentCoor.latitude-latitudeDelta),@(currentCoor.latitude+latitudeDelta)];
-    FMResultSet *s = [_db executeQuery:sql withArgumentsInArray:argu];
+    FMResultSet *s = [_db executeQuery:GetNearbyStations withArgumentsInArray:argu];
     while ([s next]) {
         JDOStationModel *station = [JDOStationModel new];
         station.fid = [NSString stringWithFormat:@"%d",[s intForColumn:@"ID"]];
         station.name = [s stringForColumn:@"STATIONNAME"];
-        station.direction = [s stringForColumn:@"GEOGRAPHICALDIRECTION"];
-        station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSX2"]];
-        station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSY2"]];
+        station.direction = [s stringForColumn:@"DIRECTION"];
+        station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSX"]];
+        station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSY"]];
         
         // 对比与当前地理位置的距离小于1000的站点
         CLLocationCoordinate2D bdStation = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);

@@ -30,6 +30,15 @@
     return _sharedClient;
 }
 
++ (JDOHttpClient *)sharedBUSClient {
+    static JDOHttpClient *_sharedClient = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedClient = [[JDOHttpClient alloc] initWithBaseURL:[NSURL URLWithString:JDO_Bus_Server]];
+    });
+    return _sharedClient;
+}
+
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method
                                       path:(NSString *)path
                                 parameters:(NSDictionary *)parameters{

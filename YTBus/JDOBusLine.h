@@ -10,7 +10,7 @@
 #import "JDOStationModel.h"
 #import "JDOBusLineDetail.h"
 
-@interface JDOBusLine : NSObject
+@interface JDOBusLine : NSObject <NSCopying>
 
 @property(nonatomic,strong) NSString *lineId;
 @property(nonatomic,strong) NSString *lineName;

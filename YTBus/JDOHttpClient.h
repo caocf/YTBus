@@ -13,5 +13,6 @@
 
 + (JDOHttpClient *)sharedDFEClient;
 + (JDOHttpClient *)sharedJDOClient;
++ (JDOHttpClient *)sharedBUSClient;
 
 @end

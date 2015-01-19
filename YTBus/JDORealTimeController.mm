@@ -54,6 +54,7 @@
 @property (nonatomic,assign) IBOutlet UIButton *directionBtn;
 @property (nonatomic,assign) IBOutlet UIButton *favorBtn;
 @property (nonatomic,assign) IBOutlet UITableView *tableView;
+@property (nonatomic,assign) IBOutlet UIView *topBackground;
 
 - (IBAction)changeDirection:(id)sender;
 - (IBAction)clickFavor:(id)sender;
@@ -85,7 +86,8 @@
     self.tableView.sectionHeaderHeight = 15;
     self.tableView.sectionFooterHeight = 15;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
-
+    
+    _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
 }
 
 - (void)loadData{
@@ -93,18 +95,24 @@
     [self loadCurrentLineInfoAndAllStations];
     
     self.navigationItem.rightBarButtonItem.enabled = true;
-    // 收藏标志
+    [self setFavorBtnState];
+    
+    [self scrollToTargetStation:true];
+}
+
+- (void)setFavorBtnState {  // 收藏标志
     NSArray *favorLineIds = [[NSUserDefaults standardUserDefaults] arrayForKey:@"favor_line"];
     if (favorLineIds) {
+        _favorBtn.selected = false;
+        JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
         for (int i=0; i<favorLineIds.count; i++) {
-            NSString *lineId = favorLineIds[i];
-            if([_busLine.lineId isEqualToString:lineId]){
+            NSString *lineDetailId = favorLineIds[i];
+            if([lineDetail.detailId isEqualToString:lineDetailId]){
                 _favorBtn.selected = true;
                 break;
             }
         }
     }
-    [self scrollToTargetStation:true];
 }
 
 - (void)loadBothDirectionLineDetailAndTargetStation{
@@ -138,16 +146,24 @@
             JDOBusLineDetail *converseLine;
             if ([d0.detailId isEqualToString:d1.detailId]) {
                 converseLine = d2;
+                _busLine.lineDetailPair = [NSMutableArray arrayWithObjects:d1,d2,nil];
             }else{
                 converseLine = d1;
+                _busLine.lineDetailPair = [NSMutableArray arrayWithObjects:d2,d1,nil];
             }
-            [_busLine.lineDetailPair addObject:converseLine];
-            JDOStationModel *cStation = [self findStationByLine:converseLine andConverseStation:_busLine.nearbyStationPair[0]];
-            if (cStation) {
-                [_busLine.nearbyStationPair addObject:cStation];
+//            [_busLine.lineDetailPair addObject:converseLine];
+            
+            if (_busLine.nearbyStationPair && _busLine.nearbyStationPair.count >0) {
+                JDOStationModel *cStation = [self findStationByLine:converseLine andConverseStation:_busLine.nearbyStationPair[0]];
+                if (cStation) {
+                    [_busLine.nearbyStationPair addObject:cStation];
+                }else{
+                    [_busLine.nearbyStationPair addObject:[NSNull null]];
+                }
             }else{
-                [_busLine.nearbyStationPair addObject:[NSNull null]];
+                _busLine.nearbyStationPair = [NSMutableArray arrayWithObjects:[NSNull null],[NSNull null],nil];
             }
+            
         }
     }else{
         NSLog(@"线路超过两条!");
@@ -378,8 +394,11 @@
         [JDOUtils showHUDText:@"该条线路为单向线路" inView:self.view];
         return;
     }
+    
     _busLine.showingIndex = (_busLine.showingIndex==0?1:0);
+    _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
     [self loadCurrentLineInfoAndAllStations];
+    [self setFavorBtnState];
     [_timer fire];
 
     // 若换向前有手动选中的站点，则换向后查找同名站点并选中
@@ -427,11 +446,12 @@
     if(!favorLineIds){
         favorLineIds = [NSMutableArray new];
     }
+    JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
     sender.selected = !sender.selected;
     if (sender.selected) {
-        [favorLineIds addObject:_busLine.lineId];
+        [favorLineIds addObject:lineDetail.detailId];
     }else{
-        [favorLineIds removeObject:_busLine.lineId];
+        [favorLineIds removeObject:lineDetail.detailId];
     }
     [[NSUserDefaults standardUserDefaults] setObject:favorLineIds forKey:@"favor_line"];
     [[NSUserDefaults standardUserDefaults] synchronize];
