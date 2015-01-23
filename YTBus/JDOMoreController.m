@@ -10,6 +10,18 @@
 #import "JDOConstants.h"
 #import "iVersion.h"
 #import "UIViewController+MJPopupViewController.h"
+#import "UMFeedback.h"
+
+typedef enum{
+    JDOSettingTypeSystem = 0,
+    JDOSettingTypeNews,
+    JDOSettingTypeShare,
+    JDOSettingTypeFeedback,
+    JDOSettingTypeFaq,
+    JDOSettingTypeHelp,
+    JDOSettingTypeVersion,
+    JDOSettingTypeAboutus
+}JDOSettingType;
 
 @interface JDOUmengAdvController : UIViewController <UIWebViewDelegate>
 
@@ -51,12 +63,16 @@
 
 @end
 
-@interface JDOMoreController () <iVersionDelegate>
+@interface JDOMoreController () <iVersionDelegate,UMFeedbackDataDelegate>
+
+@property (strong, nonatomic) UMFeedback *feedback;
 
 @end
 
 @implementation JDOMoreController{
     BOOL hasNewVersion;
+    BOOL needGetFeedback;
+    BOOL hasNewFeedback;
 }
 
 - (void)viewDidLoad {
@@ -67,33 +83,53 @@
     
     hasNewVersion = false;
     [iVersion sharedInstance].delegate = self;
-    [[iVersion sharedInstance] checkForNewVersion];
     
     // 友盟IDFA广告
-//    UIButton *advBtn = [UIButton buttonWithType:UIButtonTypeInfoLight];
-//    advBtn.frame = CGRectMake(10, 10, 60, 30);
-//    [advBtn setTitle:@"广告" forState:UIControlStateNormal];
-//    [advBtn addTarget:self action:@selector(showAdvView) forControlEvents:UIControlEventTouchUpInside];
-//    self.tableView.tableHeaderView = advBtn;
+    // TODO 同步方法，最好是在本地后台获取开关
+//    if ([MobClick getAdURL]) {
+//        UIButton *advBtn = [UIButton buttonWithType:UIButtonTypeInfoLight];
+//        advBtn.frame = CGRectMake(10, 10, 60, 30);
+//        [advBtn setTitle:@"广告" forState:UIControlStateNormal];
+//        [advBtn addTarget:self action:@selector(showAdvView) forControlEvents:UIControlEventTouchUpInside];
+//        self.tableView.tableHeaderView = advBtn;
+//    }
     
-//    ADBannerView *bannerView = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
-//    bannerView.delegate = self;
-//    bannerView.alpha = 0;
-//    self.tableView.tableHeaderView = bannerView;
+    // TODO 检查是否有新反馈 theNewReplies
+    // 注册UMFeedback的时候就会获取一遍数据，若已经有新反馈，则直接显示提示。如果没有新反馈，还有可能在应用启动到切换到“更多”tab页这段时间有新的反馈，则再重新获取一遍
+    hasNewFeedback = needGetFeedback = false;
+    self.feedback = [UMFeedback sharedInstance];
+    if (self.feedback.theNewReplies.count>0) {
+        hasNewFeedback = true;
+    }else{
+        needGetFeedback = true;
+    }
 }
 
-//- (void) bannerViewDidLoadAd:(ADBannerView *)banner {
-//    [UIView animateWithDuration:0.5 animations:^{
-//        bannerView.alpha = 1.0;
-//    }];
-//}
-//
-//- (void) bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error{
-//    NSLog(@"加载iAd错误:%@",error);
-//    [UIView animateWithDuration:0.5 animations:^{
-//        bannerView.alpha = 0.0;
-//    }];
-//}
+- (void)viewWillAppear:(BOOL)animated{
+    self.feedback.delegate = self;
+    if (needGetFeedback) {
+        [self.feedback get];
+    }else{
+        needGetFeedback = true;
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    self.feedback.delegate = nil;
+}
+
+- (void)getFinishedWithError: (NSError *)error{
+    [self performSelectorOnMainThread:@selector(onGetFinished:) withObject:error waitUntilDone:false];
+}
+
+- (void)onGetFinished:(NSError *)error{
+    if (error) {
+        NSLog(@"获取内容错误--%@", error.description);
+    }else{
+        hasNewFeedback = (self.feedback.theNewReplies.count>0);
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:JDOSettingTypeFeedback inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    }
+}
 
 - (void)showAdvView {
     JDOUmengAdvController *advController = [[JDOUmengAdvController alloc] init];
@@ -126,12 +162,15 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.row == 6) {   // 检查更新
+    if (indexPath.row == JDOSettingTypeVersion) {   // 检查更新
         if (hasNewVersion) {
             [[iVersion sharedInstance] openAppPageInAppStore];
         }else{
             [[iVersion sharedInstance] checkForNewVersion];
         }
+    }else if(indexPath.row == JDOSettingTypeFeedback){
+//        [self.navigationController pushViewController:[UMFeedback feedbackViewController] animated:YES];
+//        [self presentModalViewController:[UMFeedback feedbackModalViewController] animated:YES];
     }
 }
 
@@ -160,6 +199,23 @@
     return iv;
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.row == JDOSettingTypeVersion) {
+        [[iVersion sharedInstance] checkForNewVersion];
+    }else if(indexPath.row == JDOSettingTypeFeedback){
+        if (hasNewFeedback) {
+            UILabel *hint = [[UILabel alloc] initWithFrame:CGRectMake(130, 12, 80, 20)];
+            hint.tag = 1003;
+            hint.font = [UIFont systemFontOfSize:12];
+            hint.backgroundColor = [UIColor clearColor];
+            hint.textColor = [UIColor redColor];
+            hint.text = [NSString stringWithFormat:@"(%lu条新消息)",(unsigned long)self.feedback.theNewReplies.count];
+            [cell.contentView addSubview:hint];
+        }else{
+            [[cell.contentView viewWithTag:1003] removeFromSuperview];
+        }
+    }
+}
 
 //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MoreCell" forIndexPath:indexPath];

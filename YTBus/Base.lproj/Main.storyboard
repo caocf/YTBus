@@ -216,7 +216,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ybj-Hz-o78" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1394" y="1793"/>
+            <point key="canvasLocation" x="-1518" y="1793"/>
         </scene>
         <!--换乘方案-->
         <scene sceneID="VbR-N3-cA2">
@@ -249,7 +249,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sLB-ar-iKt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-930" y="1793"/>
+            <point key="canvasLocation" x="-1120" y="1793"/>
         </scene>
         <!--附近-->
         <scene sceneID="Mmx-c4-fv4">
@@ -565,7 +565,7 @@
                     <tabBarItem key="tabBarItem" title="附近" id="err-Fg-HWc">
                         <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="0.0"/>
                     </tabBarItem>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="wBw-9N-B0S" customClass="JDONavigationBar">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="wBw-9N-B0S">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -678,7 +678,7 @@
             <objects>
                 <navigationController id="zWQ-mD-2B8" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="线路" id="a96-PW-c8R"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Ztz-1h-spd" customClass="JDONavigationBar">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Ztz-1h-spd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -696,7 +696,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JQw-vG-sy5" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="更多" id="f59-4z-mLJ"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="MCe-q4-9Ff" customClass="JDONavigationBar">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="MCe-q4-9Ff">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -799,7 +799,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="MoreCell" rowHeight="42" id="BC5-YR-bIH" customClass="JDOMoreCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MoreCell" rowHeight="42" id="BC5-YR-bIH" customClass="JDOMoreCell">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="BC5-YR-bIH" id="7Qx-UD-ex3">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -821,6 +821,9 @@
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="uBa-Is-2Yb" kind="push" id="s4b-7x-hCJ"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="MoreCell" rowHeight="42" id="hLw-cC-Uky" customClass="JDOMoreCell">
                                         <autoresizingMask key="autoresizingMask"/>
@@ -933,7 +936,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ofl-yA-11e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-445" y="1098"/>
+            <point key="canvasLocation" x="-445" y="1079"/>
         </scene>
         <!--最新资讯-->
         <scene sceneID="l1Z-tP-4c4">
@@ -990,7 +993,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Asx-7j-ywk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-7" y="1098"/>
+            <point key="canvasLocation" x="-7" y="1079"/>
         </scene>
         <!--资讯详情-->
         <scene sceneID="TJR-uy-BgJ">
@@ -1007,7 +1010,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O0c-ET-maP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-7" y="1793"/>
+            <point key="canvasLocation" x="489" y="1079"/>
         </scene>
         <!--系统设置-->
         <scene sceneID="zfA-D2-nzT">
@@ -1101,14 +1104,29 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yHX-r9-hxP" id="o35-2a-ubE">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="资讯 | 紧急路况 | 临时改线推送" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AGI-U5-gtv">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="移动超过x米后刷新附近站点" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Pf4-Ov-ks6">
+                                                    <rect key="frame" x="20" y="11" width="188" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="7Sb-9D-Mea">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7Sb-9D-Mea" id="ijY-2h-N2w">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="资讯 | 紧急路况 | 临时改线推送" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xGd-ne-bEo">
                                                     <rect key="frame" x="20" y="11" width="207" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="SBU-aG-rGd">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="jT6-Md-Zv9">
                                                     <rect key="frame" x="249" y="6" width="51" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </switch>
@@ -1132,7 +1150,40 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cJf-7Q-eot" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-445" y="1793"/>
+            <point key="canvasLocation" x="-685" y="1793"/>
+        </scene>
+        <!--意见反馈-->
+        <scene sceneID="WYp-Hl-xch">
+            <objects>
+                <viewController title="意见反馈" id="uBa-Is-2Yb" customClass="JDOFeedbackController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Bro-KH-heI">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Hy2-lU-N5K" customClass="UIBubbleTableView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="bubbleDataSource" destination="uBa-Is-2Yb" id="6Lg-H0-zdi"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="意见反馈" id="uGi-eS-WF9">
+                        <barButtonItem key="rightBarButtonItem" image="review.png" style="plain" id="Xma-Hd-Btf">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="btnItem" destination="Xma-Hd-Btf" id="Yxk-g4-4Gr"/>
+                        <outlet property="tableView" destination="Hy2-lU-N5K" id="k5I-u3-1f7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mGa-bN-ISm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-238" y="1793"/>
         </scene>
         <!--站点-->
         <scene sceneID="3zX-P7-NXn">
@@ -1329,7 +1380,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qNo-zQ-HhA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="538" y="371"/>
+            <point key="canvasLocation" x="489" y="371"/>
         </scene>
         <!--站点-->
         <scene sceneID="dgo-C4-e5O">
@@ -1337,7 +1388,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="X4d-Yb-zeJ" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="站点" id="ren-r7-jTr"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="sGG-Cs-nVu" customClass="JDONavigationBar">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="sGG-Cs-nVu">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1356,7 +1407,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vAB-Vg-tn2" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="换乘" id="yIN-Bp-aQU"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="bAY-ZP-uBg" customClass="JDONavigationBar">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="bAY-ZP-uBg">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1372,6 +1423,7 @@
     </scenes>
     <resources>
         <image name="new.png" width="21" height="13"/>
+        <image name="review.png" width="47" height="47"/>
         <image name="中间" width="22" height="30"/>
         <image name="交换" width="18" height="17"/>
         <image name="价" width="15" height="15"/>
@@ -1411,7 +1463,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="eZd-qq-MSP"/>
         <segue reference="OSX-OU-sO9"/>
+        <segue reference="dAS-pt-L3o"/>
     </inferredMetricsTieBreakers>
 </document>

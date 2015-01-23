@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UIColor+SSToolkitAdditions.h"
+#import "NSString+SSToolkitAdditions.h"
 #import "JDOUtils.h"
 #import "MobClick.h"
 
@@ -41,6 +42,8 @@ typedef enum {
 
 #define Screen_Height [[UIScreen mainScreen] bounds].size.height
 #define Screen_Width [[UIScreen mainScreen] bounds].size.width
+
+#define App_Height ([[[UIDevice currentDevice] systemVersion] floatValue]>=7.0 ? [UIScreen mainScreen].bounds.size.height :[UIScreen mainScreen].applicationFrame.size.height)
 
 // From here to end of file added by Injection Plugin //
 //#ifdef DEBUG

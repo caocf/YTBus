@@ -76,7 +76,7 @@
     [self.view addSubview:self.logoView];
     
     [self.retryView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onRetryClicked)]];
-    [self.noNetWorkView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onNoNetworkClicked)]];
+    [self.noNetWorkView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onRetryClicked)]];
     self.status = ViewStatusLoading;
     [self loadDataFromNetwork];
 }
@@ -102,13 +102,6 @@
 }
 
 - (void) onRetryClicked{
-    self.status = ViewStatusLoading;
-    self.headArray = [[NSMutableArray alloc] initWithCapacity:NewsHead_Page_Size];
-    self.listArray = [[NSMutableArray alloc] initWithCapacity:NewsList_Page_Size];
-    [self loadDataFromNetwork];
-}
-
-- (void) onNoNetworkClicked{
     self.status = ViewStatusLoading;
     self.headArray = [[NSMutableArray alloc] initWithCapacity:NewsHead_Page_Size];
     self.listArray = [[NSMutableArray alloc] initWithCapacity:NewsList_Page_Size];

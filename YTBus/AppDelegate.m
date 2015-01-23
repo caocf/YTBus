@@ -13,6 +13,7 @@
 #import "JSONKit.h"
 #import "MBProgressHUD.h"
 #import "JDOHttpClient.h"
+#import "UMFeedback.h"
 
 #define Adv_Min_Show_Seconds 2.0f
 #define Param_Max_Wait_Seconds 5.0f
@@ -54,6 +55,51 @@
     
     canEnterMain = true;
     
+    // 友盟配置
+    [self initUMengConfig];
+    // 百度地图配置
+    [self initBMKConfig];
+    // 全局样式定义
+    [self initAppearance];
+    // 推送配置
+    [self initPushConfig];
+    
+    // 使用LaunchImage作为背景占位图，如果从友盟检测到的最小允许版本高于当前版本，则不进入storyboard，直接退出应用或进入appstore下载
+    controller = [[UIViewController alloc] init];
+    if (Screen_Height > 480) {
+        controller.view = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchImage-568h"]];
+    }else{
+        controller.view = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchImage"]];
+    }
+    controller.view.frame = [[UIScreen mainScreen] bounds];
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = controller;
+    [self.window makeKeyAndVisible];
+    
+//    [self asyncLoadAdvertise];
+    [self performSelector:@selector(showAdvertiseView) withObject:nil afterDelay:2.0f];
+    
+    [[JDOHttpClient sharedBUSClient] getPath:@"index/getSysParams" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSData *jsonData = responseObject;
+        NSDictionary *obj = [jsonData objectFromJSONData];
+        if ([obj[@"status"] intValue]==1) {
+            onlineParam = obj[@"data"];
+            [self onVersionCheckFinished:true];
+        }else{
+            NSLog(@"获取参数结果错误:%@",obj[@"info"]);
+            [self onVersionCheckFinished:false];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"获取参数网络错误:%@",error);
+        [self onVersionCheckFinished:false];
+    }];
+    
+    
+    return YES;
+}
+
+- (void) initUMengConfig{
     // 友盟统计
     // Crashlytics和友盟的错误报告不能同时用，关闭友盟日志要把[MobClick setCrashReportEnabled:NO]；写在友盟appkey的前面
     [MobClick setCrashReportEnabled:true];
@@ -64,6 +110,10 @@
 //    [MobClick updateOnlineConfig];
 //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(UMOnlineConfigDidFinished:) name:UMOnlineConfigDidFinishedNotification object:nil];
     
+    // 友盟用户反馈
+    [UMFeedback setAppkey:@"54a8b1c7fd98c5d5850008c5"];
+    [UMFeedback setLogEnabled:true];
+    
     // 友盟集成测试获取测试设备唯一识别码
 //    Class cls = NSClassFromString(@"UMANUtil");
 //    SEL deviceIDSelector = @selector(openUDIDString);
@@ -73,7 +123,9 @@
 //    }
 //    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"oid" : deviceID} options:NSJSONWritingPrettyPrinted error:nil];
 //    NSLog(@"%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
-    
+}
+
+- (void) initBMKConfig{
     // 要使用百度地图，请先启动BaiduMapManager
     _mapManager = [[BMKMapManager alloc]init];
     BOOL ret = [_mapManager start:@"BI3iLNMvqHHWiELxAi5kkbn2" generalDelegate:self];
@@ -83,15 +135,29 @@
         [BMKLocationService setLocationDesiredAccuracy:kCLLocationAccuracyBestForNavigation];
         [BMKLocationService setLocationDistanceFilter:kCLDistanceFilterNone];//kCLDistanceFilterNone,Location_Auto_Refresh_Distance
     }
-    
-    application.statusBarStyle = UIStatusBarStyleLightContent;
+}
+
+- (void) initAppearance{
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     if (After_iOS7) {
+        // 若设置该选项=false，则self.view的origin.y从导航栏以下开始计算，否则从屏幕顶端开始计算，
+        // 这是因为iOS7的controller中extendedLayoutIncludesOpaqueBars属性默认是false，也就是说不透明的bar不启用extendedLayout，
+        // 若背景是半透明的情况下，也可以通过设置controller的edgesForExtendedLayout使view从导航栏下方开始计算
+        
+        // iOS7未实现translucent的appearance，iOS8以后可用，已经改为在所有的storyboard中的navigationbar中设置该属性
+//        [[UINavigationBar appearance] setTranslucent:false];
         [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+        [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"navigation_iOS7"] forBarMetrics:UIBarMetricsDefault];
         [[UIBarButtonItem appearance] setTintColor:[UIColor whiteColor]];
     }else{
+        [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"navigation_iOS6"] forBarMetrics:UIBarMetricsDefault];
         [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithHex:@"233247"]];
     }
-    
+    //    UITextAttributeFont,UITextAttributeTextShadowOffset,UITextAttributeTextShadowColor
+    [[UINavigationBar appearance] setTitleTextAttributes: @{UITextAttributeTextColor:[UIColor whiteColor]}];
+}
+
+- (void) initPushConfig{
 //    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
 //        [application registerForRemoteNotifications];
 //        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound categories:nil];
@@ -99,39 +165,6 @@
 //    } else {
 //        [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeBadge| UIRemoteNotificationTypeSound];
 //    }
-    
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = [UIColor whiteColor];
-    
-    // 使用LaunchImage作为背景占位图，如果从友盟检测到的最小允许版本高于当前版本，则不进入storyboard，直接退出应用或进入appstore下载
-    controller = [[UIViewController alloc] init];
-    if (Screen_Height > 480) {
-        controller.view = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchImage-568h"]];
-    }else{
-        controller.view = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchImage"]];
-    }
-    controller.view.frame = self.window.bounds;
-    self.window.rootViewController = controller;
-    [self.window makeKeyAndVisible];
-    
-    [self asyncLoadAdvertise];
-    [self performSelector:@selector(showAdvertiseView) withObject:nil afterDelay:2.0f];
-    
-    [[JDOHttpClient sharedBUSClient] getPath:@"index/getSysParams" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSData *jsonData = responseObject;
-        NSDictionary *obj = [jsonData objectFromJSONData];
-        if ([obj[@"status"] intValue]==1) {
-            onlineParam = obj[@"data"];
-            [self onVersionCheckFinished];
-        }else{
-            NSLog(@"获取参数结果错误:%@",obj[@"info"]);
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"获取参数网络错误:%@",error);
-    }];
-    
-    
-    return YES;
 }
 
 - (void) asyncLoadAdvertise{   // 异步加载广告页
@@ -221,66 +254,72 @@
 // 4.程序在前台运行阶段，应该按一定的时间间隔检查最低版本，以防止在启动时由于网络差或者暂时关闭网络导致跳过版本检查。
 
 // 新的在线参数在notification.userInfo中，可能是从网络获取的，也可能是本地缓存在NSUserDefault中的
-- (void)UMOnlineConfigDidFinished:(NSNotification *)noti{
-    onlineParam = (NSDictionary *)noti.userInfo;
-    [self onVersionCheckFinished];
-    // 加载完成后即移除该观察者，否则获取广告的[MobClick getAdURL]会引起该回调再次被执行
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UMOnlineConfigDidFinishedNotification object:nil];
-}
+//- (void)UMOnlineConfigDidFinished:(NSNotification *)noti{
+//    onlineParam = (NSDictionary *)noti.userInfo;
+//    [self onVersionCheckFinished];
+//    // 加载完成后即移除该观察者，否则获取广告的[MobClick getAdURL]会引起该回调再次被执行
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UMOnlineConfigDidFinishedNotification object:nil];
+//}
 
-- (void) onVersionCheckFinished{
-    NSLog(@"检查版本完成");
+- (void) onVersionCheckFinished:(BOOL)success{
     checkVersionFinished = true;
     if (hud) {
         [hud hide:true];
     }
     
-    float sysVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
-    NSString *minVersion;
-    if (sysVersion>=5.0f && sysVersion<6.0f) {
-        minVersion = onlineParam[@"iOS5MinVersion"];
-    }else if(sysVersion>=6.0f && sysVersion<7.0f){
-        minVersion = onlineParam[@"iOS6MinVersion"];
-    }else if(sysVersion>=7.0f && sysVersion<8.0f){
-        minVersion = onlineParam[@"iOS7MinVersion"];
-    }else if(sysVersion>=8.0f && sysVersion<9.0f){
-        minVersion = onlineParam[@"iOS8MinVersion"];
-    }else{
-        minVersion = onlineParam[@"minVersion"];
-    }
-    NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    
-    if (minVersion && [minVersion floatValue] > [currentVersion floatValue]) {
-        canEnterMain = false;
-        // 如果还没进入广告页，就没必要展示广告页了
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(showAdvertiseView) object:nil];
-        // 弹AlertView提示，程序不能继续向下执行
-        if (After_iOS8) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"当前版本过低，请更新后使用。"  message:nil preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action){
-                exit(0);
-            }]];
-            [alert addAction:[UIAlertAction actionWithTitle:@"更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-                [iVersion sharedInstance].updateURL = [NSURL URLWithString:onlineParam[@"updateURL"]];
-                [[iVersion sharedInstance] openAppPageInAppStore];
-                exit(0);
-            }]];
-            [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+    if (success) {
+        float sysVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
+        NSString *minVersion;
+        if (sysVersion>=5.0f && sysVersion<6.0f) {
+            minVersion = onlineParam[@"iOS5MinVersion"];
+        }else if(sysVersion>=6.0f && sysVersion<7.0f){
+            minVersion = onlineParam[@"iOS6MinVersion"];
+        }else if(sysVersion>=7.0f && sysVersion<8.0f){
+            minVersion = onlineParam[@"iOS7MinVersion"];
+        }else if(sysVersion>=8.0f && sysVersion<9.0f){
+            minVersion = onlineParam[@"iOS8MinVersion"];
         }else{
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"当前版本过低，请更新后使用。" message:nil delegate:self cancelButtonTitle:@"退出" otherButtonTitles:@"更新", nil];
-            [alert show];
+            minVersion = onlineParam[@"minVersion"];
+        }
+        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        
+        if (minVersion && [minVersion floatValue] > [currentVersion floatValue]) {
+            canEnterMain = false;
+            // 如果还没进入广告页，就没必要展示广告页了
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(showAdvertiseView) object:nil];
+            // 弹AlertView提示，程序不能继续向下执行
+            if (After_iOS8) {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"当前版本过低，请更新后使用。"  message:nil preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action){
+                    exit(0);
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+                    [iVersion sharedInstance].updateURL = [NSURL URLWithString:onlineParam[@"updateURL"]];
+                    [[iVersion sharedInstance] openAppPageInAppStore];
+                    exit(0);
+                }]];
+                [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+            }else{
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"当前版本过低，请更新后使用。" message:nil delegate:self cancelButtonTitle:@"退出" otherButtonTitles:@"更新", nil];
+                [alert show];
+            }
+        }else{
+            if (showAdvFinished) {
+                [self enterMainStoryboard];
+            }
         }
     }else{
         if (showAdvFinished) {
-            if (hud) {
-                [hud hide:true];
-            }
             [self enterMainStoryboard];
         }
     }
+    
+    
+    
 }
 
 - (void)enterMainStoryboard{
+    [UIApplication sharedApplication].statusBarHidden = false;
     // 保证只被执行一次
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

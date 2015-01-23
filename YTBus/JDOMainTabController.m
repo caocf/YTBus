@@ -91,6 +91,8 @@
 //        SOAPAction: http://service.epfgetAppVersion
 //        <v:Envelope xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:getAppVersion id="o0" c:root="1" xmlns:n0="http://service.epf" /></v:Body></v:Envelope>
     }
+    
+    //TODO 在这里就检查一遍意见反馈和新闻资讯，有新的话在“更多”那里加红点提示
 
 }
 

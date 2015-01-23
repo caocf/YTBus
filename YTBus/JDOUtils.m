@@ -90,4 +90,25 @@ static NSDateFormatter *dateFormatter;
     return [dateFormatter dateFromString:date];
 }
 
+CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, NSInteger numberOfLines) {
+    if (string.length == 0) {
+        return CGSizeZero;
+    }
+    
+    CGFloat lineHeight = font.lineHeight;
+    CGSize size = CGSizeZero;
+    
+    if (numberOfLines == 1) {
+        size = [string sizeWithFont:font forWidth:constrainedToSize.width lineBreakMode:lineBreakMode];
+        
+    } else {
+        size = [string sizeWithFont:font constrainedToSize:constrainedToSize lineBreakMode:lineBreakMode];
+        if (numberOfLines > 0) {
+            size.height = MIN(size.height, numberOfLines * lineHeight);
+        }
+    }
+    
+    return size;
+}
+
 @end

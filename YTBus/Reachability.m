@@ -276,7 +276,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 }
 
 + (BOOL) isEnableNetwork{
-    return [self isEnableWIFI] || [self isEnable3G];
+//    return [self isEnableWIFI] || [self isEnable3G];
+    NetworkStatus status = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
+    return status == ReachableViaWWAN || status == ReachableViaWiFi;
 }
 
 @end
