@@ -67,7 +67,17 @@ static const void *SelectedKey = &SelectedKey;
     _mapView.minZoomLevel = 12;
     _mapView.maxZoomLevel = 17;
     
-    [self setMapCenter];
+    if (_stationId) {   // 存在起始站点，则以此站点为地图中心
+        for (int i=0; i<_stations.count; i++) {
+            JDOStationModel *station = _stations[i];
+            if ([station.fid isEqualToString:_stationId]) {
+                _mapView.centerCoordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue,station.gpsX.doubleValue);
+                break;
+            }
+        }
+    }else{  // 否则以整条线路中心为地图中心
+        [self setMapCenter];
+    }
     [self addStationOverlay];
     
     _buses = [NSMutableArray new];

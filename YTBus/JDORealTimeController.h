@@ -9,8 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "JDOBusLine.h"
 
+@class JDORealTimeCell;
+
 @interface JDORealTimeController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,copy) JDOBusLine *busLine;
+
+- (void)showBusMenu:(JDORealTimeCell *)cell;
 
 @end

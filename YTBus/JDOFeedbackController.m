@@ -21,106 +21,7 @@
 #define Feedback_Name_Height 20
 #define Feedback_Time_Width  150
 
-#define Main_Background_Color @"f0f0f0"
-
-//@class JDOFeedbackController;
-//
-//@interface JDOFeedbackCell : UITableViewCell
-//
-//@property (nonatomic,strong) UILabel *pubtimeLabel;
-//@property (nonatomic,strong) UIImageView *separatorLine;
-//@property (nonatomic,weak) JDOFeedbackController *controller;
-//@property (nonatomic,strong) NSDictionary *model;
-//
-//@end
-//
-//@implementation JDOFeedbackCell
-//
-//- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
-//{
-//    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
-//    if (self) {
-//        self.backgroundColor = [UIColor clearColor];
-//        self.selectionStyle = UITableViewCellSelectionStyleNone;
-//        self.textLabel.font = [UIFont systemFontOfSize:14];
-//        self.textLabel.backgroundColor = [UIColor clearColor];
-//        
-//        self.detailTextLabel.font = [UIFont systemFontOfSize:14];
-//        self.detailTextLabel.numberOfLines = 0;
-//        self.detailTextLabel.lineBreakMode = UILineBreakModeWordWrap;
-//        self.detailTextLabel.textColor = [UIColor colorWithHex:@"505050"];
-//        self.detailTextLabel.backgroundColor = [UIColor clearColor];
-//        
-//        self.pubtimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(320-Feedback_Time_Width-10, 10, Feedback_Time_Width, Feedback_Name_Height)];
-//        self.pubtimeLabel.font = [UIFont systemFontOfSize:14];
-//        self.pubtimeLabel.textColor = [UIColor colorWithHex:@"969696"];
-//        self.pubtimeLabel.textAlignment = UITextAlignmentRight;
-//        self.pubtimeLabel.backgroundColor = [UIColor clearColor];
-//        [self.contentView addSubview:self.pubtimeLabel];
-//        
-//        self.separatorLine = [[UIImageView alloc] initWithFrame:CGRectZero];
-//        self.separatorLine.image = [UIImage imageNamed:@"full_separator_line"];
-//        [self.contentView addSubview:self.separatorLine];
-//        
-//    }
-//    return self;
-//}
-//
-//- (void)layoutSubviews {
-//    [super layoutSubviews];
-//    
-//    self.textLabel.frame = CGRectMake(10, 10, Feedback_Name_Width, Feedback_Name_Height);
-//    float contentHeight = JDOSizeOfString(self.detailTextLabel.text, CGSizeMake(300, MAXFLOAT), [UIFont systemFontOfSize:Review_Font_Size], NSLineBreakByWordWrapping, 0).height;
-//    self.detailTextLabel.frame = CGRectMake(10, 10+Feedback_Name_Height+5, 300, contentHeight);
-//    self.separatorLine.frame = CGRectMake(10, 10+Feedback_Name_Height+5+contentHeight+10, 320-20, 1);
-//}
-//
-//- (void)setContent:(NSDictionary *)model{
-//    if(model == nil){
-//        self.textLabel.text = nil;
-//        self.detailTextLabel.text = nil;
-//        self.pubtimeLabel.text = nil;
-//        self.separatorLine.hidden = true;
-//    }else{
-//        _model = model;
-//        self.textLabel.textColor = [UIColor colorWithHex:@"1673ba"];
-//        self.textLabel.text = [model[@"type"] isEqualToString:@"user_reply"]?@"我":@"烟台公交客服";
-//        self.detailTextLabel.text = model[@"content"];
-//        // armv7下long型长度为32位，arm64下long型长度为64位，时间的毫秒数长度超过32位long型的取值范围
-//        self.pubtimeLabel.text = [JDOUtils formatDate:[NSDate dateWithTimeIntervalSince1970:[model[@"created_at"] longLongValue]/1000.0] withFormatter:DateFormatYMDHM];
-//        self.separatorLine.hidden = false;
-//        
-//        int state = [model[@"is_failed"] intValue];
-//        if (state == 0) {   // 发送成功
-//            self.textLabel.text = [model[@"type"] isEqualToString:@"user_reply"]?@"我(发送成功)":@"烟台公交客服";
-//        }else if(state == 1){   // 发送失败
-//            self.textLabel.text = [model[@"type"] isEqualToString:@"user_reply"]?@"我(发送失败)":@"烟台公交客服";
-//            UIButton *resendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//            [resendBtn setTitle:@"重新发送" forState:UIControlStateNormal];
-//            [resendBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-//            resendBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-//            resendBtn.frame = CGRectMake(85, 6, 60, 30);
-//            resendBtn.tag = 1001;
-//            [resendBtn addTarget:self action:@selector(resend) forControlEvents:UIControlEventTouchUpInside];
-//            [self.contentView addSubview:resendBtn];
-//        }else if(state == 2){   // 正在发送
-//            self.textLabel.text = [model[@"type"] isEqualToString:@"user_reply"]?@"我(正在发送)":@"烟台公交客服";
-//        }
-//    }
-//}
-//
-//- (void)prepareForReuse{
-//    [[self.contentView viewWithTag:1001] removeFromSuperview];
-//    self.model = nil;
-//}
-//
-//- (void)resend{
-//    [self.controller syncUI:_model[@"content"]];
-//    [self.controller.feedback post:@{@"content":_model[@"content"]}];
-//}
-//
-//@end
-
+#define Main_Background_Color @"dfded9"
 
 typedef enum{
     FeedbackLoadTypeLoad,
@@ -299,6 +200,7 @@ typedef enum{
         NSLog(@"提交内容错误--%@", error.description);
         if ([lastReply[@"is_failed"] intValue] == 2) {
             lastReply[@"is_failed"] = [NSNumber numberWithInt:1];
+            [JDOUtils showHUDText:@"发送失败，点击叹号重新发送" inView:self.view afterDelay:2.0f];
         }
     }else{
         if ([lastReply[@"is_failed"] intValue] == 2) {
@@ -351,9 +253,11 @@ typedef enum{
                 [JDOUtils showHUDText:@"加载数据出错!" inView:self.view];
             }else if(loadType == FeedbackLoadTypeSubmit){
                 // 提交前先获取，如果获取失败，为了防止数据不同步，则认为提交也是失败的
+                // 若先提交再获取，友盟会以本地最后一条数据的时间戳为参考点去查数据，有可能导致上次获取之后后台产生的新数据丢失
                 NSMutableDictionary *lastReply = [self.listArray lastObject];
                 if ([lastReply[@"is_failed"] intValue] == 2) {
                     lastReply[@"is_failed"] = [NSNumber numberWithInt:1];
+                    [JDOUtils showHUDText:@"发送失败，点击叹号重新发送" inView:self.view afterDelay:2.0f];
                 }
                 self.btnItem.enabled = true;
                 [self.tableView reloadData];

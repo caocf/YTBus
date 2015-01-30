@@ -37,13 +37,17 @@ static NSDateFormatter *dateFormatter;
     return true;
 }
 
-+ (void) showHUDText:(NSString *)text inView:(UIView *)view{
++ (void) showHUDText:(NSString *)text inView:(UIView *)view afterDelay:(float) delay{
     // 若有其他的hud正在显示，先关闭
     [MBProgressHUD hideAllHUDsForView:view animated:false];
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:true];
     hud.mode = MBProgressHUDModeText;
     hud.labelText = text;
-    [hud hide:true afterDelay:1.0f];
+    [hud hide:true afterDelay:delay];
+}
+
++ (void) showHUDText:(NSString *)text inView:(UIView *)view{
+    [self showHUDText:text inView:view afterDelay:1.0f];
 }
 
 + (BOOL) isEmptyString:(NSString *)str{

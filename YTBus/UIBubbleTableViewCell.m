@@ -12,6 +12,8 @@
 #import "UIBubbleTableViewCell.h"
 #import "NSBubbleData.h"
 
+#define Avatar_Size 32
+
 @interface UIBubbleTableViewCell ()
 
 @property (nonatomic, retain) UIView *customView;
@@ -41,17 +43,11 @@
         [self.contentView addSubview:self.bubbleImage];
         
         self.avatarImage = [[UIImageView alloc] init];
-        self.avatarImage.layer.cornerRadius = 9.0;
-        self.avatarImage.layer.masksToBounds = YES;
-        self.avatarImage.layer.borderColor = [UIColor colorWithWhite:0.0 alpha:0.2].CGColor;
-        self.avatarImage.layer.borderWidth = 1.0;
         [self.contentView addSubview:self.avatarImage];
         
         _stateBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _stateBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-        [_stateBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
         [_stateBtn addTarget:self action:@selector(resend:) forControlEvents:UIControlEventTouchUpInside];
-        [_stateBtn setTitle:@"发送失败" forState:UIControlStateNormal];
+        [_stateBtn setImage:[UIImage imageNamed:@"发送失败"] forState:UIControlStateNormal];
         _stateBtn.hidden = true;
         [self.contentView addSubview:_stateBtn];
         
@@ -79,26 +75,29 @@
     
     
     self.avatarImage.image = (self.data.avatar ? self.data.avatar : [UIImage imageNamed:@"missingAvatar.png"]);
-    CGFloat avatarX = (type == BubbleTypeSomeoneElse) ? 2 : self.frame.size.width - 52;
-    CGFloat avatarY = self.frame.size.height - 50;
+    CGFloat avatarX = (type == BubbleTypeSomeoneElse) ? 2 : self.frame.size.width - (Avatar_Size+2);
+    CGFloat avatarY = self.frame.size.height - Avatar_Size;
     
-    self.avatarImage.frame = CGRectMake(avatarX, avatarY, 50, 50);
-    CGFloat delta = self.frame.size.height - (self.data.insets.top + self.data.insets.bottom + self.data.view.frame.size.height);
+    self.avatarImage.frame = CGRectMake(avatarX, avatarY, Avatar_Size, Avatar_Size);
+    CGFloat delta = self.frame.size.height - (self.data.insets.top + self.data.insets.bottom + height);
     if (delta > 0) y = delta;
     
-    if (type == BubbleTypeSomeoneElse) x += 54;
-    if (type == BubbleTypeMine) x -= 54;
-
     [self.customView removeFromSuperview];
     self.customView = self.data.view;
-    self.customView.frame = CGRectMake(x + self.data.insets.left, y + self.data.insets.top, width, height);
     [self.contentView addSubview:self.customView];
-
-    if (type == BubbleTypeSomeoneElse){
-        self.bubbleImage.image = [[UIImage imageNamed:@"bubbleSomeone.png"] stretchableImageWithLeftCapWidth:21 topCapHeight:14];
-    }else {
-        self.bubbleImage.image = [[UIImage imageNamed:@"bubbleMine.png"] stretchableImageWithLeftCapWidth:15 topCapHeight:14];
+    
+    if (type == BubbleTypeSomeoneElse) {
+        x += Avatar_Size+4;
+        [(UILabel *)self.customView setTextColor:[UIColor whiteColor]];
+        self.bubbleImage.image = [[UIImage imageNamed:@"someoneBubble"] stretchableImageWithLeftCapWidth:21 topCapHeight:9];
     }
+    if (type == BubbleTypeMine){
+        x -= Avatar_Size+4;
+        [(UILabel *)self.customView setTextColor:[UIColor blackColor]];
+        self.bubbleImage.image = [[UIImage imageNamed:@"myBubble"] stretchableImageWithLeftCapWidth:15 topCapHeight:9];
+    }
+
+    self.customView.frame = CGRectMake(x + self.data.insets.left, y + self.data.insets.top, width, height);
     self.bubbleImage.frame = CGRectMake(x, y, width + self.data.insets.left + self.data.insets.right, height + self.data.insets.top + self.data.insets.bottom);
     
     
@@ -114,7 +113,7 @@
             _activityIndicator.hidden = true;
             [self.activityIndicator stopAnimating];
         }else if(state == 1){   // 发送失败
-            _stateBtn.frame = CGRectMake(x-65, self.data.view.center.y-10, 60, 20);
+            _stateBtn.frame = CGRectMake(x-25, self.data.view.center.y-10, 20, 20);
             _stateBtn.hidden = false;
             _activityIndicator.hidden = true;
             [self.activityIndicator stopAnimating];

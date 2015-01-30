@@ -2,7 +2,7 @@
 //  CMPopTipView.h
 //
 //  Created by Chris Miles on 18/07/10.
-//  Copyright (c) Chris Miles 2010-2012.
+//  Copyright (c) Chris Miles 2010-2014.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -10,10 +10,10 @@
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 //  copies of the Software, and to permit persons to whom the Software is
 //  furnished to do so, subject to the following conditions:
-//  
+//
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
-//  
+//
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,12 +24,12 @@
 //
 
 /*
-	Version: 1.2.0
+	Version: 2.2
  */
 
 
 /** \brief	Display a speech bubble-like popup on screen, pointing at the
-			designated view or button.
+ designated view or button.
  
 	A UIView subclass drawn using core graphics. Pops up (optionally animated)
 	a speech bubble-like view on screen, a rounded rectangle with a gradiant
@@ -39,49 +39,49 @@
  Example 1 - point at a UIBarButtonItem in a nav bar:
  
 	- (void)showPopTipView {
-		NSString *message = @"Start by adding a waterway to your favourites.";
-		CMPopTipView *popTipView = [[CMPopTipView alloc] initWithMessage:message];
-		popTipView.delegate = self;
-		[popTipView presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
-		
-		self.myPopTipView = popTipView;
-		[popTipView release];
+ NSString *message = @"Start by adding a waterway to your favourites.";
+ CMPopTipView *popTipView = [[CMPopTipView alloc] initWithMessage:message];
+ popTipView.delegate = self;
+ [popTipView presentPointingAtBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
+ 
+ self.myPopTipView = popTipView;
+ [popTipView release];
 	}
-
+ 
 	- (void)dismissPopTipView {
-		[self.myPopTipView dismissAnimated:NO];
-		self.myPopTipView = nil;
+ [self.myPopTipView dismissAnimated:NO];
+ self.myPopTipView = nil;
 	}
-
+ 
  
 	#pragma mark CMPopTipViewDelegate methods
 	- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView {
-		// User can tap CMPopTipView to dismiss it
-		self.myPopTipView = nil;
+ // User can tap CMPopTipView to dismiss it
+ self.myPopTipView = nil;
 	}
-
+ 
  Example 2 - pointing at a UIButton:
-
+ 
 	- (IBAction)buttonAction:(id)sender {
-		// Toggle popTipView when a standard UIButton is pressed
-		if (nil == self.roundRectButtonPopTipView) {
-			self.roundRectButtonPopTipView = [[[CMPopTipView alloc] initWithMessage:@"My message"] autorelease];
-			self.roundRectButtonPopTipView.delegate = self;
-
-			UIButton *button = (UIButton *)sender;
-			[self.roundRectButtonPopTipView presentPointingAtView:button inView:self.view animated:YES];
-		}
-		else {
-			// Dismiss
-			[self.roundRectButtonPopTipView dismissAnimated:YES];
-			self.roundRectButtonPopTipView = nil;
-		}	
+ // Toggle popTipView when a standard UIButton is pressed
+ if (nil == self.roundRectButtonPopTipView) {
+ self.roundRectButtonPopTipView = [[[CMPopTipView alloc] initWithMessage:@"My message"] autorelease];
+ self.roundRectButtonPopTipView.delegate = self;
+ 
+ UIButton *button = (UIButton *)sender;
+ [self.roundRectButtonPopTipView presentPointingAtView:button inView:self.view animated:YES];
+ }
+ else {
+ // Dismiss
+ [self.roundRectButtonPopTipView dismissAnimated:YES];
+ self.roundRectButtonPopTipView = nil;
+ }
 	}
-
+ 
 	#pragma mark CMPopTipViewDelegate methods
 	- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView {
-		// User can tap CMPopTipView to dismiss it
-		self.roundRectButtonPopTipView = nil;
+ // User can tap CMPopTipView to dismiss it
+ self.roundRectButtonPopTipView = nil;
 	}
  
  */
@@ -90,8 +90,8 @@
 
 typedef enum {
     PointDirectionAny = 0,
-	PointDirectionUp,
-	PointDirectionDown,
+    PointDirectionUp,
+    PointDirectionDown,
 } PointDirection;
 
 typedef enum {
@@ -103,51 +103,35 @@ typedef enum {
 @protocol CMPopTipViewDelegate;
 
 
-@interface CMPopTipView : UIView {
-	UIColor					*backgroundColor;
-	id<CMPopTipViewDelegate>	delegate;
-    NSString                *title;
-	NSString				*message;
-	id						targetObject;
-    UIColor                 *titleColor;
-    UIFont                  *titleFont;
-	UIColor					*textColor;
-	UIFont					*textFont;
-    UIColor                 *borderColor;
-    CGFloat                 borderWidth;
-    CMPopTipAnimation       animation;
+@interface CMPopTipView : UIView
 
-	@private
-	CGSize					bubbleSize;
-	CGFloat					cornerRadius;
-	BOOL					highlight;
-	CGFloat					sidePadding;
-	CGFloat					topMargin;
-	PointDirection			pointDirection;
-	CGFloat					pointerSize;
-	CGPoint					targetPoint;
-}
-
-@property (nonatomic, retain)			UIColor					*backgroundColor;
-@property (nonatomic, assign)		id<CMPopTipViewDelegate>	delegate;
+@property (nonatomic, strong)			UIColor					*backgroundColor;
+@property (nonatomic, assign)				id<CMPopTipViewDelegate>	delegate;
 @property (nonatomic, assign)			BOOL					disableTapToDismiss;
 @property (nonatomic, assign)			BOOL					dismissTapAnywhere;
-@property (nonatomic, retain)			NSString				*title;
-@property (nonatomic, retain)			NSString				*message;
-@property (nonatomic, retain)           UIView	                *customView;
-@property (nonatomic, retain, readonly)	id						targetObject;
-@property (nonatomic, retain)			UIColor					*titleColor;
-@property (nonatomic, retain)			UIFont					*titleFont;
-@property (nonatomic, retain)			UIColor					*textColor;
-@property (nonatomic, retain)			UIFont					*textFont;
-@property (nonatomic, assign)			UITextAlignment			titleAlignment;
-@property (nonatomic, assign)			UITextAlignment			textAlignment;
-@property (nonatomic, retain)			UIColor					*borderColor;
+@property (nonatomic, strong)			NSString				*title;
+@property (nonatomic, strong)			NSString				*message;
+@property (nonatomic, strong)           UIView	                *customView;
+@property (nonatomic, strong, readonly)	id						targetObject;
+@property (nonatomic, strong)			UIColor					*titleColor;
+@property (nonatomic, strong)			UIFont					*titleFont;
+@property (nonatomic, strong)			UIColor					*textColor;
+@property (nonatomic, strong)			UIFont					*textFont;
+@property (nonatomic, assign)			NSTextAlignment			titleAlignment;
+@property (nonatomic, assign)			NSTextAlignment			textAlignment;
+@property (nonatomic, assign)           BOOL                    has3DStyle;
+@property (nonatomic, strong)			UIColor					*borderColor;
+@property (nonatomic, assign)           CGFloat                 cornerRadius;
 @property (nonatomic, assign)			CGFloat					borderWidth;
+@property (nonatomic, assign)           BOOL                    hasShadow;
 @property (nonatomic, assign)           CMPopTipAnimation       animation;
 @property (nonatomic, assign)           CGFloat                 maxWidth;
 @property (nonatomic, assign)           PointDirection          preferredPointDirection;
-@property (nonatomic, retain)           NSTimer                 *autoDismissTimer;
+@property (nonatomic, assign)           BOOL                    hasGradientBackground;
+@property (nonatomic, assign)           CGFloat                 sidePadding;
+@property (nonatomic, assign)           CGFloat                 topMargin;
+@property (nonatomic, assign)           CGFloat                 pointerSize;
+@property (nonatomic, strong) NSTimer *autoDismissTimer;
 
 /* Contents can be either a message or a UIView */
 - (id)initWithTitle:(NSString *)titleToShow message:(NSString *)messageToShow;

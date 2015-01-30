@@ -19,8 +19,8 @@
 #define Param_Max_Wait_Seconds 5.0f
 #define Advertise_Cache_File @"advertise"
 
-@interface AppDelegate () <BMKGeneralDelegate>{
-    
+@interface AppDelegate () <BMKGeneralDelegate,BMKOfflineMapDelegate>{
+    BMKOfflineMap* _offlineMap;
 }
 
 @end
@@ -95,8 +95,88 @@
         [self onVersionCheckFinished:false];
     }];
     
+    // 下载最新离线地图包，是dat格式，从网站上下载的是dat_svc格式，目前还不知道这两种格式有什么区别
+//    _offlineMap = [[BMKOfflineMap alloc] init];
+//    _offlineMap.delegate = self;
+//    [_offlineMap start:326];
+    // 把离线地图包从bundle中复制到document中
+    [self performSelectorInBackground:@selector(copyOfflineMap) withObject:nil];
     
     return YES;
+}
+
+- (void)copyOfflineMap {
+    // iOS8以下的沙盒机制应用的bundle跟data在同一个目录下/var/mobile/Applications/，iOS8以上的沙盒将bundle和data分离，bundle放在"/private/var/mobile/Containers/Bundle/Application"目录下，document放在"/var/mobile/Containers/Data/Application/"目录下。
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *documentDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *baidumapDir = [documentDir stringByAppendingPathComponent:@"vmp/h"];
+    NSString *baidumapDes = [documentDir stringByAppendingPathComponent:@"vmp/h/yantai_326.dat"];
+    NSString *baidumapSrc = [[NSBundle mainBundle] pathForResource:@"yantai_326" ofType:@"dat"];
+    
+    BOOL isDir;
+    BOOL doCopy = false;
+    NSError *error;
+    if ([fm fileExistsAtPath:baidumapDir isDirectory:&isDir]) {
+        if (isDir) {
+            NSLog(@"目录已存在");
+            if ([fm fileExistsAtPath:baidumapDes]) {
+                NSLog(@"离线地图已存在");
+            }else{
+                doCopy = true;
+            }
+        }else{
+            NSLog(@"%@不是目录",baidumapDir);
+        }
+    }else{
+        BOOL success = [fm createDirectoryAtPath:baidumapDir withIntermediateDirectories:true attributes:nil error:&error];
+        if ( success ) {
+            NSLog(@"创建地图目录成功");
+            doCopy = true;
+        }else{
+            NSLog(@"创建地图目录失败:%@",error);
+        }
+    }
+    
+    if( doCopy ){
+        NSLog(@"开始复制离线地图");
+        BOOL result = [fm copyItemAtPath:baidumapSrc toPath:baidumapDes error:&error];
+        if(!result){
+            NSLog(@"复制离线地图失败:%@",error);
+        }else{
+            NSLog(@"复制离线地图成功");
+        }
+    }
+}
+
+- (void)onGetOfflineMapState:(int)type withState:(int)state{
+    if (type == TYPE_OFFLINE_UPDATE) {
+        //id为state的城市正在下载或更新，start后会毁掉此类型
+        BMKOLUpdateElement* updateInfo;
+        updateInfo = [_offlineMap getUpdateInfo:state];
+        NSLog(@"城市名：%@,下载比例:%d",updateInfo.cityName,updateInfo.ratio);
+    }
+    if (type == TYPE_OFFLINE_NEWVER) {
+        //id为state的state城市有新版本,可调用update接口进行更新
+        BMKOLUpdateElement* updateInfo;
+        updateInfo = [_offlineMap getUpdateInfo:state];
+        NSLog(@"是否有更新%d",updateInfo.update);
+    }
+    if (type == TYPE_OFFLINE_UNZIP) {
+        //正在解压第state个离线包，导入时会回调此类型
+    }
+    if (type == TYPE_OFFLINE_ZIPCNT) {
+        //检测到state个离线包，开始导入时会回调此类型
+        NSLog(@"检测到%d个离线包",state);
+    }
+    if (type == TYPE_OFFLINE_ERRZIP) {
+        //有state个错误包，导入完成后会回调此类型
+        NSLog(@"有%d个离线包导入错误",state);
+    }
+    if (type == TYPE_OFFLINE_UNZIPFINISH) {
+        NSLog(@"成功导入%d个离线包",state);
+        //导入成功state个离线包，导入成功后会回调此类型
+    }
+    
 }
 
 - (void) initUMengConfig{

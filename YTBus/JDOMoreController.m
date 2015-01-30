@@ -72,7 +72,7 @@ typedef enum{
 @implementation JDOMoreController{
     BOOL hasNewVersion;
     BOOL needGetFeedback;
-    BOOL hasNewFeedback;
+    NSUInteger unreadNumber;
 }
 
 - (void)viewDidLoad {
@@ -94,12 +94,12 @@ typedef enum{
 //        self.tableView.tableHeaderView = advBtn;
 //    }
     
-    // TODO 检查是否有新反馈 theNewReplies
     // 注册UMFeedback的时候就会获取一遍数据，若已经有新反馈，则直接显示提示。如果没有新反馈，还有可能在应用启动到切换到“更多”tab页这段时间有新的反馈，则再重新获取一遍
-    hasNewFeedback = needGetFeedback = false;
+    unreadNumber= 0;
     self.feedback = [UMFeedback sharedInstance];
     if (self.feedback.theNewReplies.count>0) {
-        hasNewFeedback = true;
+        unreadNumber = self.feedback.theNewReplies.count;
+        needGetFeedback = false;
     }else{
         needGetFeedback = true;
     }
@@ -126,7 +126,7 @@ typedef enum{
     if (error) {
         NSLog(@"获取内容错误--%@", error.description);
     }else{
-        hasNewFeedback = (self.feedback.theNewReplies.count>0);
+        unreadNumber += self.feedback.theNewReplies.count;
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:JDOSettingTypeFeedback inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
@@ -203,17 +203,22 @@ typedef enum{
     if (indexPath.row == JDOSettingTypeVersion) {
         [[iVersion sharedInstance] checkForNewVersion];
     }else if(indexPath.row == JDOSettingTypeFeedback){
-        if (hasNewFeedback) {
+        [[cell.contentView viewWithTag:1003] removeFromSuperview];
+        if (unreadNumber > 0) {
             UILabel *hint = [[UILabel alloc] initWithFrame:CGRectMake(130, 12, 80, 20)];
             hint.tag = 1003;
             hint.font = [UIFont systemFontOfSize:12];
             hint.backgroundColor = [UIColor clearColor];
             hint.textColor = [UIColor redColor];
-            hint.text = [NSString stringWithFormat:@"(%lu条新消息)",(unsigned long)self.feedback.theNewReplies.count];
+            hint.text = [NSString stringWithFormat:@"(%lu条新消息)",(unsigned long)unreadNumber];
             [cell.contentView addSubview:hint];
-        }else{
-            [[cell.contentView viewWithTag:1003] removeFromSuperview];
         }
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"toFeedback"]) {
+        unreadNumber = 0;
     }
 }
 
@@ -223,16 +228,5 @@ typedef enum{
 //    return cell;
 //}
 
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

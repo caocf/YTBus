@@ -15,6 +15,7 @@
 #import "JDOConstants.h"
 #import "JSONKit.h"
 #import "JDOBusModel.h"
+#import "CMPopTipView.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
 
@@ -23,16 +24,29 @@
 @property (nonatomic,assign) IBOutlet UIImageView *stationIcon;
 @property (nonatomic,assign) IBOutlet UILabel *stationName;
 @property (nonatomic,assign) IBOutlet UILabel *stationSeq;
-@property (nonatomic,assign) IBOutlet UIImageView *arrivingBus;
-@property (nonatomic,assign) IBOutlet UIImageView *arrivedBus;
+@property (nonatomic,assign) IBOutlet UIButton *arrivingBus;
+@property (nonatomic,assign) IBOutlet UIButton *arrivedBus;
+@property (nonatomic,assign) IBOutlet UILabel *busNumLabel;
+@property (nonatomic,assign) IBOutlet UIImageView *busNumBorder;
+
+@property (nonatomic,assign) JDORealTimeController *controller;
+@property (nonatomic,strong) CMPopTipView *popTipView;
 
 @end
 
 @implementation JDORealTimeCell
 
+- (IBAction)onBusClicked:(id)sender{
+    [self.controller showBusMenu:self];
+}
+
+//- (void)prepareForReuse{
+//    [super prepareForReuse];
+//}
+
 @end
 
-@interface JDORealTimeController () <NSXMLParserDelegate> {
+@interface JDORealTimeController () <NSXMLParserDelegate,CMPopTipViewDelegate> {
     NSMutableArray *_stations;
     FMDatabase *_db;
     id dbObserver;
@@ -56,13 +70,21 @@
 @property (nonatomic,assign) IBOutlet UITableView *tableView;
 @property (nonatomic,assign) IBOutlet UIView *topBackground;
 
+@property (nonatomic,assign) IBOutlet UIButton *reportErrorBtn;
+@property (nonatomic,assign) IBOutlet UIButton *shareBtn;
+@property (nonatomic,assign) IBOutlet UIView *menu;
+
+@property (nonatomic,strong) NSMutableArray *visiblePopTipViews;
+@property (nonatomic,strong) NSMutableArray *realBusList;
+
+
 - (IBAction)changeDirection:(id)sender;
 - (IBAction)clickFavor:(id)sender;
 
 @end
 
 @implementation JDORealTimeController{
-
+    
 }
 
 - (void)viewDidLoad {
@@ -88,6 +110,24 @@
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     
     _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
+    self.visiblePopTipViews = [NSMutableArray array];
+}
+
+- (void) toggleMenu {
+    BOOL isHidden = self.menu.hidden;
+    if(isHidden) {
+        self.menu.hidden = NO;
+    }
+    [UIView animateWithDuration:0.4 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        CGRect menuFrame = self.menu.frame;
+        menuFrame.origin.y = isHidden?0.0f:-menuFrame.size.height;
+        self.menu.frame = menuFrame;
+        self.menu.alpha = isHidden?0.8f:0.0f;
+    } completion:^(BOOL finished) {
+        if (!isHidden) {
+            self.menu.hidden = YES;
+        }
+    }];
 }
 
 - (void)loadData{
@@ -334,11 +374,11 @@
                 [self.tableView reloadData];
             }
         }else{
-            NSArray *list = [_jsonResult objectFromJSONString];
-            if (!list) {
+            _realBusList = [_jsonResult objectFromJSONString];
+            if (!_realBusList) {
                 [JDOUtils showHUDText:@"实时数据JSON格式错误" inView:self.view];
             }else{
-                [self redrawBus:list];
+                [self redrawBus];
             }
         }
     }
@@ -348,10 +388,17 @@
     [JDOUtils showHUDText:[NSString stringWithFormat:@"解析实时数据XML错误：%@",parseError] inView:self.view];
 }
 
-- (void) redrawBus:(NSArray *)list{
-    _busIndexSet = [NSMutableSet new];
-    for (int i=0; i<list.count; i++){
-        NSDictionary *dict = list[i];
+- (void) redrawBus{
+    NSMutableSet *oldIndexSet;
+    if (!_busIndexSet) {
+        _busIndexSet = [NSMutableSet new];
+    }else{
+        oldIndexSet = [NSMutableSet setWithSet:_busIndexSet];
+        [_busIndexSet removeAllObjects];
+    }
+    
+    for (int i=0; i<_realBusList.count; i++){
+        NSDictionary *dict = _realBusList[i];
         JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
         int stationIndex = -1;
         for (int j=0; j<_stations.count; j++) {
@@ -365,7 +412,34 @@
             [_busIndexSet addObject:[NSIndexPath indexPathForRow:stationIndex inSection:0]];
         }
     }
-    [self.tableView reloadData];
+    
+    if (!oldIndexSet) {
+        [self.tableView reloadData];
+    }else{  // 对比可视范围内索引有变化才刷新
+        NSArray *visibleCells = [self.tableView visibleCells];
+        
+        NSMutableSet *toKeep = [NSMutableSet setWithSet:oldIndexSet];
+        [toKeep intersectSet:_busIndexSet];
+        NSMutableSet *toAdd = [NSMutableSet setWithSet:_busIndexSet];
+        [toAdd minusSet:toKeep];
+        NSMutableSet *toRemove = [NSMutableSet setWithSet:oldIndexSet];
+        [toRemove minusSet:_busIndexSet];
+        
+        NSMutableSet *toRefresh = [NSMutableSet set];
+        for (int i=0; i<visibleCells.count; i++) {
+            JDORealTimeCell *cell = visibleCells[i];
+            NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+            if ([toAdd containsObject:indexPath] || [toRemove containsObject:indexPath] ) {
+                [toRefresh addObject:indexPath];
+            }
+            if ([toRemove containsObject:indexPath] && cell.popTipView) {
+                [cell.popTipView dismissAnimated:true];
+                cell.popTipView = nil;
+            }
+        }
+        [self.tableView reloadRowsAtIndexPaths:[toRefresh allObjects]  withRowAnimation:UITableViewRowAnimationNone];
+    }
+    
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -482,6 +556,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     JDORealTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"lineStation" forIndexPath:indexPath];
+    cell.controller = self;
     JDOStationModel *station = _stations[indexPath.row];
     station.start = false;
     
@@ -519,10 +594,33 @@
     
     [cell.stationName setText:station.name];
     [cell.stationSeq setText:[NSString stringWithFormat:@"%d",indexPath.row+1]];
+    CGRect stationFrame = cell.stationName.frame;
+    
     if (_busIndexSet && [_busIndexSet containsObject:indexPath]) {
-        cell.arrivedBus.image = [UIImage imageNamed:@"公交"];
+        cell.arrivedBus.hidden = false;
+        int busNumInSameStation = 0;    // 检查是否超过1辆车
+        for (int i=0; i<_realBusList.count; i++){
+            NSDictionary *dict = _realBusList[i];
+            JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
+            if([bus.toStationId isEqualToString:station.fid]){
+                busNumInSameStation++;
+            }
+        }
+        if (busNumInSameStation > 1) {
+            cell.busNumLabel.hidden = cell.busNumBorder.hidden = false;
+            cell.busNumLabel.text = [NSString stringWithFormat:@"%d",busNumInSameStation];
+            stationFrame.size.width = 205;
+            cell.stationName.frame = stationFrame;
+        }else{
+            cell.busNumLabel.hidden = cell.busNumBorder.hidden = true;
+            stationFrame.size.width = 223;
+            cell.stationName.frame = stationFrame;
+        }
     }else{
-        cell.arrivedBus.image = nil;
+        cell.arrivedBus.hidden = true;
+        cell.busNumLabel.hidden = cell.busNumBorder.hidden = true;
+        stationFrame.size.width = 250;
+        cell.stationName.frame = stationFrame;
     }
     return cell;
 }
@@ -553,6 +651,85 @@
     if (dbObserver) {
         [[NSNotificationCenter defaultCenter] removeObserver:dbObserver];
     }
+}
+
+- (void)showBusMenu:(JDORealTimeCell *)cell{
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    JDOStationModel *station = _stations[indexPath.row];
+    
+    int count = 0;
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    contentView.backgroundColor = [UIColor clearColor];
+    
+    for (int i=0; i<_realBusList.count; i++){
+        NSDictionary *dict = _realBusList[i];
+        JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
+        if ([station.fid isEqualToString:bus.toStationId]) {
+            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(10, count*40+8, 120, 24)];
+            busNo.text = [NSString stringWithFormat:@"车牌号:%@",bus.busNo];
+            busNo.textColor = [UIColor whiteColor];
+            busNo.font = [UIFont systemFontOfSize:14];
+            [contentView addSubview:busNo];
+            
+            double distance = 0;
+            for (NSInteger j=indexPath.row+1; j<_stations.count; j++) {
+                JDOStationModel *aStation = _stations[j];
+                if (j == indexPath.row+1) {
+                    CLLocationCoordinate2D busPos = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(bus.gpsY.doubleValue, bus.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+                    CLLocationCoordinate2D stationPos = CLLocationCoordinate2DMake(aStation.gpsY.doubleValue, aStation.gpsX.doubleValue);
+                    distance+=BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(busPos),BMKMapPointForCoordinate(stationPos));
+                }else{
+                    JDOStationModel *stationB = _stations[j-1];
+                    CLLocationCoordinate2D stationAPos = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(aStation.gpsY.doubleValue, aStation.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+                    CLLocationCoordinate2D stationBPos = CLLocationCoordinate2DMake(stationB.gpsY.doubleValue, stationB.gpsX.doubleValue);
+                    distance+=BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(stationAPos),BMKMapPointForCoordinate(stationBPos));
+                }
+                if (aStation.isStart) {
+                    break;
+                }
+            }
+            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(140, count*40+8, 120, 24)];
+            if (distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
+                distanceLabel.text = [NSString stringWithFormat:@"距离：%.1f公里",distance/1000];
+            }else{
+                distanceLabel.text = [NSString stringWithFormat:@"距离：%d米",[@(distance) intValue]];
+            }
+            distanceLabel.textColor = [UIColor whiteColor];
+            distanceLabel.font = [UIFont systemFontOfSize:14];
+            [contentView addSubview:distanceLabel];
+            
+            count++;
+        }
+    }
+    contentView.frame = CGRectMake(0, 0, 300, count*40);
+    
+    CMPopTipView *popTipView = [[CMPopTipView alloc] initWithCustomView:contentView];
+    cell.popTipView = popTipView;
+    popTipView.delegate = self;
+    popTipView.disableTapToDismiss = true;
+    popTipView.preferredPointDirection = PointDirectionUp;
+    popTipView.hasGradientBackground = NO;
+    popTipView.cornerRadius = 0.0f;
+    popTipView.sidePadding = 10.0f;
+    popTipView.topMargin = 0.0f;
+    popTipView.pointerSize = 6.0f;
+    popTipView.hasShadow = NO;
+    popTipView.backgroundColor = [UIColor colorWithRed:75/255.0f green:77/255.0f blue:88/255.0f alpha:1.0f];
+    popTipView.textColor = [UIColor whiteColor];
+    popTipView.animation = CMPopTipAnimationPop;
+    popTipView.has3DStyle = false;
+    popTipView.dismissTapAnywhere = YES;
+    
+    [popTipView presentPointingAtView:cell.arrivedBus inView:self.view animated:YES];
+    [self.visiblePopTipViews addObject:popTipView];
+    
+//    self.currentPopTipViewTarget = sender;
+    
+}
+
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView{
+    [self.visiblePopTipViews removeObject:popTipView];
+//    self.currentPopTipViewTarget = nil;
 }
 
 @end

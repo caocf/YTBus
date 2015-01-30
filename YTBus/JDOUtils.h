@@ -24,6 +24,7 @@ typedef enum{
 
 + (NSString *) getJDOCacheDirectory;
 + (void) showHUDText:(NSString *)text inView:(UIView *)view;
++ (void) showHUDText:(NSString *)text inView:(UIView *)view afterDelay:(float) delay;
 + (BOOL) isEmptyString:(NSString *)str;
 
 + (NSString *)formatDate:(NSDate *) date withFormatter:(DateFormatType) format;

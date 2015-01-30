@@ -93,7 +93,6 @@
     }
     
     //TODO 在这里就检查一遍意见反馈和新闻资讯，有新的话在“更多”那里加红点提示
-
 }
 
 - (void)zipArchiveDidUnzipArchiveAtPath:(NSString *)path zipInfo:(unz_global_info)zipInfo unzippedPath:(NSString *)unzippedPath{

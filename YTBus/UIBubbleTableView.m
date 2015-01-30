@@ -13,6 +13,8 @@
 #import "UIBubbleHeaderTableViewCell.h"
 #import "UIBubbleTypingTableViewCell.h"
 
+#define Avatar_Size 32
+
 @interface UIBubbleTableView ()
 
 @property (nonatomic, retain) NSMutableArray *bubbleSection;
@@ -121,7 +123,7 @@
             NSBubbleType type = [object[@"type"] isEqualToString:@"user_reply"]?BubbleTypeMine:BubbleTypeSomeoneElse;
             NSDate *date = [NSDate dateWithTimeIntervalSince1970:[object[@"created_at"] longLongValue]/1000.0];
             NSBubbleData *bubble = [NSBubbleData dataWithText:object[@"content"] date:date type:type];
-            bubble.avatar = [UIImage imageNamed:([object[@"type"] isEqualToString:@"user_reply"]?@"始":@"终")];
+            bubble.avatar = [UIImage imageNamed:([object[@"type"] isEqualToString:@"user_reply"]?@"网友头像":@"公交头像")];
             bubble.status = [object[@"is_failed"] intValue];
             
             [bubbleData addObject:bubble];
@@ -178,7 +180,7 @@
     // Now typing
 	if (indexPath.section >= [self.bubbleSection count])
     {
-        return MAX([UIBubbleTypingTableViewCell height], self.showAvatars ? 52 : 0);
+        return MAX([UIBubbleTypingTableViewCell height], self.showAvatars ? (Avatar_Size+5) : 0);
     }
     
     // Header
@@ -188,7 +190,7 @@
     }
     
     NSBubbleData *data = [[self.bubbleSection objectAtIndex:indexPath.section] objectAtIndex:indexPath.row - 1];
-    return MAX(data.insets.top + data.view.frame.size.height + data.insets.bottom, self.showAvatars ? 52 : 0);
+    return MAX(data.insets.top + data.view.frame.size.height + data.insets.bottom + 10, self.showAvatars ? (Avatar_Size+10) : 0);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
