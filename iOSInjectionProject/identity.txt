@@ -1,0 +1,2 @@
+/Users/zhangyi/Library/Developer/Xcode/DerivedData/YTBus-aimmfgdhynvqjqauuleyulvrsebm/Build/Products/Debug-iphoneos/YTBus.app
+iPhone Developer: yi zhang (XT5Z965G79)
