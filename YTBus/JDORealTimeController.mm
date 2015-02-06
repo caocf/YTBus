@@ -16,6 +16,9 @@
 #import "JSONKit.h"
 #import "JDOBusModel.h"
 #import "CMPopTipView.h"
+#import <ShareSDK/ShareSDK.h>
+#import "JDOShareController.h"
+#import "AppDelegate.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
 
@@ -59,6 +62,7 @@
     NSMutableSet *_busIndexSet;
     JDOStationModel *selectedStartStation;
     BOOL notHintSelectStart;
+    UIImage *screenImage;
 }
 
 @property (nonatomic,assign) IBOutlet UILabel *lineDetail;
@@ -73,6 +77,7 @@
 @property (nonatomic,assign) IBOutlet UIButton *reportErrorBtn;
 @property (nonatomic,assign) IBOutlet UIButton *shareBtn;
 @property (nonatomic,assign) IBOutlet UIView *menu;
+@property (nonatomic,assign) IBOutlet UIButton *dropDownBtn;
 
 @property (nonatomic,strong) NSMutableArray *visiblePopTipViews;
 @property (nonatomic,strong) NSMutableArray *realBusList;
@@ -80,11 +85,14 @@
 
 - (IBAction)changeDirection:(id)sender;
 - (IBAction)clickFavor:(id)sender;
+- (IBAction)toggleMenu:(id)sender;
+- (IBAction)clickReport:(id)sender;
+- (IBAction)clickShare:(id)sender;
 
 @end
 
 @implementation JDORealTimeController{
-    
+    BOOL isMenuHidden;
 }
 
 - (void)viewDidLoad {
@@ -93,6 +101,7 @@
     self.navigationItem.title = _busLine.lineName;
     self.navigationItem.rightBarButtonItem.enabled = false;
     isLoadFinised = false;
+    isMenuHidden = true;
     
     _stations = [NSMutableArray new];
     _db = [JDODatabase sharedDB];
@@ -113,19 +122,24 @@
     self.visiblePopTipViews = [NSMutableArray array];
 }
 
-- (void) toggleMenu {
-    BOOL isHidden = self.menu.hidden;
-    if(isHidden) {
-        self.menu.hidden = NO;
-    }
-    [UIView animateWithDuration:0.4 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+- (void) toggleMenu:(UIButton *)sender {
+//    if (isMenuHidden) {
+//        UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
+//        AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+//        [appDelegate.window.rootViewController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+//        screenImage = UIGraphicsGetImageFromCurrentImageContext();
+//        UIGraphicsEndImageContext();
+//    }
+    
+    [UIView animateWithDuration:0.25f delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         CGRect menuFrame = self.menu.frame;
-        menuFrame.origin.y = isHidden?0.0f:-menuFrame.size.height;
+        menuFrame.origin.y = isMenuHidden?0:-69;
+        self.dropDownBtn.transform = isMenuHidden?CGAffineTransformMakeRotation(M_PI):CGAffineTransformMakeRotation(2*M_PI);
         self.menu.frame = menuFrame;
-        self.menu.alpha = isHidden?0.8f:0.0f;
     } completion:^(BOOL finished) {
-        if (!isHidden) {
-            self.menu.hidden = YES;
+        isMenuHidden = !isMenuHidden;
+        if (isMenuHidden) {
+            self.dropDownBtn.transform = CGAffineTransformIdentity;
         }
     }];
 }
@@ -429,7 +443,8 @@
         for (int i=0; i<visibleCells.count; i++) {
             JDORealTimeCell *cell = visibleCells[i];
             NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-            if ([toAdd containsObject:indexPath] || [toRemove containsObject:indexPath] ) {
+            if ([toAdd containsObject:indexPath] || [toRemove containsObject:indexPath] || [toKeep containsObject:indexPath]) {
+                // toKeep也要刷新，因为有可能车辆从1辆变成2辆
                 [toRefresh addObject:indexPath];
             }
             if ([toRemove containsObject:indexPath] && cell.popTipView) {
@@ -533,6 +548,74 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"favor_line_changed" object:nil];
 }
 
+- (IBAction)clickReport:(id)sender{
+    NSLog(@"report");
+}
+
+- (IBAction)clickShare:(id)sender{
+    NSString *content;
+    JDOStationModel *startStation;
+    if(selectedStartStation){
+        startStation = selectedStartStation;
+    }else if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]) {
+        startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
+    }
+    if (startStation) {
+        NSMutableArray *stationIds = [NSMutableArray new];
+        for (int i=0; i<_stations.count; i++) {
+            [stationIds addObject:[_stations[i] fid]];
+        }
+        NSUInteger maxIndex = 0;
+        for (int i=0; i<_realBusList.count; i++){
+            NSDictionary *dict = _realBusList[i];
+            JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
+            NSUInteger index = [stationIds indexOfObject:bus.toStationId];
+            if (index != NSNotFound && index > maxIndex) {
+                maxIndex = index;
+            }
+        }
+        if (maxIndex>0) {
+            NSUInteger startIndex = [stationIds indexOfObject:startStation.fid];
+            content = [NSString stringWithFormat:@"实时:%@公交开往\"%@\"方向，距离\"%@\"还有%lu站。",self.busLine.lineName,[[_stations lastObject] name], startStation.name,(startIndex-maxIndex)];
+        }else{
+            content = [NSString stringWithFormat:@"实时:%@公交开往\"%@\"方向，在\"%@\"之前尚未发车。",self.busLine.lineName,[[_stations lastObject] name], startStation.name];
+        }
+    }else{
+        content = [NSString stringWithFormat:@"我正在查询%@公交车的实时位置，你也来试试吧。",self.busLine.lineName];
+    }
+    
+    //构造分享内容，这里的content和titile提供给非微博类平台使用，微信好友使用titile、content不能超过26个字，朋友圈只使用title，图片使用logo。
+    id<ISSContent> publishContent = [ShareSDK content:content
+                                       defaultContent:nil
+                                                image:[ShareSDK jpegImageWithImage:[UIImage imageNamed:@"分享80"] quality:1.0]
+                                                title:@"“烟台公交”上线啦！等车不再捉急，到点准时来接你。"
+                                                  url:@"http://m.jiaodong.net"
+                                          description:content
+                                            mediaType:SSPublishContentMediaTypeNews];
+    //QQ使用title和content(大概26个字以内)，但能显示字数更少。
+    [publishContent addQQUnitWithType:INHERIT_VALUE content:[NSString stringWithFormat:@"我正在查询%@车的实时位置,你也来试试吧!",self.busLine.lineName] title:@"“烟台公交”上线啦！" url:INHERIT_VALUE image:INHERIT_VALUE];
+//    [publishContent addQQSpaceUnitWithTitle:INHERIT_VALUE url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:nil summary:content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
+    
+    NSArray *shareList = [ShareSDK customShareListWithType:SHARE_TYPE_NUMBER(ShareTypeWeixiSession),SHARE_TYPE_NUMBER(ShareTypeWeixiTimeline),SHARE_TYPE_NUMBER(ShareTypeQQ),[self getShareItem:ShareTypeQQSpace content:content],[self getShareItem:ShareTypeSinaWeibo content:content],[self getShareItem:ShareTypeRenren content:content],nil];
+    
+    [ShareSDK showShareActionSheet:nil shareList:shareList content:publishContent statusBarTips:NO authOptions:nil shareOptions:nil result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
+            if (state == SSResponseStateSuccess){
+                NSLog(@"分享成功");
+            }else if (state == SSResponseStateFail){
+                [JDOUtils showHUDText:[NSString stringWithFormat:@"分享失败,错误码:%ld",(long)[error errorCode]] inView:self.view];
+            }
+        }
+     ];
+}
+
+- (id<ISSShareActionSheetItem>) getShareItem:(ShareType) type content:(NSString *)content{
+    return [ShareSDK shareActionSheetItemWithTitle:[ShareSDK getClientNameWithType:type] icon:[ShareSDK getClientIconWithType:type] clickHandler:^{
+        JDOShareController *vc = [[JDOShareController alloc] initWithImage:screenImage content:content type:type];
+        UINavigationController *naVC = [[UINavigationController alloc] initWithRootViewController:vc];
+        [self presentViewController:naVC animated:true completion:nil];
+    }];
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -627,6 +710,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     selectedStartStation = _stations[indexPath.row];
+    [_busIndexSet removeAllObjects];
     [tableView reloadData];
     [_timer fire];
 }
@@ -688,6 +772,7 @@
                     break;
                 }
             }
+            // TODO距离计算错误
             UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(140, count*40+8, 120, 24)];
             if (distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
                 distanceLabel.text = [NSString stringWithFormat:@"距离：%.1f公里",distance/1000];
@@ -713,7 +798,7 @@
     popTipView.sidePadding = 10.0f;
     popTipView.topMargin = 0.0f;
     popTipView.pointerSize = 6.0f;
-    popTipView.hasShadow = NO;
+    popTipView.hasShadow = false;
     popTipView.backgroundColor = [UIColor colorWithRed:75/255.0f green:77/255.0f blue:88/255.0f alpha:1.0f];
     popTipView.textColor = [UIColor whiteColor];
     popTipView.animation = CMPopTipAnimationPop;

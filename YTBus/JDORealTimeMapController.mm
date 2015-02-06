@@ -63,7 +63,6 @@ static const void *SelectedKey = &SelectedKey;
     _mapView.rotateEnabled = true;
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
-    _mapView.zoomLevel = 13;
     _mapView.minZoomLevel = 12;
     _mapView.maxZoomLevel = 17;
     
@@ -72,10 +71,12 @@ static const void *SelectedKey = &SelectedKey;
             JDOStationModel *station = _stations[i];
             if ([station.fid isEqualToString:_stationId]) {
                 _mapView.centerCoordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue,station.gpsX.doubleValue);
+                _mapView.zoomLevel = 15;
                 break;
             }
         }
     }else{  // 否则以整条线路中心为地图中心
+        _mapView.zoomLevel = 13;
         [self setMapCenter];
     }
     [self addStationOverlay];

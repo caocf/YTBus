@@ -82,20 +82,21 @@
     // TODO 增加当前位置和移动距离横幅条，在设置中增加移动xx距离后刷新附近站点的选项
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 5)];   // 填充边距
 //    self.tableView.showsVerticalScrollIndicator = false;
-    hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 80)];
+    float deltaY = Screen_Height>480?50:0;
+    hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 265+deltaY, 280, 80)];
     hintLabel.backgroundColor = [UIColor clearColor];
     hintLabel.font = [UIFont systemFontOfSize:15];
     hintLabel.numberOfLines = 4;
-    hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(61, 140, 197, 180)];
-    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 280, 100)];
+    hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10+deltaY, 300, 351)];
+    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 255+deltaY, 280, 100)];
     noDataLabel.backgroundColor = [UIColor clearColor];
     noDataLabel.font = [UIFont systemFontOfSize:15];
     noDataLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
-    noDataLabel.text = @"很抱歉，“烟台公交”仅覆盖烟台市辖区范围内的公交数据，您的位置附近没有找到公交线路和站点信息。若您在烟台市区范围内，请尝试在“更多->系统设置->附近半径”中增加查询范围。";
+    noDataLabel.text = @"          很抱歉，“烟台公交”仅覆盖烟台市辖区范围内的公交数据，您的位置附近没有找到公交线路和站点信息。若您在烟台市区范围内，请尝试在“更多->系统设置->附近半径”中增加查询范围。";
     noDataLabel.numberOfLines = 5;
     noDataLabel.hidden = true;
     [self.tableView addSubview:noDataLabel];
-    noDataImage = [[UIImageView alloc] initWithFrame:CGRectMake(61, 140, 197, 180)];
+    noDataImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10+deltaY, 300, 351)];
     noDataImage.image = [UIImage imageNamed:@"超出范围"];
     noDataImage.hidden = true;
     [self.tableView addSubview:noDataImage];
@@ -143,21 +144,21 @@
         self.navigationItem.rightBarButtonItem.enabled = false;
         
         //TODO 调整提示的显示样式
-        hintLabel.text = @"您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
+        hintLabel.text = @"          您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
         hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
         hintImage.image = [UIImage imageNamed:@"关闭定位"];
-        [self.tableView addSubview:hintLabel];
         [self.tableView addSubview:hintImage];
+        [self.tableView addSubview:hintLabel];
     }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied || [CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){
         [_linesInfo removeAllObjects];
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
         
-        hintLabel.text = @"您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
+        hintLabel.text = @"          您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
         hintLabel.textColor = [UIColor colorWithHex:@"8f8e89"];
         hintImage.image = [UIImage imageNamed:@"不允许使用定位"];
-        [self.tableView addSubview:hintLabel];
         [self.tableView addSubview:hintImage];
+        [self.tableView addSubview:hintLabel];
         //TODO 直接进入设置页面
 //        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
     }else{

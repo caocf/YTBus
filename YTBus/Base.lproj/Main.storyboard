@@ -387,47 +387,47 @@
                                 <color key="backgroundColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.80784313725490198" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="烟台人力市场——宫家岛" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" adjustsLetterSpacingToFitWidth="YES" id="5sm-8K-Ce5">
-                                <rect key="frame" x="15" y="10" width="227" height="22"/>
+                                <rect key="frame" x="15" y="15" width="227" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="06:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="s99-Ci-epu">
-                                <rect key="frame" x="36" y="40" width="36" height="21"/>
+                                <rect key="frame" x="36" y="43" width="36" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="18:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="evm-n0-7X5">
-                                <rect key="frame" x="101" y="40" width="36" height="21"/>
+                                <rect key="frame" x="101" y="43" width="36" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2.0元" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="AmD-Za-qbS">
-                                <rect key="frame" x="166" y="40" width="36" height="21"/>
+                                <rect key="frame" x="166" y="43" width="36" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="首" id="YXf-ID-B1H">
-                                <rect key="frame" x="15" y="43" width="15" height="15"/>
+                                <rect key="frame" x="15" y="46" width="15" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="末" id="o4N-OM-OcE">
-                                <rect key="frame" x="80" y="43" width="15" height="15"/>
+                                <rect key="frame" x="80" y="46" width="15" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="价" id="gdm-cx-Jby">
-                                <rect key="frame" x="145" y="43" width="15" height="15"/>
+                                <rect key="frame" x="145" y="46" width="15" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="BuA-mL-hgt">
-                                <rect key="frame" x="250" y="40" width="56" height="22"/>
+                                <rect key="frame" x="250" y="43" width="56" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="切换1">
                                     <color key="titleColor" red="0.58823529409999997" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="calibratedRGB"/>
@@ -438,38 +438,6 @@
                                     <action selector="changeDirection:" destination="U4C-Oa-85a" eventType="touchUpInside" id="K8a-xz-mq0"/>
                                 </connections>
                             </button>
-                            <view hidden="YES" contentMode="scaleToFill" id="jfz-iK-G5u">
-                                <rect key="frame" x="0.0" y="-70" width="320" height="70"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="BKx-vN-L9G">
-                                        <rect key="frame" x="25" y="18" width="45" height="33"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="地图">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ZyG-YB-CIQ">
-                                        <rect key="frame" x="138" y="18" width="45" height="33"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="地图">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="selected" image="收藏2"/>
-                                        <connections>
-                                            <action selector="clickFavor:" destination="U4C-Oa-85a" eventType="touchUpInside" id="Fhq-Jv-hvd"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KQh-tU-xNh">
-                                        <rect key="frame" x="254" y="18" width="45" height="33"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" image="地图">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" red="0.23454607664233521" green="0.24501026459854014" blue="0.23645643248175183" alpha="0.91000000000000003" colorSpace="calibratedRGB"/>
-                            </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="30" sectionHeaderHeight="22" sectionFooterHeight="22" id="c1U-JG-9Za">
                                 <rect key="frame" x="0.0" y="71" width="320" height="433"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -498,17 +466,6 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="车辆标注" id="2u9-xu-KyX">
-                                                    <rect key="frame" x="267" y="9" width="12" height="10"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Wqa-sB-u4a">
-                                                    <rect key="frame" x="268" y="10" width="8" height="8"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="8"/>
-                                                    <color key="textColor" red="0.19607843137254902" green="0.66666666666666663" blue="0.21568627450980393" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="JOK-Os-7YL">
                                                     <rect key="frame" x="281" y="3" width="19" height="22"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -519,6 +476,17 @@
                                                         <action selector="onBusClicked:" destination="9bu-si-7It" eventType="touchUpInside" id="qSA-FL-0gS"/>
                                                     </connections>
                                                 </button>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="车辆标注" id="2u9-xu-KyX">
+                                                    <rect key="frame" x="264" y="7" width="17" height="14"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Wqa-sB-u4a">
+                                                    <rect key="frame" x="267" y="10" width="8" height="8"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="10"/>
+                                                    <color key="textColor" red="0.19607843137254902" green="0.66666666666666663" blue="0.21568627450980393" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
@@ -536,6 +504,58 @@
                                     <outlet property="delegate" destination="U4C-Oa-85a" id="bVv-KX-6bH"/>
                                 </connections>
                             </tableView>
+                            <view contentMode="scaleToFill" id="jfz-iK-G5u">
+                                <rect key="frame" x="0.0" y="-69" width="320" height="103"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="下拉菜单背景" id="Cd4-C3-edD">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="103"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ijx-6E-WIM">
+                                        <rect key="frame" x="269" y="72" width="36" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="菜单箭头">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="toggleMenu:" destination="U4C-Oa-85a" eventType="touchUpInside" id="U9z-eH-tUC"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="BKx-vN-L9G">
+                                        <rect key="frame" x="22" y="7" width="60" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="纠错">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="clickReport:" destination="U4C-Oa-85a" eventType="touchUpInside" id="nbv-RQ-ae1"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ZyG-YB-CIQ">
+                                        <rect key="frame" x="130" y="7" width="60" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="收藏">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="selected" image="收藏2"/>
+                                        <connections>
+                                            <action selector="clickFavor:" destination="U4C-Oa-85a" eventType="touchUpInside" id="Fhq-Jv-hvd"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KQh-tU-xNh">
+                                        <rect key="frame" x="237" y="7" width="60" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="分享-下拉">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="clickShare:" destination="U4C-Oa-85a" eventType="touchUpInside" id="fKi-qj-zW8"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -551,6 +571,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="directionBtn" destination="BuA-mL-hgt" id="bpn-kN-YNK"/>
+                        <outlet property="dropDownBtn" destination="ijx-6E-WIM" id="yWz-H5-Opb"/>
                         <outlet property="endTime" destination="evm-n0-7X5" id="dXD-aJ-ylS"/>
                         <outlet property="favorBtn" destination="ZyG-YB-CIQ" id="GfH-bu-v7Q"/>
                         <outlet property="lineDetail" destination="5sm-8K-Ce5" id="77H-J4-lW2"/>
@@ -1459,11 +1480,13 @@
     </scenes>
     <resources>
         <image name="new.png" width="21" height="13"/>
+        <image name="下拉菜单背景" width="320" height="103"/>
         <image name="中间" width="22" height="30"/>
         <image name="交换" width="18" height="17"/>
         <image name="价" width="15" height="15"/>
         <image name="公交" width="19" height="18"/>
         <image name="关于.png" width="16" height="16"/>
+        <image name="分享-下拉" width="60" height="60"/>
         <image name="分享.png" width="16" height="16"/>
         <image name="分隔线" width="1" height="1"/>
         <image name="切换1" width="56" height="15"/>
@@ -1478,7 +1501,8 @@
         <image name="意见.png" width="16" height="16"/>
         <image name="指南.png" width="16" height="16"/>
         <image name="搜索图标" width="11" height="13"/>
-        <image name="收藏2" width="56" height="15"/>
+        <image name="收藏" width="60" height="60"/>
+        <image name="收藏2" width="60" height="60"/>
         <image name="更新.png" width="16" height="16"/>
         <image name="末" width="15" height="15"/>
         <image name="标签1" width="22" height="42"/>
@@ -1487,10 +1511,12 @@
         <image name="站点底图" width="320" height="42"/>
         <image name="站点箭头" width="12" height="12"/>
         <image name="箭头" width="8" height="16"/>
+        <image name="纠错" width="60" height="60"/>
         <image name="线路圆点" width="15" height="15"/>
+        <image name="菜单箭头" width="16" height="14"/>
         <image name="设置.png" width="16" height="16"/>
         <image name="资讯.png" width="16" height="16"/>
-        <image name="车辆标注" width="11" height="10"/>
+        <image name="车辆标注" width="17" height="14"/>
         <image name="首" width="15" height="15"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -1499,7 +1525,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="OSX-OU-sO9"/>
         <segue reference="dAS-pt-L3o"/>
+        <segue reference="OSX-OU-sO9"/>
     </inferredMetricsTieBreakers>
 </document>

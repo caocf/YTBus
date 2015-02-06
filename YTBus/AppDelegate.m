@@ -15,6 +15,14 @@
 #import "JDOHttpClient.h"
 #import "UMFeedback.h"
 
+// ShareSDK
+#import <ShareSDK/ShareSDK.h>
+#import <TencentOpenAPI/QQApiInterface.h>
+#import <TencentOpenAPI/TencentOAuth.h>
+#import "WXApi.h"
+#import "WeiboSDK.h"
+#import <QZoneConnection/ISSQZoneApp.h>
+
 #define Adv_Min_Show_Seconds 2.0f
 #define Param_Max_Wait_Seconds 5.0f
 #define Advertise_Cache_File @"advertise"
@@ -102,7 +110,50 @@
     // 把离线地图包从bundle中复制到document中
     [self performSelectorInBackground:@selector(copyOfflineMap) withObject:nil];
     
+    [self initShareSDK];
+    
     return YES;
+}
+
+- (void)initShareSDK {
+    [ShareSDK registerApp:@"5a2cb151ceba"];
+    [ShareSDK setInterfaceOrientationMask:SSInterfaceOrientationMaskPortrait];
+    [ShareSDK allowExchangeDataEnabled:true];
+    [ShareSDK ssoEnabled:true];
+    
+    
+    // TODO QQ互联提交资料审核后才能开应用，微信开放平台不通给审核不给appkey
+    [ShareSDK connectSinaWeiboWithAppKey:@"2993327297"
+                               appSecret:@"7027a9f77cdd1d5ecdee09b433502ece"
+                             redirectUri:@"http://m.jiaodong.net"
+                             weiboSDKCls:[WeiboSDK class]];
+    
+    [ShareSDK connectQZoneWithAppKey:@"100497289"
+                           appSecret:@"3373fc627de22237a075dd1a0b4757e2"
+                   qqApiInterfaceCls:[QQApiInterface class]
+                     tencentOAuthCls:[TencentOAuth class]];
+
+    [ShareSDK connectQQWithAppId:@"QQ05FD7789" qqApiCls:[QQApi class]];
+    // http://open.weixin.qq.com上注册应用，应用管理账户tec@jiaodong.net，密码Jdjsb6690009
+    [ShareSDK connectWeChatWithAppId:@"wx1b4314c4cfb4239b" wechatCls:[WXApi class]];
+    
+    [ShareSDK connectRenRenWithAppId:@"475009"
+                              appKey:@"9bee76292b5f43b783c2843a3ef837d4"
+                           appSecret:@"256923d272c740e39cd7728fa612b5ae"
+                   renrenClientClass:nil];
+//    [ShareSDK connectSMS];
+    
+    //开启QQ空间网页授权开关(optional)
+    id<ISSQZoneApp> app =(id<ISSQZoneApp>)[ShareSDK getClientWithType:ShareTypeQQSpace];
+    [app setIsAllowWebAuthorize:YES];
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [ShareSDK handleOpenURL:url wxDelegate:self];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [ShareSDK handleOpenURL:url sourceApplication:sourceApplication annotation:annotation wxDelegate:self];
 }
 
 - (void)copyOfflineMap {

@@ -57,40 +57,40 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    if (![JDODatabase isDBExistInDocument]) {
-        // 若document中不存在数据库文件，则下载数据库文件
-        hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
-//        hud.minShowTime = 1.0f;
-        hud.labelText = @"初始化数据";
-        NSLog(@"开始下载");
-        [[JDOHttpClient sharedDFEClient] getPath:Download_Action parameters:@{@"method":@"downloadDb"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSLog(@"下载完成，开始保存");
-            NSData *zipData = (NSData *)responseObject;
-            BOOL success = [JDODatabase saveZipFile:zipData];
-            NSLog(@"保存完成，开始解压");
-            if ( success) { // 解压缩文件
-                BOOL result = [JDODatabase unzipDBFile:self];
-                if ( result) {
-                    // 正在解压
-                }else{  // 解压文件出错
+//    if (![JDODatabase isDBExistInDocument]) {
+//        // 若document中不存在数据库文件，则下载数据库文件
+//        hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
+////        hud.minShowTime = 1.0f;
+//        hud.labelText = @"初始化数据";
+//        NSLog(@"开始下载");
+//        [[JDOHttpClient sharedDFEClient] getPath:Download_Action parameters:@{@"method":@"downloadDb"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//            NSLog(@"下载完成，开始保存");
+//            NSData *zipData = (NSData *)responseObject;
+//            BOOL success = [JDODatabase saveZipFile:zipData];
+//            NSLog(@"保存完成，开始解压");
+//            if ( success) { // 解压缩文件
+//                BOOL result = [JDODatabase unzipDBFile:self];
+//                if ( result) {
+//                    // 正在解压
+//                }else{  // 解压文件出错
                     [JDODatabase openDB:1];
-                }
-            }else{  // 保存文件出错
-                [JDODatabase openDB:1];
-            }
-            [hud hide:true];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Error: %@", error);
-            [JDODatabase openDB:1];
-            [hud hide:true];
-        }];
-    }else{
-        //TODO 更新最新数据
-        [JDODatabase openDB:2];
-//    http://218.56.32.7:4998/SynBusSoftWebservice/services/SynBusSoft
-//        SOAPAction: http://service.epfgetAppVersion
-//        <v:Envelope xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:getAppVersion id="o0" c:root="1" xmlns:n0="http://service.epf" /></v:Body></v:Envelope>
-    }
+//                }
+//            }else{  // 保存文件出错
+//                [JDODatabase openDB:1];
+//            }
+//            [hud hide:true];
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            NSLog(@"Error: %@", error);
+//            [JDODatabase openDB:1];
+//            [hud hide:true];
+//        }];
+//    }else{
+//        //TODO 更新最新数据
+//        [JDODatabase openDB:2];
+////    http://218.56.32.7:4998/SynBusSoftWebservice/services/SynBusSoft
+////        SOAPAction: http://service.epfgetAppVersion
+////        <v:Envelope xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:getAppVersion id="o0" c:root="1" xmlns:n0="http://service.epf" /></v:Body></v:Envelope>
+//    }
     
     //TODO 在这里就检查一遍意见反馈和新闻资讯，有新的话在“更多”那里加红点提示
 }
