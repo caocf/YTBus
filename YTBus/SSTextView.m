@@ -100,9 +100,9 @@
 		rect = UIEdgeInsetsInsetRect(rect, self.contentInset);
 
 		// TODO: This is hacky. Not sure why 8 is the magic number
-//		if (self.contentInset.left == 0.0f) {
-			rect.origin.x += 8.0f;
-//		}
+		if (self.contentInset.left == 0.0f) {
+            rect.origin.x += ([[[UIDevice currentDevice] systemVersion] floatValue]>=7.0?6.0f:8.0f);
+		}
 		rect.origin.y += 8.0f;
 
 		// Draw the text

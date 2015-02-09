@@ -14,6 +14,7 @@
 #import "MBProgressHUD.h"
 #import "JDOHttpClient.h"
 #import "UMFeedback.h"
+#import "IQKeyboardManager.h"
 
 // ShareSDK
 #import <ShareSDK/ShareSDK.h>
@@ -111,6 +112,10 @@
     [self performSelectorInBackground:@selector(copyOfflineMap) withObject:nil];
     
     [self initShareSDK];
+    
+    [[IQKeyboardManager sharedManager] setEnable:false];
+    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:false];
+    [[IQKeyboardManager sharedManager] setShouldResignOnTouchOutside:true];
     
     return YES;
 }

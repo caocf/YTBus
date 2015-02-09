@@ -125,6 +125,13 @@
 		2DA47A7D1A887CEA0078D194 /* IQToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A731A887CEA0078D194 /* IQToolbar.m */; };
 		2DA47A7E1A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A751A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m */; };
 		2DA47A811A887D850078D194 /* IQKeyboardManager.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47A801A887D850078D194 /* IQKeyboardManager.bundle */; };
+		2DA47AB41A888A7C0078D194 /* 纠错-电话@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47AAF1A888A7C0078D194 /* 纠错-电话@2x.png */; };
+		2DA47AB51A888A7C0078D194 /* 纠错-确认@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47AB01A888A7C0078D194 /* 纠错-确认@2x.png */; };
+		2DA47AB61A888A7C0078D194 /* 纠错-输入框@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47AB11A888A7C0078D194 /* 纠错-输入框@2x.png */; };
+		2DA47AB71A888A7C0078D194 /* 纠错-输入@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47AB21A888A7C0078D194 /* 纠错-输入@2x.png */; };
+		2DA47AB81A888A7C0078D194 /* 纠错-线路@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47AB31A888A7C0078D194 /* 纠错-线路@2x.png */; };
+		2DA47ABB1A88A2DC0078D194 /* 纠错-定位@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47AB91A88A2DB0078D194 /* 纠错-定位@2x.png */; };
+		2DA47ABC1A88A2DC0078D194 /* 纠错-时间@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47ABA1A88A2DC0078D194 /* 纠错-时间@2x.png */; };
 		2DA662F919F0D92D00DFED0B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662F819F0D92D00DFED0B /* main.m */; };
 		2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662FB19F0D92D00DFED0B /* AppDelegate.m */; };
 		2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630319F0D92D00DFED0B /* Main.storyboard */; };
@@ -400,6 +407,13 @@
 		2DA47A741A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIView+IQKeyboardToolbar.h"; sourceTree = "<group>"; };
 		2DA47A751A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+IQKeyboardToolbar.m"; sourceTree = "<group>"; };
 		2DA47A801A887D850078D194 /* IQKeyboardManager.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQKeyboardManager.bundle; sourceTree = "<group>"; };
+		2DA47AAF1A888A7C0078D194 /* 纠错-电话@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-电话@2x.png"; sourceTree = "<group>"; };
+		2DA47AB01A888A7C0078D194 /* 纠错-确认@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-确认@2x.png"; sourceTree = "<group>"; };
+		2DA47AB11A888A7C0078D194 /* 纠错-输入框@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-输入框@2x.png"; sourceTree = "<group>"; };
+		2DA47AB21A888A7C0078D194 /* 纠错-输入@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-输入@2x.png"; sourceTree = "<group>"; };
+		2DA47AB31A888A7C0078D194 /* 纠错-线路@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-线路@2x.png"; sourceTree = "<group>"; };
+		2DA47AB91A88A2DB0078D194 /* 纠错-定位@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-定位@2x.png"; sourceTree = "<group>"; };
+		2DA47ABA1A88A2DC0078D194 /* 纠错-时间@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "纠错-时间@2x.png"; sourceTree = "<group>"; };
 		2DA662F319F0D92D00DFED0B /* YTBus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YTBus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA662F719F0D92D00DFED0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DA662F819F0D92D00DFED0B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -1156,6 +1170,13 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DA47AB91A88A2DB0078D194 /* 纠错-定位@2x.png */,
+				2DA47ABA1A88A2DC0078D194 /* 纠错-时间@2x.png */,
+				2DA47AAF1A888A7C0078D194 /* 纠错-电话@2x.png */,
+				2DA47AB01A888A7C0078D194 /* 纠错-确认@2x.png */,
+				2DA47AB11A888A7C0078D194 /* 纠错-输入框@2x.png */,
+				2DA47AB21A888A7C0078D194 /* 纠错-输入@2x.png */,
+				2DA47AB31A888A7C0078D194 /* 纠错-线路@2x.png */,
 				2DA47A2E1A84A7A50078D194 /* iphone5s@2x.png */,
 				2DA47A2C1A849CE70078D194 /* 5sBG@2x.png */,
 				2DA47A221A845E090078D194 /* 分享80@2x.png */,
@@ -1530,11 +1551,13 @@
 				2D9D2B4C1A81EC4100410DD2 /* ShareSDKiPhoneSimpleShareViewUI.bundle in Resources */,
 				2DA47A231A845E090078D194 /* 分享80@2x.png in Resources */,
 				2D6D08531A7A160500E3A375 /* umeng_fb_audio_play_02@2x.png in Resources */,
+				2DA47AB41A888A7C0078D194 /* 纠错-电话@2x.png in Resources */,
 				2D6D084E1A7A160500E3A375 /* ToolViewInputVoice@2x.png in Resources */,
 				2D4714571A6CFA7000F2DE04 /* WebViewJavascriptBridge.js.txt in Resources */,
 				2D6D084D1A7A160500E3A375 /* ToolViewInputTextHL@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
 				2DA47A2F1A84A7A50078D194 /* iphone5s@2x.png in Resources */,
+				2DA47AB81A888A7C0078D194 /* 纠错-线路@2x.png in Resources */,
 				2D6D08501A7A160500E3A375 /* umeng_fb_audio_dialog_cancel@2x.png in Resources */,
 				2D05CD021A788CE400AFF9EE /* yantai_326.dat in Resources */,
 				2D4714261A6CB4D100F2DE04 /* UMFeedbackLocalizable.strings in Resources */,
@@ -1543,17 +1566,22 @@
 				2D6D084C1A7A160500E3A375 /* ToolViewInputText@2x.png in Resources */,
 				2D6D08521A7A160500E3A375 /* umeng_fb_audio_play_01@2x.png in Resources */,
 				2D6D08541A7A160500E3A375 /* umeng_fb_audio_play_03@2x.png in Resources */,
+				2DA47AB51A888A7C0078D194 /* 纠错-确认@2x.png in Resources */,
 				2D9D2B4A1A81EC4100410DD2 /* ShareSDKFlatShareViewUI.bundle in Resources */,
 				2D4714141A6CB3F200F2DE04 /* bubble_min@2x.png in Resources */,
 				2DF7173B1A5923DF00EEDC1E /* mapapi.bundle in Resources */,
 				2D6D084B1A7A160500E3A375 /* save@2x.png in Resources */,
 				2D9D2B631A8244D200410DD2 /* SharePin@2x.png in Resources */,
 				2DA47A2D1A849CE70078D194 /* 5sBG@2x.png in Resources */,
+				2DA47AB61A888A7C0078D194 /* 纠错-输入框@2x.png in Resources */,
 				2D9D2B411A81EC4000410DD2 /* Resource.bundle in Resources */,
 				2D6D084F1A7A160500E3A375 /* ToolViewInputVoiceHL@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D9D2B441A81EC4100410DD2 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
+				2DA47ABB1A88A2DC0078D194 /* 纠错-定位@2x.png in Resources */,
 				2DA6630A19F0D92D00DFED0B /* LaunchScreen.xib in Resources */,
+				2DA47ABC1A88A2DC0078D194 /* 纠错-时间@2x.png in Resources */,
+				2DA47AB71A888A7C0078D194 /* 纠错-输入@2x.png in Resources */,
 				2D6D08551A7A160500E3A375 /* umeng_fb_audio_play_default@2x.png in Resources */,
 				2DA6630719F0D92D00DFED0B /* Images.xcassets in Resources */,
 				2D6D08511A7A160500E3A375 /* umeng_fb_audio_dialog_content@2x.png in Resources */,

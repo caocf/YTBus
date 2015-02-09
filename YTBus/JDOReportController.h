@@ -10,4 +10,6 @@
 
 @interface JDOReportController : UIViewController
 
+-(id)initWithStation:(NSString *)station direction:(NSString *)direction;
+
 @end

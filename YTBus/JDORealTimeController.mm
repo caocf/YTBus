@@ -21,6 +21,7 @@
 #import "AppDelegate.h"
 #import <QZoneConnection/ISSQZoneApp.h>
 #import "JDOReportController.h"
+#import "MBProgressHUD.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
 #define LineHeight 30
@@ -64,7 +65,6 @@
     NSMutableString *_jsonResult;
     NSMutableSet *_busIndexSet;
     JDOStationModel *selectedStartStation;
-    BOOL notHintSelectStart;
     UIImage *screenImage;
 }
 
@@ -96,6 +96,8 @@
 
 @implementation JDORealTimeController{
     BOOL isMenuHidden;
+    MBProgressHUD *hud;
+    BOOL isFirstRefreshData;
 }
 
 - (void)viewDidLoad {
@@ -155,7 +157,7 @@
     self.navigationItem.rightBarButtonItem.enabled = true;
     [self setFavorBtnState];
     
-    [self scrollToTargetStation:true];
+    [self scrollToTargetStation:false];
 }
 
 - (void)setFavorBtnState {  // 收藏标志
@@ -282,13 +284,25 @@
     [MobClick event:@"realtime"];
     [MobClick beginEvent:@"realtime"];
     
-    int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
-    _timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
-    [_timer fire];
+    [self resetTimer];
+    
     if (_isInit) {
-        [self scrollToTargetStation:false];
+        if (isLoadFinised) {
+            [self scrollToTargetStation:false];
+        }
         _isInit = false;
     }
+}
+
+- (void) resetTimer {
+    int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
+    if (_timer && [_timer isValid]) {
+        [_timer invalidate];
+    }
+    isFirstRefreshData = true;
+    _timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
+    [_timer fire];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -327,14 +341,21 @@
         // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
 //        startStation = [_stations lastObject];
         // 没有附近站点的时候，不显示实时数据
-        if(!notHintSelectStart){
-            [JDOUtils showHUDText:@"请选择起始站点" inView:self.view];
-            notHintSelectStart = true;
-        }
+        [JDOUtils showHUDText:@"请选择起始站点" inView:self.view];
+        [_timer invalidate];
+        _timer= nil;
         return;
     }else{
         startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
     }
+    
+    if (isFirstRefreshData) {
+        hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
+        hud.mode = MBProgressHUDModeIndeterminate;
+        hud.minShowTime = 0.5f;
+        isFirstRefreshData = false;
+    }
+    
     NSString *stationId = startStation.fid;
     NSString *busLineId = _busLine.lineId;
     JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
@@ -367,7 +388,15 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
-    [JDOUtils showHUDText:[NSString stringWithFormat:@"无法获取实时数据：%@",error] inView:self.view];
+    if (hud) {
+        hud.mode = MBProgressHUDModeText;
+        hud.labelText = @"无法获取实时数据";
+        [hud hide:true afterDelay:1.0f];
+        hud = nil;
+    }else{
+        [JDOUtils showHUDText:@"无法获取实时数据" inView:self.view];
+        NSLog(@"error:%@",error);
+    }
 }
 
 -(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *) namespaceURI qualifiedName:(NSString *)qName attributes: (NSDictionary *)attributeDict{
@@ -387,8 +416,31 @@
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
         NSLog(@"%@",_jsonResult);
         isRecording = false;
+        // TODO 确定提示信息
         if (_jsonResult.length==0) {
-            [JDOUtils showHUDText:@"没有满足条件的车辆信息" inView:self.view];
+            if (hud) {
+                hud.mode = MBProgressHUDModeText;
+                hud.labelText = @"无法获取实时数据";
+                [hud hide:true afterDelay:1.0f];
+                hud = nil;
+            }else{
+                [JDOUtils showHUDText:@"无法获取实时数据" inView:self.view];
+            }
+            
+            if (_busIndexSet.count>0) {
+                [_busIndexSet removeAllObjects];
+                [self.tableView reloadData];
+            }
+        }else if([_jsonResult isEqualToString:@"[]"]){
+            if (hud) {
+                hud.mode = MBProgressHUDModeText;
+                hud.labelText = @"没有下一班次数据";
+                [hud hide:true afterDelay:1.0f];
+                hud = nil;
+            }else{
+                [JDOUtils showHUDText:@"没有下一班次数据" inView:self.view];
+            }
+
             // 删除掉已经绘制的所有车辆，可能发生的情景是：最后一辆车开过参考站点，则要删除该车辆
             if (_busIndexSet.count>0) {
                 [_busIndexSet removeAllObjects];
@@ -397,8 +449,19 @@
         }else{
             _realBusList = [_jsonResult objectFromJSONString];
             if (!_realBusList) {
-                [JDOUtils showHUDText:@"实时数据JSON格式错误" inView:self.view];
+                if (hud) {
+                    hud.mode = MBProgressHUDModeText;
+                    hud.labelText = @"实时数据格式错误";
+                    [hud hide:true afterDelay:1.0f];
+                    hud = nil;
+                }else{
+                    [JDOUtils showHUDText:@"实时数据格式错误" inView:self.view];
+                }
             }else{
+                if (hud) {
+                    [hud hide:true];
+                    hud = nil;
+                }
                 [self redrawBus];
             }
         }
@@ -406,7 +469,16 @@
 }
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError{
-    [JDOUtils showHUDText:[NSString stringWithFormat:@"解析实时数据XML错误：%@",parseError] inView:self.view];
+    if (hud) {
+        hud.mode = MBProgressHUDModeText;
+        hud.labelText = @"解析实时数据错误";
+        [hud hide:true afterDelay:1.0f];
+        hud = nil;
+    }else{
+        [JDOUtils showHUDText:@"解析实时数据错误" inView:self.view];
+        NSLog(@"Error:%@",parseError);
+    }
+    
 }
 
 - (void) redrawBus{
@@ -495,7 +567,7 @@
     _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
     [self loadCurrentLineInfoAndAllStations];
     [self setFavorBtnState];
-    [_timer fire];
+    [self resetTimer];
 
     // 若换向前有手动选中的站点，则换向后查找同名站点并选中
     if (selectedStartStation){
@@ -556,7 +628,15 @@
 }
 
 - (IBAction)clickReport:(id)sender{
-    JDOReportController *vc = [[JDOReportController alloc] initWithImage:screenImage content:content type:type];
+    JDOStationModel *startStation;
+    if(selectedStartStation){
+        startStation = selectedStartStation;
+    }else if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]) {
+        startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
+    }
+    NSString *direction = [NSString stringWithFormat:@"%@ 开往 %@ 方向",self.busLine.lineName,[[_stations lastObject] name]];
+    
+    JDOReportController *vc = [[JDOReportController alloc] initWithStation:startStation.name direction:direction];
     UINavigationController *naVC = [[UINavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:naVC animated:true completion:nil];
 }
@@ -729,7 +809,7 @@
     selectedStartStation = _stations[indexPath.row];
     [_busIndexSet removeAllObjects];
     [tableView reloadData];
-    [_timer fire];
+    [self resetTimer];
 }
 
 - (UIImage *) imageAtPosition:(int)pos selected:(BOOL)selected{
@@ -767,7 +847,7 @@
         JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
         if ([station.fid isEqualToString:bus.toStationId]) {
             UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(10, count*LineHeight+4, 120, 22)];
-            busNo.text = [NSString stringWithFormat:@"车牌号:%@",bus.busNo];
+            busNo.text = [NSString stringWithFormat:@"车牌号：%@",bus.busNo];
             busNo.textColor = [UIColor whiteColor];
             busNo.font = [UIFont systemFontOfSize:14];
             [contentView addSubview:busNo];
@@ -814,8 +894,8 @@
     popTipView.cornerRadius = 0.0f;
     popTipView.sidePadding = 10.0f;
     popTipView.topMargin = 0.0f;
-    popTipView.pointerSize = 6.0f;
-    popTipView.hasShadow = false;
+    popTipView.pointerSize = 5.0f;
+    popTipView.hasShadow = true;
     popTipView.backgroundColor = [UIColor colorWithRed:75/255.0f green:77/255.0f blue:88/255.0f alpha:1.0f];
     popTipView.textColor = [UIColor whiteColor];
     popTipView.animation = CMPopTipAnimationPop;

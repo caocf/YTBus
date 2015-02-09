@@ -69,7 +69,7 @@
         [self setExtendedLayoutIncludesOpaqueBars:NO];
         [self setEdgesForExtendedLayout:SSRectEdgeBottom | SSRectEdgeLeft | SSRectEdgeRight];
     }
-    self.view.backgroundColor = [UIColor colorWithHex:@"dfded9"];;
+    self.view.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     
     _contentBG = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"5sBG"]];
     _contentBG.frame = CGRectMake(10, 10, 300, 186);
