@@ -122,20 +122,20 @@
     [ShareSDK ssoEnabled:true];
     
     
-    // TODO QQ互联提交资料审核后才能开应用，微信开放平台不通给审核不给appkey
+    // TODO 分享平台尚未提交审核
     [ShareSDK connectSinaWeiboWithAppKey:@"2993327297"
                                appSecret:@"7027a9f77cdd1d5ecdee09b433502ece"
                              redirectUri:@"http://m.jiaodong.net"
                              weiboSDKCls:[WeiboSDK class]];
     
-    [ShareSDK connectQZoneWithAppKey:@"100497289"
-                           appSecret:@"3373fc627de22237a075dd1a0b4757e2"
+    [ShareSDK connectQZoneWithAppKey:@"1104226312"
+                           appSecret:@"leL07oBD9u3bi2r2"
                    qqApiInterfaceCls:[QQApiInterface class]
                      tencentOAuthCls:[TencentOAuth class]];
 
-    [ShareSDK connectQQWithAppId:@"QQ05FD7789" qqApiCls:[QQApi class]];
+    [ShareSDK connectQQWithAppId:@"QQ41D12808" qqApiCls:[QQApi class]];
     // http://open.weixin.qq.com上注册应用，应用管理账户tec@jiaodong.net，密码Jdjsb6690009
-    [ShareSDK connectWeChatWithAppId:@"wx1b4314c4cfb4239b" wechatCls:[WXApi class]];
+    [ShareSDK connectWeChatWithAppId:@"wxa25ab258af707980" wechatCls:[WXApi class]];
     
     [ShareSDK connectRenRenWithAppId:@"475009"
                               appKey:@"9bee76292b5f43b783c2843a3ef837d4"

@@ -14,6 +14,7 @@
 @interface JDORealTimeController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,copy) JDOBusLine *busLine;
+@property (nonatomic,assign) BOOL isInit;
 
 - (void)showBusMenu:(JDORealTimeCell *)cell;
 

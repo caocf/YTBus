@@ -71,11 +71,7 @@
     }
     self.view.backgroundColor = [UIColor colorWithHex:@"dfded9"];;
     
-    if (Screen_Height > 480) {
-        _contentBG = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"5sBG"]];
-    }else{
-        _contentBG = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"4sBG"]];
-    }
+    _contentBG = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"5sBG"]];
     _contentBG.frame = CGRectMake(10, 10, 300, 186);
     [self.view addSubview:_contentBG];
 	
@@ -141,39 +137,13 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)publishButtonClickHandler:(id)sender{
-    
-//case ShareTypeQQSpace:{
-//    content = [ShareSDK content:_textView2.text
-//                 defaultContent:nil
-//                          image:imageUrl?[ShareSDK imageWithUrl:imageUrl] : nil
-//                          title:[self.model title]
-//                            url:[self.model tinyurl]
-//                    description:[self.model summary]
-//                      mediaType:SSPublishContentMediaTypeNews];
-//    break;}
-//case ShareTypeRenren:{
-//    NSString *comment = [[NSString alloc] init];
-//    if (_textView2.text && ![_textView2.text isEqualToString:@""]) {
-//        comment =_textView2.text;
-//    } else {
-//        comment = @"分享";
-//    }
-//    content = [ShareSDK content:comment
-//                 defaultContent:nil
-//                          image:imageUrl?[ShareSDK imageWithUrl:imageUrl] : nil
-//                          title:[self.model title]
-//                            url:[self.model tinyurl]
-//                    description:[self.model summary]
-//                      mediaType:SSPublishContentMediaTypeNews];
-//    break;}
-    
+- (void)publishButtonClickHandler:(id)sender{    
     id<ISSContent> publishContent = [ShareSDK content:[_textView.text stringByAppendingFormat:@"//%@",_content]
                                        defaultContent:nil
                                                 image:[ShareSDK jpegImageWithImage:[UIImage imageNamed:@"iphone5s"] quality:1]
                                                 title:@"“烟台公交”上线啦！"
                                                   url:@"http://m.jiaodong.net"
-                                          description:nil
+                                          description:[_textView.text stringByAppendingFormat:@"//%@",_content]
                                             mediaType:SSPublishContentMediaTypeText];
     // QQ空间的内容
 //    [publishContent addQQSpaceUnitWithTitle:INHERIT_VALUE url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:[JDOUtils isEmptyString:_textView.text]?@"分享":_textView.text summary:_content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];

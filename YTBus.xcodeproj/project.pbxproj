@@ -97,13 +97,34 @@
 		2D9D2B5A1A81ED9500410DD2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D9D2B591A81ED9500410DD2 /* MessageUI.framework */; };
 		2D9D2B5C1A81EDA500410DD2 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D9D2B5B1A81EDA500410DD2 /* libstdc++.dylib */; };
 		2D9D2B5F1A82307300410DD2 /* JDOShareController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9D2B5E1A82307300410DD2 /* JDOShareController.m */; };
-		2D9D2B611A823A0800410DD2 /* SharePanel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9D2B601A823A0800410DD2 /* SharePanel@2x.png */; };
 		2D9D2B631A8244D200410DD2 /* SharePin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D9D2B621A8244D200410DD2 /* SharePin@2x.png */; };
 		2D9F90811A5E179000B7A70E /* JDOAboutUsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F90801A5E179000B7A70E /* JDOAboutUsController.m */; };
 		2D9F90861A5E197E00B7A70E /* V8HorizontalPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F90841A5E197E00B7A70E /* V8HorizontalPickerView.m */; };
 		2DA47A231A845E090078D194 /* 分享80@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47A221A845E090078D194 /* 分享80@2x.png */; };
 		2DA47A2D1A849CE70078D194 /* 5sBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47A2C1A849CE70078D194 /* 5sBG@2x.png */; };
 		2DA47A2F1A84A7A50078D194 /* iphone5s@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47A2E1A84A7A50078D194 /* iphone5s@2x.png */; };
+		2DA47A321A886E490078D194 /* JDOReportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A311A886E490078D194 /* JDOReportController.m */; };
+		2DA47A461A8870D50078D194 /* AbstractActionSheetPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A351A8870D50078D194 /* AbstractActionSheetPicker.m */; };
+		2DA47A471A8870D50078D194 /* ActionSheetCustomPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A371A8870D50078D194 /* ActionSheetCustomPicker.m */; };
+		2DA47A481A8870D50078D194 /* ActionSheetDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A3A1A8870D50078D194 /* ActionSheetDatePicker.m */; };
+		2DA47A491A8870D50078D194 /* ActionSheetDistancePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A3C1A8870D50078D194 /* ActionSheetDistancePicker.m */; };
+		2DA47A4A1A8870D50078D194 /* ActionSheetLocalePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A3E1A8870D50078D194 /* ActionSheetLocalePicker.m */; };
+		2DA47A4B1A8870D50078D194 /* ActionSheetStringPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A411A8870D50078D194 /* ActionSheetStringPicker.m */; };
+		2DA47A4C1A8870D50078D194 /* DistancePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A431A8870D50078D194 /* DistancePickerView.m */; };
+		2DA47A4D1A8870D50078D194 /* SWActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A451A8870D50078D194 /* SWActionSheet.m */; };
+		2DA47A501A8873760078D194 /* SSTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A4F1A8873760078D194 /* SSTextView.m */; };
+		2DA47A5B1A887CD60078D194 /* IQKeyboardManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A571A887CD60078D194 /* IQKeyboardManager.m */; };
+		2DA47A5C1A887CD60078D194 /* IQKeyboardReturnKeyHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A591A887CD60078D194 /* IQKeyboardReturnKeyHandler.m */; };
+		2DA47A761A887CEA0078D194 /* IQNSArray+Sort.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A5F1A887CEA0078D194 /* IQNSArray+Sort.m */; };
+		2DA47A771A887CEA0078D194 /* IQUIView+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A611A887CEA0078D194 /* IQUIView+Hierarchy.m */; };
+		2DA47A781A887CEA0078D194 /* IQUIWindow+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A631A887CEA0078D194 /* IQUIWindow+Hierarchy.m */; };
+		2DA47A791A887CEA0078D194 /* IQSegmentedNextPrevious.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A691A887CEA0078D194 /* IQSegmentedNextPrevious.m */; };
+		2DA47A7A1A887CEA0078D194 /* IQTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A6C1A887CEA0078D194 /* IQTextView.m */; };
+		2DA47A7B1A887CEA0078D194 /* IQBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A6F1A887CEA0078D194 /* IQBarButtonItem.m */; };
+		2DA47A7C1A887CEA0078D194 /* IQTitleBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A711A887CEA0078D194 /* IQTitleBarButtonItem.m */; };
+		2DA47A7D1A887CEA0078D194 /* IQToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A731A887CEA0078D194 /* IQToolbar.m */; };
+		2DA47A7E1A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA47A751A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m */; };
+		2DA47A811A887D850078D194 /* IQKeyboardManager.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2DA47A801A887D850078D194 /* IQKeyboardManager.bundle */; };
 		2DA662F919F0D92D00DFED0B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662F819F0D92D00DFED0B /* main.m */; };
 		2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA662FB19F0D92D00DFED0B /* AppDelegate.m */; };
 		2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2DA6630319F0D92D00DFED0B /* Main.storyboard */; };
@@ -321,7 +342,6 @@
 		2D9D2B5B1A81EDA500410DD2 /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		2D9D2B5D1A82307300410DD2 /* JDOShareController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOShareController.h; sourceTree = "<group>"; };
 		2D9D2B5E1A82307300410DD2 /* JDOShareController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOShareController.m; sourceTree = "<group>"; };
-		2D9D2B601A823A0800410DD2 /* SharePanel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SharePanel@2x.png"; sourceTree = "<group>"; };
 		2D9D2B621A8244D200410DD2 /* SharePin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SharePin@2x.png"; sourceTree = "<group>"; };
 		2D9F907F1A5E179000B7A70E /* JDOAboutUsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOAboutUsController.h; sourceTree = "<group>"; };
 		2D9F90801A5E179000B7A70E /* JDOAboutUsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOAboutUsController.m; sourceTree = "<group>"; };
@@ -332,6 +352,54 @@
 		2DA47A221A845E090078D194 /* 分享80@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享80@2x.png"; sourceTree = "<group>"; };
 		2DA47A2C1A849CE70078D194 /* 5sBG@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "5sBG@2x.png"; sourceTree = "<group>"; };
 		2DA47A2E1A84A7A50078D194 /* iphone5s@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iphone5s@2x.png"; sourceTree = "<group>"; };
+		2DA47A301A886E490078D194 /* JDOReportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDOReportController.h; sourceTree = "<group>"; };
+		2DA47A311A886E490078D194 /* JDOReportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDOReportController.m; sourceTree = "<group>"; };
+		2DA47A341A8870D50078D194 /* AbstractActionSheetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractActionSheetPicker.h; sourceTree = "<group>"; };
+		2DA47A351A8870D50078D194 /* AbstractActionSheetPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractActionSheetPicker.m; sourceTree = "<group>"; };
+		2DA47A361A8870D50078D194 /* ActionSheetCustomPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetCustomPicker.h; sourceTree = "<group>"; };
+		2DA47A371A8870D50078D194 /* ActionSheetCustomPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetCustomPicker.m; sourceTree = "<group>"; };
+		2DA47A381A8870D50078D194 /* ActionSheetCustomPickerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetCustomPickerDelegate.h; sourceTree = "<group>"; };
+		2DA47A391A8870D50078D194 /* ActionSheetDatePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetDatePicker.h; sourceTree = "<group>"; };
+		2DA47A3A1A8870D50078D194 /* ActionSheetDatePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetDatePicker.m; sourceTree = "<group>"; };
+		2DA47A3B1A8870D50078D194 /* ActionSheetDistancePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetDistancePicker.h; sourceTree = "<group>"; };
+		2DA47A3C1A8870D50078D194 /* ActionSheetDistancePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetDistancePicker.m; sourceTree = "<group>"; };
+		2DA47A3D1A8870D50078D194 /* ActionSheetLocalePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetLocalePicker.h; sourceTree = "<group>"; };
+		2DA47A3E1A8870D50078D194 /* ActionSheetLocalePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetLocalePicker.m; sourceTree = "<group>"; };
+		2DA47A3F1A8870D50078D194 /* ActionSheetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetPicker.h; sourceTree = "<group>"; };
+		2DA47A401A8870D50078D194 /* ActionSheetStringPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetStringPicker.h; sourceTree = "<group>"; };
+		2DA47A411A8870D50078D194 /* ActionSheetStringPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetStringPicker.m; sourceTree = "<group>"; };
+		2DA47A421A8870D50078D194 /* DistancePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistancePickerView.h; sourceTree = "<group>"; };
+		2DA47A431A8870D50078D194 /* DistancePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DistancePickerView.m; sourceTree = "<group>"; };
+		2DA47A441A8870D50078D194 /* SWActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWActionSheet.h; sourceTree = "<group>"; };
+		2DA47A451A8870D50078D194 /* SWActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWActionSheet.m; sourceTree = "<group>"; };
+		2DA47A4E1A8873760078D194 /* SSTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSTextView.h; sourceTree = "<group>"; };
+		2DA47A4F1A8873760078D194 /* SSTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSTextView.m; sourceTree = "<group>"; };
+		2DA47A561A887CD60078D194 /* IQKeyboardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManager.h; sourceTree = "<group>"; };
+		2DA47A571A887CD60078D194 /* IQKeyboardManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQKeyboardManager.m; sourceTree = "<group>"; };
+		2DA47A581A887CD60078D194 /* IQKeyboardReturnKeyHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardReturnKeyHandler.h; sourceTree = "<group>"; };
+		2DA47A591A887CD60078D194 /* IQKeyboardReturnKeyHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQKeyboardReturnKeyHandler.m; sourceTree = "<group>"; };
+		2DA47A5A1A887CD60078D194 /* KeyboardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardManager.h; sourceTree = "<group>"; };
+		2DA47A5E1A887CEA0078D194 /* IQNSArray+Sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQNSArray+Sort.h"; sourceTree = "<group>"; };
+		2DA47A5F1A887CEA0078D194 /* IQNSArray+Sort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQNSArray+Sort.m"; sourceTree = "<group>"; };
+		2DA47A601A887CEA0078D194 /* IQUIView+Hierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIView+Hierarchy.h"; sourceTree = "<group>"; };
+		2DA47A611A887CEA0078D194 /* IQUIView+Hierarchy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+Hierarchy.m"; sourceTree = "<group>"; };
+		2DA47A621A887CEA0078D194 /* IQUIWindow+Hierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIWindow+Hierarchy.h"; sourceTree = "<group>"; };
+		2DA47A631A887CEA0078D194 /* IQUIWindow+Hierarchy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIWindow+Hierarchy.m"; sourceTree = "<group>"; };
+		2DA47A651A887CEA0078D194 /* IQKeyboardManagerConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManagerConstants.h; sourceTree = "<group>"; };
+		2DA47A661A887CEA0078D194 /* IQKeyboardManagerConstantsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManagerConstantsInternal.h; sourceTree = "<group>"; };
+		2DA47A681A887CEA0078D194 /* IQSegmentedNextPrevious.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQSegmentedNextPrevious.h; sourceTree = "<group>"; };
+		2DA47A691A887CEA0078D194 /* IQSegmentedNextPrevious.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQSegmentedNextPrevious.m; sourceTree = "<group>"; };
+		2DA47A6B1A887CEA0078D194 /* IQTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQTextView.h; sourceTree = "<group>"; };
+		2DA47A6C1A887CEA0078D194 /* IQTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQTextView.m; sourceTree = "<group>"; };
+		2DA47A6E1A887CEA0078D194 /* IQBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQBarButtonItem.h; sourceTree = "<group>"; };
+		2DA47A6F1A887CEA0078D194 /* IQBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQBarButtonItem.m; sourceTree = "<group>"; };
+		2DA47A701A887CEA0078D194 /* IQTitleBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQTitleBarButtonItem.h; sourceTree = "<group>"; };
+		2DA47A711A887CEA0078D194 /* IQTitleBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQTitleBarButtonItem.m; sourceTree = "<group>"; };
+		2DA47A721A887CEA0078D194 /* IQToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQToolbar.h; sourceTree = "<group>"; };
+		2DA47A731A887CEA0078D194 /* IQToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQToolbar.m; sourceTree = "<group>"; };
+		2DA47A741A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIView+IQKeyboardToolbar.h"; sourceTree = "<group>"; };
+		2DA47A751A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+IQKeyboardToolbar.m"; sourceTree = "<group>"; };
+		2DA47A801A887D850078D194 /* IQKeyboardManager.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQKeyboardManager.bundle; sourceTree = "<group>"; };
 		2DA662F319F0D92D00DFED0B /* YTBus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YTBus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA662F719F0D92D00DFED0B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DA662F819F0D92D00DFED0B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -618,6 +686,8 @@
 		2D33FAC81A1983540024F1ED /* SSToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				2DA47A4E1A8873760078D194 /* SSTextView.h */,
+				2DA47A4F1A8873760078D194 /* SSTextView.m */,
 				2D33FAC91A19836E0024F1ED /* NSDate+SSToolkitAdditions.h */,
 				2D33FACA1A19836E0024F1ED /* NSDate+SSToolkitAdditions.m */,
 				2D33FACB1A19836E0024F1ED /* NSString+SSToolkitAdditions.h */,
@@ -875,6 +945,114 @@
 			name = V8HorizontalPickerView;
 			sourceTree = "<group>";
 		};
+		2DA47A331A8870B80078D194 /* ActionSheetPicker */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A341A8870D50078D194 /* AbstractActionSheetPicker.h */,
+				2DA47A351A8870D50078D194 /* AbstractActionSheetPicker.m */,
+				2DA47A361A8870D50078D194 /* ActionSheetCustomPicker.h */,
+				2DA47A371A8870D50078D194 /* ActionSheetCustomPicker.m */,
+				2DA47A381A8870D50078D194 /* ActionSheetCustomPickerDelegate.h */,
+				2DA47A391A8870D50078D194 /* ActionSheetDatePicker.h */,
+				2DA47A3A1A8870D50078D194 /* ActionSheetDatePicker.m */,
+				2DA47A3B1A8870D50078D194 /* ActionSheetDistancePicker.h */,
+				2DA47A3C1A8870D50078D194 /* ActionSheetDistancePicker.m */,
+				2DA47A3D1A8870D50078D194 /* ActionSheetLocalePicker.h */,
+				2DA47A3E1A8870D50078D194 /* ActionSheetLocalePicker.m */,
+				2DA47A3F1A8870D50078D194 /* ActionSheetPicker.h */,
+				2DA47A401A8870D50078D194 /* ActionSheetStringPicker.h */,
+				2DA47A411A8870D50078D194 /* ActionSheetStringPicker.m */,
+				2DA47A421A8870D50078D194 /* DistancePickerView.h */,
+				2DA47A431A8870D50078D194 /* DistancePickerView.m */,
+				2DA47A441A8870D50078D194 /* SWActionSheet.h */,
+				2DA47A451A8870D50078D194 /* SWActionSheet.m */,
+			);
+			name = ActionSheetPicker;
+			sourceTree = "<group>";
+		};
+		2DA47A551A887BFD0078D194 /* IQKeyBoardManager */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A7F1A887D850078D194 /* IQResources */,
+				2DA47A5D1A887CEA0078D194 /* IQCategories */,
+				2DA47A641A887CEA0078D194 /* IQConstants */,
+				2DA47A671A887CEA0078D194 /* IQSegmentedNextPrevious */,
+				2DA47A6A1A887CEA0078D194 /* IQTextView */,
+				2DA47A6D1A887CEA0078D194 /* IQToolbar */,
+				2DA47A561A887CD60078D194 /* IQKeyboardManager.h */,
+				2DA47A571A887CD60078D194 /* IQKeyboardManager.m */,
+				2DA47A581A887CD60078D194 /* IQKeyboardReturnKeyHandler.h */,
+				2DA47A591A887CD60078D194 /* IQKeyboardReturnKeyHandler.m */,
+				2DA47A5A1A887CD60078D194 /* KeyboardManager.h */,
+			);
+			name = IQKeyBoardManager;
+			sourceTree = "<group>";
+		};
+		2DA47A5D1A887CEA0078D194 /* IQCategories */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A5E1A887CEA0078D194 /* IQNSArray+Sort.h */,
+				2DA47A5F1A887CEA0078D194 /* IQNSArray+Sort.m */,
+				2DA47A601A887CEA0078D194 /* IQUIView+Hierarchy.h */,
+				2DA47A611A887CEA0078D194 /* IQUIView+Hierarchy.m */,
+				2DA47A621A887CEA0078D194 /* IQUIWindow+Hierarchy.h */,
+				2DA47A631A887CEA0078D194 /* IQUIWindow+Hierarchy.m */,
+			);
+			name = IQCategories;
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		2DA47A641A887CEA0078D194 /* IQConstants */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A651A887CEA0078D194 /* IQKeyboardManagerConstants.h */,
+				2DA47A661A887CEA0078D194 /* IQKeyboardManagerConstantsInternal.h */,
+			);
+			name = IQConstants;
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		2DA47A671A887CEA0078D194 /* IQSegmentedNextPrevious */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A681A887CEA0078D194 /* IQSegmentedNextPrevious.h */,
+				2DA47A691A887CEA0078D194 /* IQSegmentedNextPrevious.m */,
+			);
+			path = IQSegmentedNextPrevious;
+			sourceTree = "<group>";
+		};
+		2DA47A6A1A887CEA0078D194 /* IQTextView */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A6B1A887CEA0078D194 /* IQTextView.h */,
+				2DA47A6C1A887CEA0078D194 /* IQTextView.m */,
+			);
+			path = IQTextView;
+			sourceTree = "<group>";
+		};
+		2DA47A6D1A887CEA0078D194 /* IQToolbar */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A6E1A887CEA0078D194 /* IQBarButtonItem.h */,
+				2DA47A6F1A887CEA0078D194 /* IQBarButtonItem.m */,
+				2DA47A701A887CEA0078D194 /* IQTitleBarButtonItem.h */,
+				2DA47A711A887CEA0078D194 /* IQTitleBarButtonItem.m */,
+				2DA47A721A887CEA0078D194 /* IQToolbar.h */,
+				2DA47A731A887CEA0078D194 /* IQToolbar.m */,
+				2DA47A741A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.h */,
+				2DA47A751A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m */,
+			);
+			path = IQToolbar;
+			sourceTree = "<group>";
+		};
+		2DA47A7F1A887D850078D194 /* IQResources */ = {
+			isa = PBXGroup;
+			children = (
+				2DA47A801A887D850078D194 /* IQKeyboardManager.bundle */,
+			);
+			path = IQResources;
+			sourceTree = "<group>";
+		};
 		2DA662EA19F0D92C00DFED0B = {
 			isa = PBXGroup;
 			children = (
@@ -951,6 +1129,8 @@
 		2DA6632019F0D97100DFED0B /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				2DA47A551A887BFD0078D194 /* IQKeyBoardManager */,
+				2DA47A331A8870B80078D194 /* ActionSheetPicker */,
 				2D9D2B131A81EC1300410DD2 /* ShareSDK-2.10.5 */,
 				2D05CCD01A70EA7F00AFF9EE /* UIBubbleTableView */,
 				2D4714641A6CFC2F00F2DE04 /* HPGrowingTextView */,
@@ -980,7 +1160,6 @@
 				2DA47A2C1A849CE70078D194 /* 5sBG@2x.png */,
 				2DA47A221A845E090078D194 /* 分享80@2x.png */,
 				2D9D2B621A8244D200410DD2 /* SharePin@2x.png */,
-				2D9D2B601A823A0800410DD2 /* SharePanel@2x.png */,
 				2DA6630619F0D92D00DFED0B /* Images.xcassets */,
 			);
 			name = Resources;
@@ -1111,6 +1290,8 @@
 				2D05CCCE1A6E23F300AFF9EE /* JDOReviewController.m */,
 				2D9D2B5D1A82307300410DD2 /* JDOShareController.h */,
 				2D9D2B5E1A82307300410DD2 /* JDOShareController.m */,
+				2DA47A301A886E490078D194 /* JDOReportController.h */,
+				2DA47A311A886E490078D194 /* JDOReportController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1378,7 +1559,7 @@
 				2D6D08511A7A160500E3A375 /* umeng_fb_audio_dialog_content@2x.png in Resources */,
 				2DA8D8FB1A834E33006BD1AF /* RennSDK.bundle in Resources */,
 				2D9D2B401A81EC4000410DD2 /* ShareSDKLocalizable.strings in Resources */,
-				2D9D2B611A823A0800410DD2 /* SharePanel@2x.png in Resources */,
+				2DA47A811A887D850078D194 /* IQKeyboardManager.bundle in Resources */,
 				2D4714151A6CB3F200F2DE04 /* cancel@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1397,11 +1578,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA47A5B1A887CD60078D194 /* IQKeyboardManager.m in Sources */,
 				2DA662FC19F0D92D00DFED0B /* AppDelegate.m in Sources */,
 				2DECC33D1A0324D00022F60E /* UIImageView+AFNetworking.m in Sources */,
+				2DA47A7E1A887CEA0078D194 /* IQUIView+IQKeyboardToolbar.m in Sources */,
 				2DC39A201A4D4AFF00662A33 /* NSArray_DeepMutableCopy.m in Sources */,
 				2D33FAD71A19836E0024F1ED /* UIControl+SSToolkitAdditions.m in Sources */,
 				2DF7177E1A5BBA0500EEDC1E /* iVersion.m in Sources */,
+				2DA47A4A1A8870D50078D194 /* ActionSheetLocalePicker.m in Sources */,
+				2DA47A321A886E490078D194 /* JDOReportController.m in Sources */,
 				2D33FAD61A19836E0024F1ED /* UIColor+SSToolkitAdditions.m in Sources */,
 				2DECC2B119FF9ABA0022F60E /* FMDatabaseQueue.m in Sources */,
 				2D05CCCF1A6E23F300AFF9EE /* JDOReviewController.m in Sources */,
@@ -1409,6 +1594,8 @@
 				2DECC3361A0324D00022F60E /* AFHTTPRequestOperation.m in Sources */,
 				2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */,
 				2DC39A041A4D4A8200662A33 /* JDONewsTableCell.m in Sources */,
+				2DA47A5C1A887CD60078D194 /* IQKeyboardReturnKeyHandler.m in Sources */,
+				2DA47A761A887CEA0078D194 /* IQNSArray+Sort.m in Sources */,
 				2DC39A0B1A4D4AA300662A33 /* JDONewsDetailModel.m in Sources */,
 				2DECC2A219FF2AC80022F60E /* JDOStationModel.m in Sources */,
 				2DECC3391A0324D00022F60E /* AFNetworkActivityIndicatorManager.m in Sources */,
@@ -1426,6 +1613,8 @@
 				2DECC3401A0325B40022F60E /* JDOHttpClient.m in Sources */,
 				2DC39A401A527E5B00662A33 /* TBCoordinateQuadTree.m in Sources */,
 				2D33FAB01A0CB2AF0024F1ED /* JDOStationAnnotation.m in Sources */,
+				2DA47A771A887CEA0078D194 /* IQUIView+Hierarchy.m in Sources */,
+				2DA47A791A887CEA0078D194 /* IQSegmentedNextPrevious.m in Sources */,
 				2D9D2B5F1A82307300410DD2 /* JDOShareController.m in Sources */,
 				2DECC2BD1A00DF7F0022F60E /* JDOBusLineDetail.m in Sources */,
 				2DECC2B019FF9ABA0022F60E /* FMResultSet.m in Sources */,
@@ -1437,16 +1626,24 @@
 				2DECC2C71A0218FC0022F60E /* JDONearMapController.mm in Sources */,
 				2D47145D1A6CFB0600F2DE04 /* JDONewsReviewView.m in Sources */,
 				2D05CCDC1A70EA9700AFF9EE /* NSBubbleData.m in Sources */,
+				2DA47A7D1A887CEA0078D194 /* IQToolbar.m in Sources */,
 				2D33FADA1A1ADCA20024F1ED /* JDOStationMapController.mm in Sources */,
 				2DA662F919F0D92D00DFED0B /* main.m in Sources */,
 				2D9F90811A5E179000B7A70E /* JDOAboutUsController.m in Sources */,
 				2D47144D1A6CF70500F2DE04 /* JDOToolBar.m in Sources */,
+				2DA47A461A8870D50078D194 /* AbstractActionSheetPicker.m in Sources */,
+				2DA47A481A8870D50078D194 /* ActionSheetDatePicker.m in Sources */,
 				2DECC2B219FF9ABA0022F60E /* FMDatabaseAdditions.m in Sources */,
 				2DC39A2B1A4D4C7000662A33 /* StyledPageControl.m in Sources */,
 				2DC399EC1A4D2A5400662A33 /* JDONewsController.m in Sources */,
 				2D4714621A6CFC2300F2DE04 /* HPGrowingTextView.m in Sources */,
+				2DA47A471A8870D50078D194 /* ActionSheetCustomPicker.m in Sources */,
 				2DC39A0A1A4D4AA300662A33 /* JDONewsModel.m in Sources */,
+				2DA47A4C1A8870D50078D194 /* DistancePickerView.m in Sources */,
+				2DA47A4D1A8870D50078D194 /* SWActionSheet.m in Sources */,
+				2DA47A7A1A887CEA0078D194 /* IQTextView.m in Sources */,
 				2DECC2BA1A0081710022F60E /* JDOSettingController.m in Sources */,
+				2DA47A491A8870D50078D194 /* ActionSheetDistancePicker.m in Sources */,
 				2DECC34E1A032BAF0022F60E /* mztools.c in Sources */,
 				2DAF41731A358239007E60A3 /* UIDevice+Hardware.m in Sources */,
 				2DC39A211A4D4AFF00662A33 /* NSDictionary_DeepMutableCopy.m in Sources */,
@@ -1458,12 +1655,15 @@
 				2D4714541A6CFA6400F2DE04 /* WebViewJavascriptBridge_iOS.m in Sources */,
 				2DECC3351A0324D00022F60E /* AFHTTPClient.m in Sources */,
 				2D33FABF1A1472770024F1ED /* JDOUtils.m in Sources */,
+				2DA47A7C1A887CEA0078D194 /* IQTitleBarButtonItem.m in Sources */,
 				2DC399F41A4D2D4600662A33 /* UIScrollView+SVPullToRefresh.m in Sources */,
 				2DECC2AF19FF9ABA0022F60E /* FMDatabase.m in Sources */,
+				2DA47A501A8873760078D194 /* SSTextView.m in Sources */,
 				2D33FB471A26E7D00024F1ED /* JDOLocationMapController.m in Sources */,
 				2DC39A431A527E5B00662A33 /* TBClusterAnnotationView.m in Sources */,
 				2DECC3501A032BAF0022F60E /* zip.c in Sources */,
 				2DECC33C1A0324D00022F60E /* AFXMLRequestOperation.m in Sources */,
+				2DA47A7B1A887CEA0078D194 /* IQBarButtonItem.m in Sources */,
 				2DECC33B1A0324D00022F60E /* AFURLConnectionOperation.m in Sources */,
 				2D33FAD41A19836E0024F1ED /* NSString+SSToolkitAdditions.m in Sources */,
 				2D33FAC71A15996F0024F1ED /* JDOStationController.m in Sources */,
@@ -1477,8 +1677,10 @@
 				2DC399F31A4D2D4600662A33 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
 				2D0DEF201A677D680096B419 /* UIViewController+MJPopupViewController.m in Sources */,
 				2D9F90861A5E197E00B7A70E /* V8HorizontalPickerView.m in Sources */,
+				2DA47A781A887CEA0078D194 /* IQUIWindow+Hierarchy.m in Sources */,
 				2D33FAD31A19836E0024F1ED /* NSDate+SSToolkitAdditions.m in Sources */,
 				2DECC3381A0324D00022F60E /* AFJSONRequestOperation.m in Sources */,
+				2DA47A4B1A8870D50078D194 /* ActionSheetStringPicker.m in Sources */,
 				2D33FAB61A109D3C0024F1ED /* JDORealTimeMapController.mm in Sources */,
 				2DECC33A1A0324D00022F60E /* AFPropertyListRequestOperation.m in Sources */,
 				2D884B4E19F61C3200C83F71 /* JDORealTimeController.mm in Sources */,

@@ -19,8 +19,11 @@
 #import <ShareSDK/ShareSDK.h>
 #import "JDOShareController.h"
 #import "AppDelegate.h"
+#import <QZoneConnection/ISSQZoneApp.h>
+#import "JDOReportController.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
+#define LineHeight 30
 
 @interface JDORealTimeCell : UITableViewCell
 
@@ -102,6 +105,7 @@
     self.navigationItem.rightBarButtonItem.enabled = false;
     isLoadFinised = false;
     isMenuHidden = true;
+    _isInit = true;
     
     _stations = [NSMutableArray new];
     _db = [JDODatabase sharedDB];
@@ -281,7 +285,10 @@
     int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
     _timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(refreshData:) userInfo:nil repeats:true];
     [_timer fire];
-    [self scrollToTargetStation:false];
+    if (_isInit) {
+        [self scrollToTargetStation:false];
+        _isInit = false;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -549,7 +556,9 @@
 }
 
 - (IBAction)clickReport:(id)sender{
-    NSLog(@"report");
+    JDOReportController *vc = [[JDOReportController alloc] initWithImage:screenImage content:content type:type];
+    UINavigationController *naVC = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:naVC animated:true completion:nil];
 }
 
 - (IBAction)clickShare:(id)sender{
@@ -594,9 +603,17 @@
                                             mediaType:SSPublishContentMediaTypeNews];
     //QQ使用title和content(大概26个字以内)，但能显示字数更少。
     [publishContent addQQUnitWithType:INHERIT_VALUE content:[NSString stringWithFormat:@"我正在查询%@车的实时位置,你也来试试吧!",self.busLine.lineName] title:@"“烟台公交”上线啦！" url:INHERIT_VALUE image:INHERIT_VALUE];
-//    [publishContent addQQSpaceUnitWithTitle:INHERIT_VALUE url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:nil summary:content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
+    [publishContent addQQSpaceUnitWithTitle:@"“烟台公交”上线啦！" url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:nil summary:content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
     
-    NSArray *shareList = [ShareSDK customShareListWithType:SHARE_TYPE_NUMBER(ShareTypeWeixiSession),SHARE_TYPE_NUMBER(ShareTypeWeixiTimeline),SHARE_TYPE_NUMBER(ShareTypeQQ),[self getShareItem:ShareTypeQQSpace content:content],[self getShareItem:ShareTypeSinaWeibo content:content],[self getShareItem:ShareTypeRenren content:content],nil];
+    id<ISSQZoneApp> app =(id<ISSQZoneApp>)[ShareSDK getClientWithType:ShareTypeQQSpace];
+    NSObject *qZone;
+    if (app.isClientInstalled) {
+        qZone = SHARE_TYPE_NUMBER(ShareTypeQQSpace);
+    }else{
+        qZone = [self getShareItem:ShareTypeQQSpace content:content];
+    }
+    
+    NSArray *shareList = [ShareSDK customShareListWithType:SHARE_TYPE_NUMBER(ShareTypeWeixiSession),SHARE_TYPE_NUMBER(ShareTypeWeixiTimeline),SHARE_TYPE_NUMBER(ShareTypeQQ),qZone,[self getShareItem:ShareTypeSinaWeibo content:content],[self getShareItem:ShareTypeRenren content:content],nil];
     
     [ShareSDK showShareActionSheet:nil shareList:shareList content:publishContent statusBarTips:NO authOptions:nil shareOptions:nil result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
             if (state == SSResponseStateSuccess){
@@ -749,7 +766,7 @@
         NSDictionary *dict = _realBusList[i];
         JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
         if ([station.fid isEqualToString:bus.toStationId]) {
-            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(10, count*40+8, 120, 24)];
+            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(10, count*LineHeight+4, 120, 22)];
             busNo.text = [NSString stringWithFormat:@"车牌号:%@",bus.busNo];
             busNo.textColor = [UIColor whiteColor];
             busNo.font = [UIFont systemFontOfSize:14];
@@ -764,7 +781,7 @@
                     distance+=BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(busPos),BMKMapPointForCoordinate(stationPos));
                 }else{
                     JDOStationModel *stationB = _stations[j-1];
-                    CLLocationCoordinate2D stationAPos = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(aStation.gpsY.doubleValue, aStation.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+                    CLLocationCoordinate2D stationAPos = CLLocationCoordinate2DMake(aStation.gpsY.doubleValue, aStation.gpsX.doubleValue);
                     CLLocationCoordinate2D stationBPos = CLLocationCoordinate2DMake(stationB.gpsY.doubleValue, stationB.gpsX.doubleValue);
                     distance+=BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(stationAPos),BMKMapPointForCoordinate(stationBPos));
                 }
@@ -773,7 +790,7 @@
                 }
             }
             // TODO距离计算错误
-            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(140, count*40+8, 120, 24)];
+            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(140, count*LineHeight+4, 120, 22)];
             if (distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
                 distanceLabel.text = [NSString stringWithFormat:@"距离：%.1f公里",distance/1000];
             }else{
@@ -786,7 +803,7 @@
             count++;
         }
     }
-    contentView.frame = CGRectMake(0, 0, 300, count*40);
+    contentView.frame = CGRectMake(0, 0, 300, count*LineHeight);
     
     CMPopTipView *popTipView = [[CMPopTipView alloc] initWithCustomView:contentView];
     cell.popTipView = popTipView;

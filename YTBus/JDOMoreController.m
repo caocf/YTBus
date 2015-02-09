@@ -11,6 +11,9 @@
 #import "iVersion.h"
 #import "UIViewController+MJPopupViewController.h"
 #import "UMFeedback.h"
+#import <ShareSDK/ShareSDK.h>
+#import <QZoneConnection/ISSQZoneApp.h>
+#import "JDOShareController.h"
 
 typedef enum{
     JDOSettingTypeSystem = 0,
@@ -171,7 +174,42 @@ typedef enum{
     }else if(indexPath.row == JDOSettingTypeFeedback){
 //        [self.navigationController pushViewController:[UMFeedback feedbackViewController] animated:YES];
 //        [self presentModalViewController:[UMFeedback feedbackModalViewController] animated:YES];
+    }else if(indexPath.row == JDOSettingTypeShare){
+        // TODO 全局替换m.jiaodong.net
+        NSString *content = @"我正在使用“烟台公交”查询公交车的实时位置,你也来试试吧!";
+        id<ISSContent> publishContent = [ShareSDK content:content defaultContent:nil image:[ShareSDK jpegImageWithImage:[UIImage imageNamed:@"分享80"] quality:1.0] title:@"“烟台公交”上线啦！等车不再捉急，到点准时来接你。" url:@"http://m.jiaodong.net" description:content mediaType:SSPublishContentMediaTypeNews];
+        
+        //QQ使用title和content(大概26个字以内)，但能显示字数更少。
+        [publishContent addQQUnitWithType:INHERIT_VALUE content:content title:@"“烟台公交”上线啦！" url:INHERIT_VALUE image:INHERIT_VALUE];
+        [publishContent addQQSpaceUnitWithTitle:@"“烟台公交”上线啦！" url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:nil summary:content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
+        
+        id<ISSQZoneApp> app =(id<ISSQZoneApp>)[ShareSDK getClientWithType:ShareTypeQQSpace];
+        NSObject *qZone;
+        if (app.isClientInstalled) {
+            qZone = SHARE_TYPE_NUMBER(ShareTypeQQSpace);
+        }else{
+            qZone = [self getShareItem:ShareTypeQQSpace content:content];
+        }
+        
+        NSArray *shareList = [ShareSDK customShareListWithType:SHARE_TYPE_NUMBER(ShareTypeWeixiSession),SHARE_TYPE_NUMBER(ShareTypeWeixiTimeline),SHARE_TYPE_NUMBER(ShareTypeQQ),qZone,[self getShareItem:ShareTypeSinaWeibo content:content],[self getShareItem:ShareTypeRenren content:content],nil];
+        
+        [ShareSDK showShareActionSheet:nil shareList:shareList content:publishContent statusBarTips:NO authOptions:nil shareOptions:nil result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
+            if (state == SSResponseStateSuccess){
+                NSLog(@"分享成功");
+            }else if (state == SSResponseStateFail){
+                [JDOUtils showHUDText:[NSString stringWithFormat:@"分享失败,错误码:%ld",(long)[error errorCode]] inView:self.view];
+            }
+        }
+         ];
     }
+}
+
+- (id<ISSShareActionSheetItem>) getShareItem:(ShareType) type content:(NSString *)content{
+    return [ShareSDK shareActionSheetItemWithTitle:[ShareSDK getClientNameWithType:type] icon:[ShareSDK getClientIconWithType:type] clickHandler:^{
+        JDOShareController *vc = [[JDOShareController alloc] initWithImage:nil content:content type:type];
+        UINavigationController *naVC = [[UINavigationController alloc] initWithRootViewController:vc];
+        [self presentViewController:naVC animated:true completion:nil];
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
