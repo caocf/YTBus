@@ -147,7 +147,7 @@
 }
 
 - (void)publishButtonClickHandler:(id)sender{
-    // TODO 后台数据接口，以及数据有效性校验
+    // TODO 后台数据接口，以及数据有效性校验(号码、长度)
 }
 /*
 #pragma mark - Navigation

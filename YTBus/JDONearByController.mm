@@ -50,7 +50,7 @@
 
 @end
 
-@interface JDONearByController () <BMKLocationServiceDelegate,CLLocationManagerDelegate> {
+@interface JDONearByController () <BMKLocationServiceDelegate,CLLocationManagerDelegate,BMKGeoCodeSearchDelegate> {
     BMKLocationService *_locService;
     BMKUserLocation *currentUserLocation;
     CLLocation *currentLocation;
@@ -72,7 +72,12 @@
 
 @end
 
-@implementation JDONearByController
+@implementation JDONearByController{
+    BMKGeoCodeSearch *_searcher;
+    UILabel *myLocation;
+    UILabel *myMovement;
+    int sectionHeight;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -80,8 +85,10 @@
     self.navigationItem.rightBarButtonItem.enabled = false;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     // TODO 增加当前位置和移动距离横幅条，在设置中增加移动xx距离后刷新附近站点的选项
-    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 5)];   // 填充边距
 //    self.tableView.showsVerticalScrollIndicator = false;
+    self.tableView.bounces = false;
+    sectionHeight = 0;
+    
     float deltaY = Screen_Height>480?50:0;
     hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 265+deltaY, 280, 80)];
     hintLabel.backgroundColor = [UIColor clearColor];
@@ -109,6 +116,7 @@
     }
 //    [locationManger startUpdatingLocation];
     
+    _searcher =[[BMKGeoCodeSearch alloc] init];
     _locService = [[BMKLocationService alloc] init];
     _nearbyStations = [[NSMutableArray alloc] init];
     animationIndexPath = [NSMutableSet set];
@@ -139,6 +147,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(![CLLocationManager locationServicesEnabled]){
+        sectionHeight = 0;
         [_linesInfo removeAllObjects];
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
@@ -150,6 +159,7 @@
         [self.tableView addSubview:hintImage];
         [self.tableView addSubview:hintLabel];
     }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied || [CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){
+        sectionHeight = 0;
         [_linesInfo removeAllObjects];
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
@@ -163,6 +173,7 @@
 //        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
     }else{
         self.navigationItem.rightBarButtonItem.enabled = true;
+        sectionHeight = 46;
         
         [hintLabel removeFromSuperview];
         [hintImage removeFromSuperview];
@@ -192,6 +203,7 @@
     [MobClick event:@"nearby"];
     [MobClick beginEvent:@"nearby"];
     _locService.delegate = self;
+    _searcher.delegate = self;
     [_locService startUserLocationService];
 }
 
@@ -200,6 +212,7 @@
     [MobClick endEvent:@"nearby"];
     [_locService stopUserLocationService];
     _locService.delegate = nil;
+    _searcher.delegate = nil;
 }
 
 - (void)didFailToLocateUserWithError:(NSError *)error {
@@ -230,10 +243,18 @@
         // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
         double moveDistance = [userLocation.location distanceFromLocation:currentLocation];
         if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance) {
-//            NSLog(@"移动距离%g，不足刷新条件",moveDistance);
+            myMovement.text = [NSString stringWithFormat:@"距离上次位置%d米",(int)moveDistance];
 //            [JDOUtils showHUDText:[NSString stringWithFormat:@"距离上次刷新位置:%g米",moveDistance] inView:self.view];
             return;
         }
+    }
+//    发起反向地理编码检索
+    CLLocationCoordinate2D pt = userLocation.location.coordinate;
+    BMKReverseGeoCodeOption *reverseGeoCodeSearchOption = [[BMKReverseGeoCodeOption alloc] init];
+    reverseGeoCodeSearchOption.reverseGeoPoint = pt;
+    BOOL flag = [_searcher reverseGeoCode:reverseGeoCodeSearchOption];
+    if(!flag){
+        NSLog(@"反geo检索发送失败");
     }
     
     currentUserLocation = userLocation;
@@ -356,12 +377,27 @@
     if (_linesInfo.count>0) {
         noDataLabel.hidden = true;
         noDataImage.hidden = true;
+        sectionHeight = 46;
         self.navigationItem.rightBarButtonItem.enabled = true;
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:false];
     }else{
         noDataLabel.hidden = false;
         noDataImage.hidden = false;
+        sectionHeight = 0;
         self.navigationItem.rightBarButtonItem.enabled = false;
+    }
+}
+
+//接收反向地理编码结果
+-(void) onGetReverseGeoCodeResult:(BMKGeoCodeSearch *)searcher result: (BMKReverseGeoCodeResult *)result errorCode:(BMKSearchErrorCode)error{
+    if (error == BMK_SEARCH_NO_ERROR) {
+        if (result.poiList.count>0) {
+            myLocation.text = [(BMKPoiInfo *)result.poiList[0] name];
+        }else{
+            myLocation.text = [[result.addressDetail.district stringByAppendingString:result.addressDetail.streetName] stringByAppendingString:result.addressDetail.streetNumber];
+        }
+    }else{
+        NSLog(@"抱歉，未找到结果");
     }
 }
 
@@ -381,6 +417,28 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return _linesInfo.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return sectionHeight;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIImageView *bg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 46)];
+    bg.image = [UIImage imageNamed:@"附近头部"];
+    myLocation = [[UILabel alloc] initWithFrame:CGRectMake(30, 10, 120, 21)];
+    myLocation.textColor = [UIColor colorWithWhite:240/255.0f alpha:1.0f];
+    myLocation.font = [UIFont systemFontOfSize:14];
+    myLocation.minimumFontSize = 10;
+    myLocation.text = @"我的位置";
+    [bg addSubview:myLocation];
+    myMovement = [[UILabel alloc] initWithFrame:CGRectMake(180, 10, 135, 21)];
+    myMovement.textColor = [UIColor colorWithWhite:240/255.0f alpha:1.0f];
+    myMovement.font = [UIFont systemFontOfSize:14];
+    myMovement.minimumFontSize = 10;
+    myMovement.text = @"正在定位";
+    [bg addSubview:myMovement];
+    return bg;
 }
 
 

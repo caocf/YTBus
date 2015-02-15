@@ -122,8 +122,8 @@
 /* Class = "IBUITabBarItem"; title = "线路"; ObjectID = "a96-PW-c8R"; */
 "a96-PW-c8R.title" = "线路";
 
-/* Class = "IBUINavigationItem"; title = "线路实时"; ObjectID = "ac7-Xo-KEe"; */
-"ac7-Xo-KEe.title" = "线路实时";
+/* Class = "IBUINavigationItem"; title = "线路地图"; ObjectID = "ac7-Xo-KEe"; */
+"ac7-Xo-KEe.title" = "线路地图";
 
 /* Class = "IBUILabel"; text = "Subtitle"; ObjectID = "aej-om-oZv"; */
 "aej-om-oZv.text" = "Subtitle";
@@ -236,8 +236,8 @@
 /* Class = "IBUINavigationItem"; title = "换乘方案"; ObjectID = "ufG-he-agL"; */
 "ufG-he-agL.title" = "换乘方案";
 
-/* Class = "IBUINavigationItem"; title = "站点查询"; ObjectID = "w6g-dL-CzU"; */
-"w6g-dL-CzU.title" = "站点查询";
+/* Class = "IBUINavigationItem"; title = "站点地图"; ObjectID = "w6g-dL-CzU"; */
+"w6g-dL-CzU.title" = "站点地图";
 
 /* Class = "IBUINavigationItem"; title = "最新资讯"; ObjectID = "xKh-9a-apq"; */
 "xKh-9a-apq.title" = "最新资讯";

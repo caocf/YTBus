@@ -84,6 +84,14 @@ static const void *SelectedKey = &SelectedKey;
     _buses = [NSMutableArray new];
     _drawedBusAnnotations = [NSMutableArray new];
     _stationAnnotations = [NSMutableArray new];
+    if (_realBusList) {
+        for (int i=0; i<_realBusList.count; i++){
+            NSDictionary *dict = [_realBusList objectAtIndex:i];
+            JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
+            [_buses addObject:bus];
+        }
+        [self redrawBus];
+    }
 }
 
 - (void) setMapCenter{
@@ -169,7 +177,8 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
-    [JDOUtils showHUDText:[NSString stringWithFormat:@"无法获取实时数据：%@",error] inView:self.view];
+    [JDOUtils showHUDText:[NSString stringWithFormat:@"网络连接异常:%ld",error.code] inView:self.view];
+    NSLog(@"error:%@",error);
 }
 
 -(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *) namespaceURI qualifiedName:(NSString *)qName attributes: (NSDictionary *)attributeDict{
@@ -189,8 +198,14 @@ static const void *SelectedKey = &SelectedKey;
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
         NSLog(@"%@",_jsonResult);
         isRecording = false;
-        if (_jsonResult.length==0) {
-            [JDOUtils showHUDText:@"没有满足条件的车辆信息" inView:self.view];
+        if (_jsonResult.length==0 || [_jsonResult isEqualToString:@"[]"]) {
+            NSString *info;
+            if (_jsonResult.length==0) {
+                info = @"无法获取实时数据";
+            }else{
+                info = @"没有下一班次数据";
+            }
+            [JDOUtils showHUDText:info inView:self.view];
             // 删除掉已经绘制的所有车辆，可能发生的情景是：最后一辆车开过参考站点，则要删除该车辆
             if (_buses.count>0) {
                 [_buses removeAllObjects];
@@ -199,7 +214,7 @@ static const void *SelectedKey = &SelectedKey;
         }else{
             NSArray *list = [_jsonResult objectFromJSONString];
             if (!list) {
-                [JDOUtils showHUDText:@"实时数据JSON格式错误" inView:self.view];
+                [JDOUtils showHUDText:@"实时数据格式错误" inView:self.view];
             }else{
                 [_buses removeAllObjects];
                 for (int i=0; i<list.count; i++){
@@ -214,7 +229,8 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError{
-    [JDOUtils showHUDText:[NSString stringWithFormat:@"解析实时数据XML时出现错误：%@",parseError] inView:self.view];
+    [JDOUtils showHUDText:[NSString stringWithFormat:@"解析XML错误:%ld",(long)parseError.code] inView:self.view];
+    NSLog(@"Error:%@",parseError);
 }
 
 - (void) redrawBus{
@@ -226,6 +242,31 @@ static const void *SelectedKey = &SelectedKey;
     
     for (int i=0; i<_buses.count; i++){
         JDOBusModel *bus = _buses[i];
+        JDOStationModel *nextStation;
+        int nextStationIndex;
+        for (int j=0; j<_stations.count; j++) {
+            nextStation = _stations[j];
+            if ([nextStation.fid isEqualToString:bus.toStationId]) {
+                nextStation = _stations[j+1];
+                nextStationIndex = j+1;
+                break;
+            }
+        }
+        CLLocationCoordinate2D busPos = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(bus.gpsY.doubleValue, bus.gpsX.doubleValue),BMK_COORDTYPE_GPS));
+        CLLocationCoordinate2D stationPos = CLLocationCoordinate2DMake(nextStation.gpsY.doubleValue, nextStation.gpsX.doubleValue);
+        double distance = BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(busPos),BMKMapPointForCoordinate(stationPos));
+        
+        for (int j=nextStationIndex; j<_stations.count-1; j++) {
+            JDOStationModel *stationA = _stations[j];
+            if (stationA.isStart) {
+                break;
+            }
+            JDOStationModel *stationB = _stations[j+1];
+            CLLocationCoordinate2D stationAPos = CLLocationCoordinate2DMake(stationA.gpsY.doubleValue, stationA.gpsX.doubleValue);
+            CLLocationCoordinate2D stationBPos = CLLocationCoordinate2DMake(stationB.gpsY.doubleValue, stationB.gpsX.doubleValue);
+            distance += BMKMetersBetweenMapPoints(BMKMapPointForCoordinate(stationAPos),BMKMapPointForCoordinate(stationBPos));
+            
+        }
 
         BMKPointAnnotation *annotation = [[BMKPointAnnotation alloc] init];
         annotation.coordinate = BMKCoorDictionaryDecode(BMKConvertBaiduCoorFrom(CLLocationCoordinate2DMake(bus.gpsY.doubleValue, bus.gpsX.doubleValue),BMK_COORDTYPE_GPS));
@@ -233,10 +274,16 @@ static const void *SelectedKey = &SelectedKey;
             NSLog(@"没有车牌号");
         }
         annotation.title = bus.busNo;
-        [_mapView addAnnotation:annotation];
+        if (distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
+            annotation.subtitle = [NSString stringWithFormat:@"%.1f公里",distance/1000];
+        }else{
+            annotation.subtitle = [NSString stringWithFormat:@"%d米",[@(distance) intValue]];
+        }
         
+        [_mapView addAnnotation:annotation];
         [_drawedBusAnnotations addObject:annotation];
     }
+    
 }
 
 - (void)mapStatusDidChanged:(BMKMapView *)mapView{

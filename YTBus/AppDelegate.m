@@ -293,6 +293,13 @@
     [[UINavigationBar appearance] setTitleTextAttributes: @{UITextAttributeTextColor:[UIColor whiteColor]}];
 }
 
+
+/*
+１.　当程序处于关闭状态收到推送消息时，点击图标会调用- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions　这个方法，那么消息给通过launchOptions这个参数获取到。
+２.　当程序处于前台工作时，这时候若收到消息推送，会调用- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo这个方法
+３.　当程序处于后台运行时，这时候若收到消息推送，如果点击消息或者点击消息图标时，也会调用- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary *)userInfo这个方法
+４.　当程序处于后台运行时，这时候若收到消息推送，如果点击桌面应用图标，则不会调用didFinishLaunchingWithOptions和didReceiveRemoteNotification方法，所以无法获取消息
+*/
 - (void) initPushConfig{
 //    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
 //        [application registerForRemoteNotifications];

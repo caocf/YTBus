@@ -80,7 +80,7 @@
     self.tableView.sectionFooterHeight = 15;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     
-    self.lineView.frame = CGRectMake(20, CGRectGetHeight(self.view.bounds)-44, 280, 44);
+    self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.view.bounds)-44, 320, 44);
     self.stationLabel.text = @"请选择站点";
     self.busMonitor.hidden = true;
     self.closeBtn.hidden = true;
@@ -301,13 +301,18 @@
         return cell;
     }else{
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"stationLine" forIndexPath:indexPath];
-        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
+        if (indexPath.row%2==0) {
+//            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
+            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
+        }else{
+            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景灰"]];
+        }
         
         JDOBusLine *busLine = selectedStation.passLines[indexPath.row];
         JDOBusLineDetail *lineDetail = busLine.lineDetailPair[0];
         [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
         [(UILabel *)[cell viewWithTag:1002] setText:lineDetail.lineDetail];
-        [[cell viewWithTag:1003] setHidden:!self.busMonitor.on];
+//        [[cell viewWithTag:1003] setHidden:!self.busMonitor.on];
         [[cell viewWithTag:1004] setHidden:(indexPath.row == selectedStation.passLines.count-1)];  //最后一行不显示分割线
         
         return cell;
@@ -366,13 +371,13 @@
     [self.tableView reloadData];
     
     self.stationLabel.text = selectedStation.name;
-    self.busMonitor.on = false;
-    self.busMonitor.hidden = false;
+//    self.busMonitor.on = false;
+//    self.busMonitor.hidden = false;
     self.closeBtn.hidden = false;
     
     [UIView animateWithDuration:0.25f animations:^{
-        float height = MIN(44+60*count+30, 250);
-        self.lineView.frame = CGRectMake(20, CGRectGetHeight(self.view.bounds)-height, 280, height);
+        float height = 44+36*MIN(count,4)+30;
+        self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.view.bounds)-height, 320, height);
     } completion:^(BOOL finished) {
         
     }];
@@ -381,10 +386,10 @@
 
 - (void)closeLineView{
     [UIView animateWithDuration:0.25f animations:^{
-        self.lineView.frame = CGRectMake(20, CGRectGetHeight(self.view.bounds)-44, 280, 44);
+        self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.view.bounds)-44, 320, 44);
     } completion:^(BOOL finished) {
         self.stationLabel.text = @"请选择站点";
-        self.busMonitor.hidden = true;
+//        self.busMonitor.hidden = true;
         self.closeBtn.hidden = true;
     }];
 }
@@ -518,10 +523,12 @@
 //
 //
 //
-//- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-//    selectedIndexPath = indexPath;
-//    return indexPath;
-//}
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView == self.tableView) {
+        selectedIndexPath = indexPath;
+    }
+    return indexPath;
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"toRealtimeFromStation"]) {

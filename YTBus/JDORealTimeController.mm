@@ -24,7 +24,10 @@
 #import "MBProgressHUD.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
-#define LineHeight 30
+// TODO 原来的颜色太重了，换个浅一点的
+//#define PopViewColor [UIColor colorWithRed:75/255.0f green:77/255.0f blue:88/255.0f alpha:1.0f]
+#define PopViewColor [UIColor colorWithRed:150/255.0f green:154/255.0f blue:176/255.0f alpha:1.0f]
+#define LineHeight 32
 
 @interface JDORealTimeCell : UITableViewCell
 
@@ -43,13 +46,55 @@
 
 @implementation JDORealTimeCell
 
+- (void)awakeFromNib{
+    [super awakeFromNib];
+    [self.stationSeq addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onStationClicked:)]];
+    [self.stationName addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onStationClicked:)]];
+}
+
 - (IBAction)onBusClicked:(id)sender{
     [self.controller showBusMenu:self];
 }
 
-//- (void)prepareForReuse{
-//    [super prepareForReuse];
-//}
+- (void)onStationClicked:(id)sender{
+    [self.controller showStationMenu:self];
+}
+
+- (void)prepareForReuse{
+    [super prepareForReuse];
+}
+
+@end
+
+@interface JDOClockButton : UIButton
+
+@property (nonatomic,strong) NSString *busNo;
+@property (nonatomic,strong) NSString *stationId;
+
+@end
+
+@implementation JDOClockButton
+
+@end
+
+@interface JDOSetStartButton : UIButton
+
+@property (nonatomic,assign) NSInteger row;
+@property (nonatomic,weak) CMPopTipView *popView;
+
+@end
+
+@implementation JDOSetStartButton
+
+@end
+
+@interface JDOToMapButton : UIButton
+
+@property (nonatomic,weak) CMPopTipView *popView;
+
+@end
+
+@implementation JDOToMapButton
 
 @end
 
@@ -66,6 +111,8 @@
     NSMutableSet *_busIndexSet;
     JDOStationModel *selectedStartStation;
     UIImage *screenImage;
+    JDORealTimeCell *_currentPopTipViewCell;
+    NSIndexPath *_currentPopTipViewIndexPath;
 }
 
 @property (nonatomic,assign) IBOutlet UILabel *lineDetail;
@@ -82,7 +129,6 @@
 @property (nonatomic,assign) IBOutlet UIView *menu;
 @property (nonatomic,assign) IBOutlet UIButton *dropDownBtn;
 
-@property (nonatomic,strong) NSMutableArray *visiblePopTipViews;
 @property (nonatomic,strong) NSMutableArray *realBusList;
 
 
@@ -125,7 +171,6 @@
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     
     _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
-    self.visiblePopTipViews = [NSMutableArray array];
 }
 
 - (void) toggleMenu:(UIButton *)sender {
@@ -292,6 +337,7 @@
         }
         _isInit = false;
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetTimer) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void) resetTimer {
@@ -313,6 +359,7 @@
         [_timer invalidate];
         _timer = nil;
     }
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void) refreshData:(NSTimer *)timer{
@@ -341,7 +388,7 @@
         // 没有附近站点的时候，以线路终点站作为实时数据获取的参照物
 //        startStation = [_stations lastObject];
         // 没有附近站点的时候，不显示实时数据
-        [JDOUtils showHUDText:@"请选择起始站点" inView:self.view];
+        [JDOUtils showHUDText:@"请选择上车站点" inView:self.view];
         [_timer invalidate];
         _timer= nil;
         return;
@@ -390,11 +437,11 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
     if (hud) {
         hud.mode = MBProgressHUDModeText;
-        hud.labelText = @"无法获取实时数据";
+        hud.labelText = [NSString stringWithFormat:@"网络连接异常:%ld",error.code];
         [hud hide:true afterDelay:1.0f];
         hud = nil;
     }else{
-        [JDOUtils showHUDText:@"无法获取实时数据" inView:self.view];
+        [JDOUtils showHUDText:[NSString stringWithFormat:@"网络连接异常:%ld",error.code] inView:self.view];
         NSLog(@"error:%@",error);
     }
 }
@@ -416,31 +463,22 @@
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
         NSLog(@"%@",_jsonResult);
         isRecording = false;
-        // TODO 确定提示信息
-        if (_jsonResult.length==0) {
+        // TODO 确定提示信息是否能区分开
+        if (_jsonResult.length==0 || [_jsonResult isEqualToString:@"[]"]) {
+            NSString *info;
+            if (_jsonResult.length==0) {
+                info = @"无法获取实时数据";
+            }else{
+                info = @"没有下一班次数据";
+            }
             if (hud) {
                 hud.mode = MBProgressHUDModeText;
-                hud.labelText = @"无法获取实时数据";
+                hud.labelText = info;
                 [hud hide:true afterDelay:1.0f];
                 hud = nil;
             }else{
-                [JDOUtils showHUDText:@"无法获取实时数据" inView:self.view];
+                [JDOUtils showHUDText:info inView:self.view];
             }
-            
-            if (_busIndexSet.count>0) {
-                [_busIndexSet removeAllObjects];
-                [self.tableView reloadData];
-            }
-        }else if([_jsonResult isEqualToString:@"[]"]){
-            if (hud) {
-                hud.mode = MBProgressHUDModeText;
-                hud.labelText = @"没有下一班次数据";
-                [hud hide:true afterDelay:1.0f];
-                hud = nil;
-            }else{
-                [JDOUtils showHUDText:@"没有下一班次数据" inView:self.view];
-            }
-
             // 删除掉已经绘制的所有车辆，可能发生的情景是：最后一辆车开过参考站点，则要删除该车辆
             if (_busIndexSet.count>0) {
                 [_busIndexSet removeAllObjects];
@@ -471,11 +509,11 @@
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError{
     if (hud) {
         hud.mode = MBProgressHUDModeText;
-        hud.labelText = @"解析实时数据错误";
+        hud.labelText = [NSString stringWithFormat:@"解析XML错误:%ld",parseError.code];
         [hud hide:true afterDelay:1.0f];
         hud = nil;
     }else{
-        [JDOUtils showHUDText:@"解析实时数据错误" inView:self.view];
+        [JDOUtils showHUDText:[NSString stringWithFormat:@"解析XML错误:%ld",parseError.code] inView:self.view];
         NSLog(@"Error:%@",parseError);
     }
     
@@ -509,16 +547,15 @@
     if (!oldIndexSet) {
         [self.tableView reloadData];
     }else{  // 对比可视范围内索引有变化才刷新
-        NSArray *visibleCells = [self.tableView visibleCells];
-        
         NSMutableSet *toKeep = [NSMutableSet setWithSet:oldIndexSet];
         [toKeep intersectSet:_busIndexSet];
         NSMutableSet *toAdd = [NSMutableSet setWithSet:_busIndexSet];
         [toAdd minusSet:toKeep];
         NSMutableSet *toRemove = [NSMutableSet setWithSet:oldIndexSet];
         [toRemove minusSet:_busIndexSet];
-        
         NSMutableSet *toRefresh = [NSMutableSet set];
+        
+        NSArray *visibleCells = [self.tableView visibleCells];
         for (int i=0; i<visibleCells.count; i++) {
             JDORealTimeCell *cell = visibleCells[i];
             NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
@@ -526,9 +563,11 @@
                 // toKeep也要刷新，因为有可能车辆从1辆变成2辆
                 [toRefresh addObject:indexPath];
             }
-            if ([toRemove containsObject:indexPath] && cell.popTipView) {
-                [cell.popTipView dismissAnimated:true];
-                cell.popTipView = nil;
+//            cell有可能在上一次刷新的时候在同一个indexPath被替换过，所有目前indexPath位置上的cell不一定是弹出popView的cell
+            if ([toRemove containsObject:indexPath] && _currentPopTipViewIndexPath == indexPath) {
+                [_currentPopTipViewCell.popTipView dismissAnimated:true];
+                _currentPopTipViewCell.popTipView = nil;
+                _currentPopTipViewCell = nil;
             }
         }
         [self.tableView reloadRowsAtIndexPaths:[toRefresh allObjects]  withRowAnimation:UITableViewRowAnimationNone];
@@ -554,6 +593,11 @@
         rt.lineId = _busLine.lineId;
         JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
         rt.lineStatus = [lineDetail.direction isEqualToString:@"下行"]?@"1":@"2";
+        
+        // 将当前车辆实时位置数据传递到地图中，避免地图界面第一次获取数据时间较长时没有车辆信息
+        if (_realBusList && _realBusList.count>0) {
+            rt.realBusList = [NSMutableArray arrayWithArray:_realBusList];
+        }
     }
 }
 
@@ -567,8 +611,7 @@
     _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
     [self loadCurrentLineInfoAndAllStations];
     [self setFavorBtnState];
-    [self resetTimer];
-
+    
     // 若换向前有手动选中的站点，则换向后查找同名站点并选中
     if (selectedStartStation){
         JDOStationModel *converseStation;
@@ -584,6 +627,7 @@
         }
     }
     [self scrollToTargetStation:true];
+    [self resetTimer];
 }
 
 - (void) scrollToTargetStation:(BOOL) animated{
@@ -627,13 +671,17 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"favor_line_changed" object:nil];
 }
 
-- (IBAction)clickReport:(id)sender{
-    JDOStationModel *startStation;
+- (JDOStationModel *) getStartStation{
     if(selectedStartStation){
-        startStation = selectedStartStation;
+        return selectedStartStation;
     }else if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]) {
-        startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
+        return _busLine.nearbyStationPair[_busLine.showingIndex];
     }
+    return nil;
+}
+
+- (IBAction)clickReport:(id)sender{
+    JDOStationModel *startStation = [self getStartStation];
     NSString *direction = [NSString stringWithFormat:@"%@ 开往 %@ 方向",self.busLine.lineName,[[_stations lastObject] name]];
     
     JDOReportController *vc = [[JDOReportController alloc] initWithStation:startStation.name direction:direction];
@@ -643,12 +691,8 @@
 
 - (IBAction)clickShare:(id)sender{
     NSString *content;
-    JDOStationModel *startStation;
-    if(selectedStartStation){
-        startStation = selectedStartStation;
-    }else if(_busLine.nearbyStationPair.count>0 && _busLine.nearbyStationPair[_busLine.showingIndex]!=[NSNull null]) {
-        startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
-    }
+    JDOStationModel *startStation = [self getStartStation];
+    
     if (startStation) {
         NSMutableArray *stationIds = [NSMutableArray new];
         for (int i=0; i<_stations.count; i++) {
@@ -699,7 +743,7 @@
             if (state == SSResponseStateSuccess){
                 NSLog(@"分享成功");
             }else if (state == SSResponseStateFail){
-                [JDOUtils showHUDText:[NSString stringWithFormat:@"分享失败,错误码:%ld",(long)[error errorCode]] inView:self.view];
+                [JDOUtils showHUDText:[NSString stringWithFormat:@"分享失败:%ld",(long)[error errorCode]] inView:self.view];
             }
         }
      ];
@@ -805,12 +849,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    selectedStartStation = _stations[indexPath.row];
-    [_busIndexSet removeAllObjects];
-    [tableView reloadData];
-    [self resetTimer];
-}
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+//}
 
 - (UIImage *) imageAtPosition:(int)pos selected:(BOOL)selected{
     NSString *imageName;
@@ -834,6 +874,79 @@
     }
 }
 
+- (void)showStationMenu:(JDORealTimeCell *)cell{
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+//    JDOStationModel *station = _stations[indexPath.row];
+    
+    if (![self getStartStation]) {  // 尚未选择上车站点的时候，单击直接选中
+        selectedStartStation = _stations[indexPath.row];
+        [_busIndexSet removeAllObjects];
+        [self.tableView reloadData];
+        [self resetTimer];
+        return;
+    }
+    
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, LineHeight)];
+    contentView.backgroundColor = [UIColor clearColor];
+    
+    JDOSetStartButton *setStartBtn = [JDOSetStartButton buttonWithType:UIButtonTypeCustom];
+    setStartBtn.frame = CGRectMake(15, 0, 115, LineHeight);
+    setStartBtn.row = indexPath.row;
+    setStartBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+    [setStartBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [setStartBtn setTitle:@"选为上车站点" forState:UIControlStateNormal];
+    [setStartBtn addTarget:self action:@selector(setToStartStation:) forControlEvents:UIControlEventTouchUpInside];
+    [setStartBtn setImage:[UIImage imageNamed:@"圆点"] forState:UIControlStateNormal];
+    [setStartBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
+    [setStartBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 1, 0, 99)];
+    [contentView addSubview:setStartBtn];
+    
+    JDOToMapButton *toMapBtn = [JDOToMapButton buttonWithType:UIButtonTypeCustom];
+    toMapBtn.frame = CGRectMake(170, 0, 115, LineHeight);
+    toMapBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+    [toMapBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [toMapBtn setTitle:@"查看站点详情" forState:UIControlStateNormal];
+    [toMapBtn addTarget:self action:@selector(showStationDetail:) forControlEvents:UIControlEventTouchUpInside];
+    [toMapBtn setImage:[UIImage imageNamed:@"圆点"] forState:UIControlStateNormal];
+    [toMapBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
+    [toMapBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 1, 0, 99)];
+    [contentView addSubview:toMapBtn];
+    
+    CMPopTipView *popTipView = [[CMPopTipView alloc] initWithCustomView:contentView];
+//    popTipView.delegate = self;
+    popTipView.disableTapToDismiss = true;
+    popTipView.preferredPointDirection = PointDirectionUp;
+    popTipView.hasGradientBackground = NO;
+    popTipView.cornerRadius = 0.0f;
+    popTipView.sidePadding = 10.0f;
+    popTipView.topMargin = 3.0f;
+    popTipView.pointerSize = 3.0f;
+    popTipView.hasShadow = true;
+    popTipView.backgroundColor = PopViewColor;
+    popTipView.textColor = [UIColor whiteColor];
+    popTipView.animation = CMPopTipAnimationPop;
+    popTipView.has3DStyle = false;
+    popTipView.dismissTapAnywhere = YES;
+    popTipView.borderWidth = 0;
+    
+    [popTipView presentPointingAtView:cell.stationSeq inView:self.view animated:YES];
+    setStartBtn.popView = popTipView;
+    toMapBtn.popView = popTipView;
+}
+
+- (void) setToStartStation:(JDOSetStartButton *)btn{
+    [btn.popView dismissAnimated:true];
+    selectedStartStation = _stations[btn.row];
+    [_busIndexSet removeAllObjects];
+    [self.tableView reloadData];
+    [self resetTimer];
+}
+
+- (void) showStationDetail:(JDOToMapButton *)btn{
+    [btn.popView dismissAnimated:false];
+    // TODO
+}
+
 - (void)showBusMenu:(JDORealTimeCell *)cell{
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     JDOStationModel *station = _stations[indexPath.row];
@@ -846,9 +959,10 @@
         NSDictionary *dict = _realBusList[i];
         JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
         if ([station.fid isEqualToString:bus.toStationId]) {
-            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(10, count*LineHeight+4, 120, 22)];
+            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(15, count*LineHeight+5, 120, 22)];
             busNo.text = [NSString stringWithFormat:@"车牌号：%@",bus.busNo];
             busNo.textColor = [UIColor whiteColor];
+            busNo.backgroundColor = [UIColor clearColor];
             busNo.font = [UIFont systemFontOfSize:14];
             [contentView addSubview:busNo];
             
@@ -869,16 +983,26 @@
                     break;
                 }
             }
-            // TODO距离计算错误
-            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(140, count*LineHeight+4, 120, 22)];
+            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(155, count*LineHeight+5, 105, 22)];
             if (distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
                 distanceLabel.text = [NSString stringWithFormat:@"距离：%.1f公里",distance/1000];
             }else{
                 distanceLabel.text = [NSString stringWithFormat:@"距离：%d米",[@(distance) intValue]];
             }
             distanceLabel.textColor = [UIColor whiteColor];
+            distanceLabel.backgroundColor = [UIColor clearColor];
             distanceLabel.font = [UIFont systemFontOfSize:14];
             [contentView addSubview:distanceLabel];
+            
+            JDOClockButton *clock = [JDOClockButton buttonWithType:UIButtonTypeCustom];
+            clock.frame = CGRectMake(267, count*LineHeight, LineHeight, LineHeight);
+            clock.busNo = bus.busNo;
+            clock.stationId = [self getStartStation].fid;
+            clock.imageEdgeInsets = UIEdgeInsetsMake(8, 6, 7, 8);
+            [clock setImage:[UIImage imageNamed:@"闹钟1"] forState:UIControlStateNormal];
+            [clock setImage:[UIImage imageNamed:@"闹钟2"] forState:UIControlStateSelected];
+            [clock addTarget:self action:@selector(setClock:) forControlEvents:UIControlEventTouchUpInside];
+            [contentView addSubview:clock];
             
             count++;
         }
@@ -893,25 +1017,41 @@
     popTipView.hasGradientBackground = NO;
     popTipView.cornerRadius = 0.0f;
     popTipView.sidePadding = 10.0f;
-    popTipView.topMargin = 0.0f;
-    popTipView.pointerSize = 5.0f;
+    popTipView.topMargin = -3.0f;
+    popTipView.pointerSize = 3.0f;
     popTipView.hasShadow = true;
-    popTipView.backgroundColor = [UIColor colorWithRed:75/255.0f green:77/255.0f blue:88/255.0f alpha:1.0f];
+    popTipView.backgroundColor = PopViewColor;
     popTipView.textColor = [UIColor whiteColor];
     popTipView.animation = CMPopTipAnimationPop;
     popTipView.has3DStyle = false;
     popTipView.dismissTapAnywhere = YES;
+    popTipView.borderWidth = 0;
     
     [popTipView presentPointingAtView:cell.arrivedBus inView:self.view animated:YES];
-    [self.visiblePopTipViews addObject:popTipView];
-    
-//    self.currentPopTipViewTarget = sender;
+    _currentPopTipViewCell = cell;
+    _currentPopTipViewIndexPath = indexPath;
     
 }
 
+- (void)setClock:(JDOClockButton *)btn{
+    // TODO 后台设置上次提醒
+    if (btn.stationId) {
+        if (btn.isSelected) {
+//            [JDOUtils showHUDText:@"已取消上车提醒" inView:self.view];
+        }else{
+//            [JDOUtils showHUDText:@"已设置上车提醒" inView:self.view];
+            [JDOUtils showHUDText:@"到站提醒暂不可用" inView:self.view];
+        }
+        btn.selected = !btn.isSelected;
+    }else{
+        [JDOUtils showHUDText:@"请选择上车站点" inView:self.view];
+    }
+}
+
 - (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView{
-    [self.visiblePopTipViews removeObject:popTipView];
-//    self.currentPopTipViewTarget = nil;
+    _currentPopTipViewCell.popTipView = nil;
+    _currentPopTipViewCell = nil;
+    _currentPopTipViewIndexPath = nil;
 }
 
 @end

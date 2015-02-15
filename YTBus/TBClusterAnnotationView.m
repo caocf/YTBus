@@ -53,8 +53,8 @@ CGFloat TBScaledValueForValue(CGFloat value)
     _countLabel.backgroundColor = [UIColor clearColor];
     _countLabel.textColor = [UIColor whiteColor];
     _countLabel.textAlignment = NSTextAlignmentCenter;
-    _countLabel.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.75];
-    _countLabel.shadowOffset = CGSizeMake(0, -1);
+//    _countLabel.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.75];
+//    _countLabel.shadowOffset = CGSizeMake(0, -1);
     _countLabel.adjustsFontSizeToFitWidth = YES;
     _countLabel.numberOfLines = 1;
     _countLabel.font = [UIFont boldSystemFontOfSize:12];

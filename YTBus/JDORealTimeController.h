@@ -17,5 +17,6 @@
 @property (nonatomic,assign) BOOL isInit;
 
 - (void)showBusMenu:(JDORealTimeCell *)cell;
+- (void)showStationMenu:(JDORealTimeCell *)cell;
 
 @end
