@@ -36,6 +36,9 @@
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
     _searchBar.placeholder = @"搜索站点";
     _searchBar.delegate = self;
+    _searchBar.showsScopeBar = true;
+    _searchBar.scopeButtonTitles = @[@"公交站点",@"周边地名"];
+    [_searchBar sizeToFit];
     self.tableView.tableHeaderView = _searchBar;
     
     // 清除历史记录

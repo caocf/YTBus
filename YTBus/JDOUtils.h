@@ -29,5 +29,5 @@ typedef enum{
 
 + (NSString *)formatDate:(NSDate *) date withFormatter:(DateFormatType) format;
 + (NSDate *)formatString:(NSString *)date withFormatter:(DateFormatType) format;
-CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, NSInteger numberOfLines);
+CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, int numberOfLines);
 @end

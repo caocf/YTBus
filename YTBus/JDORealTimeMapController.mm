@@ -20,7 +20,7 @@ static const void *SelectedKey = &SelectedKey;
 
 @interface BMKCircle (JDOCategory)
 
-@property (nonatomic,assign) NSNumber *selected;
+@property (nonatomic,retain) NSNumber *selected;
 
 @end
 

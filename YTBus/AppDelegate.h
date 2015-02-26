@@ -14,6 +14,7 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) BMKMapManager *mapManager;
 
+@property (nonatomic, strong) BMKUserLocation *userLocation;
 
 @end
 

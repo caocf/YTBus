@@ -94,7 +94,7 @@ static NSDateFormatter *dateFormatter;
     return [dateFormatter dateFromString:date];
 }
 
-CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, NSInteger numberOfLines) {
+CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, int numberOfLines) {
     if (string.length == 0) {
         return CGSizeZero;
     }

@@ -198,6 +198,12 @@
 		2DECC34F1A032BAF0022F60E /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC3491A032BAF0022F60E /* unzip.c */; };
 		2DECC3501A032BAF0022F60E /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC34B1A032BAF0022F60E /* zip.c */; };
 		2DECC3531A032BBD0022F60E /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DECC3521A032BBD0022F60E /* SSZipArchive.m */; };
+		2DF713D31A91E807008B5B93 /* 地图-弹出@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DF713CF1A91E807008B5B93 /* 地图-弹出@2x.png */; };
+		2DF713D41A91E807008B5B93 /* 地图-关闭@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DF713D01A91E807008B5B93 /* 地图-关闭@2x.png */; };
+		2DF713DD1A931D17008B5B93 /* 地图-清除@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DF713DB1A931D16008B5B93 /* 地图-清除@2x.png */; };
+		2DF713DE1A931D17008B5B93 /* 地图-搜索@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DF713DC1A931D17008B5B93 /* 地图-搜索@2x.png */; };
+		2DF713E21A931F57008B5B93 /* 隔行2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DF713E01A931F57008B5B93 /* 隔行2@2x.png */; };
+		2DF713E61A9323B8008B5B93 /* 隔行1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DF713E51A9323B8008B5B93 /* 隔行1@2x.png */; };
 		2DF717371A58ED2000EEDC1E /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DF717341A58ED2000EEDC1E /* libMobClickLibrary.a */; };
 		2DF7173A1A5923DF00EEDC1E /* libbaidumapapi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DF717381A5923DF00EEDC1E /* libbaidumapapi.a */; };
 		2DF7173B1A5923DF00EEDC1E /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2DF717391A5923DF00EEDC1E /* mapapi.bundle */; };
@@ -545,6 +551,12 @@
 		2DECC34C1A032BAF0022F60E /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
 		2DECC3511A032BBD0022F60E /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
 		2DECC3521A032BBD0022F60E /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
+		2DF713CF1A91E807008B5B93 /* 地图-弹出@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图-弹出@2x.png"; sourceTree = "<group>"; };
+		2DF713D01A91E807008B5B93 /* 地图-关闭@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图-关闭@2x.png"; sourceTree = "<group>"; };
+		2DF713DB1A931D16008B5B93 /* 地图-清除@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图-清除@2x.png"; sourceTree = "<group>"; };
+		2DF713DC1A931D17008B5B93 /* 地图-搜索@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地图-搜索@2x.png"; sourceTree = "<group>"; };
+		2DF713E01A931F57008B5B93 /* 隔行2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "隔行2@2x.png"; sourceTree = "<group>"; };
+		2DF713E51A9323B8008B5B93 /* 隔行1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "隔行1@2x.png"; sourceTree = "<group>"; };
 		2DF717341A58ED2000EEDC1E /* libMobClickLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libMobClickLibrary.a; sourceTree = "<group>"; };
 		2DF717351A58ED2000EEDC1E /* MobClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobClick.h; sourceTree = "<group>"; };
 		2DF717361A58ED2000EEDC1E /* MobClickSocialAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobClickSocialAnalytics.h; sourceTree = "<group>"; };
@@ -1176,6 +1188,12 @@
 		2DA6632119F0D97800DFED0B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2DF713E51A9323B8008B5B93 /* 隔行1@2x.png */,
+				2DF713E01A931F57008B5B93 /* 隔行2@2x.png */,
+				2DF713DB1A931D16008B5B93 /* 地图-清除@2x.png */,
+				2DF713DC1A931D17008B5B93 /* 地图-搜索@2x.png */,
+				2DF713CF1A91E807008B5B93 /* 地图-弹出@2x.png */,
+				2DF713D01A91E807008B5B93 /* 地图-关闭@2x.png */,
 				2DA47ABF1A8A03720078D194 /* 闹钟1@2x.png */,
 				2DA47AC01A8A03720078D194 /* 闹钟2@2x.png */,
 				2DA47ABD1A89E95A0078D194 /* 附近头部@2x.png */,
@@ -1557,9 +1575,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DF713D41A91E807008B5B93 /* 地图-关闭@2x.png in Resources */,
 				2DA47AC11A8A03720078D194 /* 闹钟1@2x.png in Resources */,
 				2D9D2B4C1A81EC4100410DD2 /* ShareSDKiPhoneSimpleShareViewUI.bundle in Resources */,
 				2DA47A231A845E090078D194 /* 分享80@2x.png in Resources */,
+				2DF713DD1A931D17008B5B93 /* 地图-清除@2x.png in Resources */,
 				2D6D08531A7A160500E3A375 /* umeng_fb_audio_play_02@2x.png in Resources */,
 				2DA47AC21A8A03720078D194 /* 闹钟2@2x.png in Resources */,
 				2DA47ABE1A89E95A0078D194 /* 附近头部@2x.png in Resources */,
@@ -1568,14 +1588,17 @@
 				2D4714571A6CFA7000F2DE04 /* WebViewJavascriptBridge.js.txt in Resources */,
 				2D6D084D1A7A160500E3A375 /* ToolViewInputTextHL@2x.png in Resources */,
 				2DECC2B519FF9AE70022F60E /* bus.db in Resources */,
+				2DF713D31A91E807008B5B93 /* 地图-弹出@2x.png in Resources */,
 				2DA47A2F1A84A7A50078D194 /* iphone5s@2x.png in Resources */,
 				2DA47AB81A888A7C0078D194 /* 纠错-线路@2x.png in Resources */,
 				2D6D08501A7A160500E3A375 /* umeng_fb_audio_dialog_cancel@2x.png in Resources */,
 				2D05CD021A788CE400AFF9EE /* yantai_326.dat in Resources */,
+				2DF713DE1A931D17008B5B93 /* 地图-搜索@2x.png in Resources */,
 				2D4714261A6CB4D100F2DE04 /* UMFeedbackLocalizable.strings in Resources */,
 				2D4714161A6CB3F200F2DE04 /* microphone@2x.png in Resources */,
 				2D9D2B461A81EC4100410DD2 /* WeiboSDK.bundle in Resources */,
 				2D6D084C1A7A160500E3A375 /* ToolViewInputText@2x.png in Resources */,
+				2DF713E61A9323B8008B5B93 /* 隔行1@2x.png in Resources */,
 				2D6D08521A7A160500E3A375 /* umeng_fb_audio_play_01@2x.png in Resources */,
 				2D6D08541A7A160500E3A375 /* umeng_fb_audio_play_03@2x.png in Resources */,
 				2DA47AB51A888A7C0078D194 /* 纠错-确认@2x.png in Resources */,
@@ -1588,6 +1611,7 @@
 				2DA47AB61A888A7C0078D194 /* 纠错-输入框@2x.png in Resources */,
 				2D9D2B411A81EC4000410DD2 /* Resource.bundle in Resources */,
 				2D6D084F1A7A160500E3A375 /* ToolViewInputVoiceHL@2x.png in Resources */,
+				2DF713E21A931F57008B5B93 /* 隔行2@2x.png in Resources */,
 				2DA6630519F0D92D00DFED0B /* Main.storyboard in Resources */,
 				2D9D2B441A81EC4100410DD2 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
 				2DA47ABB1A88A2DC0078D194 /* 纠错-定位@2x.png in Resources */,

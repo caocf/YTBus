@@ -16,6 +16,7 @@
 #import "JDODatabase.h"
 #import "MBProgressHUD.h"
 #import "JDOConstants.h"
+#import "AppDelegate.h"
 
 @interface JDONearByCell : UITableViewCell
 
@@ -77,6 +78,8 @@
     UILabel *myLocation;
     UILabel *myMovement;
     int sectionHeight;
+    NSString *myLocationText1;
+    NSString *myLocationText2;
 }
 
 - (void)viewDidLoad {
@@ -152,7 +155,6 @@
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
         
-        //TODO 调整提示的显示样式
         hintLabel.text = @"          您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
         hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
         hintImage.image = [UIImage imageNamed:@"关闭定位"];
@@ -238,6 +240,8 @@
         hud = nil;
     }
     showLocationErrorHint = false;
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] setUserLocation:userLocation];
+    
     
     if (currentUserLocation) {
         // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
@@ -392,12 +396,24 @@
 -(void) onGetReverseGeoCodeResult:(BMKGeoCodeSearch *)searcher result: (BMKReverseGeoCodeResult *)result errorCode:(BMKSearchErrorCode)error{
     if (error == BMK_SEARCH_NO_ERROR) {
         if (result.poiList.count>0) {
-            myLocation.text = [(BMKPoiInfo *)result.poiList[0] name];
+            myLocationText1 = [(BMKPoiInfo *)result.poiList[0] name];
+            myLocationText2 = [[result.addressDetail.district stringByAppendingString:result.addressDetail.streetName] stringByAppendingString:result.addressDetail.streetNumber];
+            myLocation.text = myLocationText1;
         }else{
-            myLocation.text = [[result.addressDetail.district stringByAppendingString:result.addressDetail.streetName] stringByAppendingString:result.addressDetail.streetNumber];
+            myLocationText1 = nil;
+            myLocationText2 = [[result.addressDetail.district stringByAppendingString:result.addressDetail.streetName] stringByAppendingString:result.addressDetail.streetNumber];
+            myLocation.text = myLocationText2;
         }
     }else{
         NSLog(@"抱歉，未找到结果");
+    }
+}
+
+- (void) changeDisplayLocation:(UITapGestureRecognizer *)gesture{
+    if ([myLocation.text isEqualToString:myLocationText1]) {
+        myLocation.text = myLocationText2;
+    }else if([myLocation.text isEqualToString:myLocationText2]){
+        myLocation.text = myLocationText1;
     }
 }
 
@@ -426,11 +442,16 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UIImageView *bg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 46)];
     bg.image = [UIImage imageNamed:@"附近头部"];
+    // 父视图不开启userInteractionEnabled，只开子视图的无效
+    bg.userInteractionEnabled = true;
     myLocation = [[UILabel alloc] initWithFrame:CGRectMake(30, 10, 120, 21)];
     myLocation.textColor = [UIColor colorWithWhite:240/255.0f alpha:1.0f];
     myLocation.font = [UIFont systemFontOfSize:14];
     myLocation.minimumFontSize = 10;
     myLocation.text = @"我的位置";
+    myLocation.userInteractionEnabled = true;
+    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(changeDisplayLocation:)];
+    [myLocation addGestureRecognizer:gesture];
     [bg addSubview:myLocation];
     myMovement = [[UILabel alloc] initWithFrame:CGRectMake(180, 10, 135, 21)];
     myMovement.textColor = [UIColor colorWithWhite:240/255.0f alpha:1.0f];

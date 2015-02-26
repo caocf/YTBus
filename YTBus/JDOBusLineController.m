@@ -38,7 +38,8 @@
     self.tableView.tableHeaderView = searchBar;
     self.tableView.bounces = false;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 10)];
-    self.tableView.tableFooterView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+    self.tableView.tableFooterView.backgroundColor = [UIColor clearColor];
+    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
     
     _db = [JDODatabase sharedDB];
     if (_db) {

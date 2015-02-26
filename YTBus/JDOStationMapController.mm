@@ -15,10 +15,36 @@
 #import "JDOStationAnnotation.h"
 #import "JDORealTimeController.h"
 #import "JDOConstants.h"
+#import "AppDelegate.h"
+#import <objc/runtime.h>
 
 #import "TBCoordinateQuadTree.h"
 #import "TBClusterAnnotationView.h"
 #import "TBClusterAnnotation.h"
+
+#define PaoPaoLineHeight 35
+
+static const void *LabelKey = &LabelKey;
+
+@interface BMKGeoCodeSearch (JDOCategory)
+
+@property (nonatomic,retain) UILabel *titleLabel;
+
+@end
+
+@implementation BMKGeoCodeSearch (JDOCategory)
+
+@dynamic titleLabel;
+
+- (UILabel *)titleLabel {
+    return objc_getAssociatedObject(self, LabelKey);
+}
+
+- (void)setTitleLabel:(UILabel *)titleLabel{
+    objc_setAssociatedObject(self, LabelKey, titleLabel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+@end
 
 @interface JDOPaoPaoTable2 : UITableView
 
@@ -30,7 +56,7 @@
 
 @end
 
-@interface JDOStationMapController () <BMKMapViewDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface JDOStationMapController () <BMKMapViewDelegate,UITableViewDataSource,UITableViewDelegate,BMKGeoCodeSearchDelegate>
 
 @property (nonatomic,assign) IBOutlet BMKMapView *mapView;
 @property (nonatomic,assign) IBOutlet UITableView *tableView;
@@ -48,6 +74,7 @@
     JDOStationModel *selectedStation;
     NSIndexPath *selectedIndexPath;
     NSOperationQueue *_queryQueue;
+    BOOL rightBtnIsSearch;
 }
 
 - (void)viewDidLoad {
@@ -60,9 +87,15 @@
     _mapView.overlookEnabled = false;
     _mapView.showMapScaleBar = false;
     _mapView.minZoomLevel = 12; // 覆盖当前全部站点的范围
-    _mapView.zoomLevel = 13;
-    // TODO 进入时候根据传入的定位位置进行设置(定位位置保存为全局变量)，并相应增大初始化时候的缩放级别
-    _mapView.centerCoordinate = CLLocationCoordinate2DMake( 37.4698,121.454);   // 市政府的位置
+    // 进入时候根据传入的定位位置进行设置(定位位置保存为全局变量)，并相应增大初始化时候的缩放级别
+    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (delegate.userLocation) {
+        _mapView.centerCoordinate = delegate.userLocation.location.coordinate;
+        _mapView.zoomLevel = 15;
+    }else{
+        _mapView.centerCoordinate = CLLocationCoordinate2DMake(37.4698,121.454);   // 市政府的位置
+        _mapView.zoomLevel = 13;
+    }
     
     self.coordinateQuadTree = [[TBCoordinateQuadTree alloc] init];
     _queryQueue = [NSOperationQueue new];
@@ -76,16 +109,31 @@
         }];
     }
     
-    self.tableView.sectionHeaderHeight = 15;
-    self.tableView.sectionFooterHeight = 15;
+//    self.tableView.sectionHeaderHeight = 15;
+//    self.tableView.sectionFooterHeight = 15;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+    self.tableView.bounces = true;
     
-    self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.view.bounds)-44, 320, 44);
+    self.lineView.frame = CGRectMake(10, CGRectGetHeight(self.view.bounds)-44, 300, 44);
     self.stationLabel.text = @"请选择站点";
     self.busMonitor.hidden = true;
     self.closeBtn.hidden = true;
     [self.closeBtn addTarget:self action:@selector(closeLineView) forControlEvents:UIControlEventTouchUpInside];
     [self.busMonitor addTarget:self action:@selector(switchMonitor) forControlEvents:UIControlEventValueChanged];
+    
+//    self.navigationItem.rightBarButtonItem.target = self;
+//    self.navigationItem.rightBarButtonItem.action = @selector(searchOrClear:);
+    rightBtnIsSearch = true;
+    
+}
+
+- (void) searchOrClear:(id)sender {
+    if (rightBtnIsSearch) {
+        self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"地图-清除"];
+    }else{
+        self.navigationItem.rightBarButtonItem.image = [UIImage imageNamed:@"地图-搜索"];
+    }
+    rightBtnIsSearch = !rightBtnIsSearch;
 }
 
 - (void)loadData2{
@@ -184,11 +232,42 @@
 
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
     TBClusterAnnotation *ca = (TBClusterAnnotation *)view.annotation;
-    // 若marker上只有一个站点，则不弹出paopaoView，直接打开线路列表
-    if(ca.stations.count ==1){
+    
+    if (ca.stations.count == 0) {
+
+    }else if(ca.stations.count ==1) {   // 若marker上只有一个站点，则不弹出paopaoView，直接打开线路列表
         selectedStation = ca.stations[0];
         [self showLineView];
+    }else{  // 多个站点的时候，取位置进行反地理编码填充表格头部
+        TBClusterAnnotationView *annotationView = (TBClusterAnnotationView *)view;
+        UIView *customView = [annotationView.paopaoView subviews][0];
+        UILabel *title = (UILabel *)[customView viewWithTag:8001];
+        BMKReverseGeoCodeOption *reverseGeoCodeSearchOption = [[BMKReverseGeoCodeOption alloc] init];
+        reverseGeoCodeSearchOption.reverseGeoPoint = ca.coordinate;
+        BMKGeoCodeSearch *searcher =[[BMKGeoCodeSearch alloc] init];
+        searcher.delegate = self;
+        searcher.titleLabel = title;
+        BOOL flag = [searcher reverseGeoCode:reverseGeoCodeSearchOption];
+        if(!flag){
+            NSLog(@"反geo检索发送失败");
+        }
+        UITableView *tv = (UITableView *)[customView viewWithTag:8002];
+        [tv scrollsToTop];
     }
+}
+
+//接收反向地理编码结果
+-(void) onGetReverseGeoCodeResult:(BMKGeoCodeSearch *)searcher result: (BMKReverseGeoCodeResult *)result errorCode:(BMKSearchErrorCode)error{
+    if (error == BMK_SEARCH_NO_ERROR) {
+//        if (result.poiList.count>0) {
+//            searcher.titleLabel.text = [(BMKPoiInfo *)result.poiList[0] name];
+//        }else{
+            searcher.titleLabel.text = [[result.addressDetail.district stringByAppendingString:result.addressDetail.streetName] stringByAppendingString:result.addressDetail.streetNumber];
+//        }
+    }else{
+        searcher.titleLabel.text = @"无法获取位置信息";
+    }
+    searcher.delegate = nil;
 }
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id<BMKAnnotation>)annotation
@@ -218,11 +297,18 @@
 }
 
 - (BMKActionPaopaoView *)createPaoPaoView:(NSArray *)paopaoLines{
-    // 弹出窗口中的线路数目如果小于180，则有多高就显示多高，否则最多显示180高度，内部表格滚动
-    float tableHeight = paopaoLines.count*40<100?paopaoLines.count*40:100;
-    UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 140, 35+tableHeight+12)];
+    float tableHeight = paopaoLines.count*PaoPaoLineHeight;
+    // 计算最长的站点名称宽度
+    float tableWidth = 0;
+    for (int i=0; i<paopaoLines.count; i++) {
+        JDOStationModel *station = paopaoLines[i];
+        float width = [station.name sizeWithFont:[UIFont systemFontOfSize:14] forWidth:MAXFLOAT lineBreakMode:NSLineBreakByWordWrapping].width;
+        tableWidth = MAX(tableWidth, width+10);
+    }
+    tableWidth = MAX(tableWidth,140);
     
-    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 140, 35)];
+    UIView *customView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableWidth, 35+tableHeight+12)];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, tableWidth, 35)];
     header.image = [UIImage imageNamed:@"弹出列表01"];
     [customView addSubview:header];
     
@@ -233,19 +319,22 @@
     title.adjustsFontSizeToFitWidth = true;
     title.textColor = [UIColor whiteColor];
     title.textAlignment = NSTextAlignmentCenter;
-    title.text = @"站点列表";
-    [header addSubview:title];
+    title.tag = 8001;
+//    title.text = @"正在获取位置";
+    [customView addSubview:title];
     
-    UIImageView *footer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 35+tableHeight+12-51, 140, 51)];
+    UIImageView *footer = [[UIImageView alloc] initWithFrame:CGRectMake(0, 35+tableHeight+12-51, tableWidth, 51)];
     footer.image = [UIImage imageNamed:@"弹出列表04"];
     [customView addSubview:footer];
     
-    JDOPaoPaoTable2 *paopaoTable = [[JDOPaoPaoTable2 alloc] initWithFrame:CGRectMake(0, 35, 140, tableHeight)];
+    JDOPaoPaoTable2 *paopaoTable = [[JDOPaoPaoTable2 alloc] initWithFrame:CGRectMake(0, 35, tableWidth, tableHeight)];
     paopaoTable.stations = paopaoLines;
-    paopaoTable.rowHeight = 40;
+    paopaoTable.rowHeight = PaoPaoLineHeight;
+    paopaoTable.bounces = false;
     paopaoTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     paopaoTable.delegate = self;
     paopaoTable.dataSource = self;
+    paopaoTable.tag = 8002;
     [customView addSubview:paopaoTable];
     
     BMKActionPaopaoView *paopaoView = [[BMKActionPaopaoView alloc] initWithCustomView:customView];
@@ -275,11 +364,11 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:lineIdentifier];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
-            UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, 140-10, 40)];
+            UILabel *lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, CGRectGetWidth(tableView.frame)-10, PaoPaoLineHeight)];
             lineLabel.backgroundColor = [UIColor clearColor];
             lineLabel.font = [UIFont systemFontOfSize:14];
             lineLabel.minimumFontSize = 12;
-            lineLabel.numberOfLines = 2;
+            lineLabel.numberOfLines = 1;
             lineLabel.adjustsFontSizeToFitWidth = true;
             lineLabel.textColor = [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1];
             lineLabel.tag = 3001;
@@ -303,9 +392,9 @@
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"stationLine" forIndexPath:indexPath];
         if (indexPath.row%2==0) {
 //            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
-            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"表格圆角中"]];
+            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"隔行1"]];
         }else{
-            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景灰"]];
+            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"隔行2"]];
         }
         
         JDOBusLine *busLine = selectedStation.passLines[indexPath.row];
@@ -319,25 +408,25 @@
     }
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    if ([tableView isKindOfClass:[JDOPaoPaoTable2 class]]) {
-        return nil;
-    }else{
-        UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
-        iv.image = [UIImage imageNamed:@"表格圆角上"];
-        return iv;
-    }
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
-    if ([tableView isKindOfClass:[JDOPaoPaoTable2 class]]) {
-        return nil;
-    }else{
-        UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
-        iv.image = [UIImage imageNamed:@"表格圆角下"];
-        return iv;
-    }
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+//    if ([tableView isKindOfClass:[JDOPaoPaoTable2 class]]) {
+//        return nil;
+//    }else{
+//        UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+//        iv.image = [UIImage imageNamed:@"表格圆角上"];
+//        return iv;
+//    }
+//}
+//
+//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+//    if ([tableView isKindOfClass:[JDOPaoPaoTable2 class]]) {
+//        return nil;
+//    }else{
+//        UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
+//        iv.image = [UIImage imageNamed:@"表格圆角下"];
+//        return iv;
+//    }
+//}
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -368,7 +457,7 @@
         
         count++;
     }
-    [self.tableView reloadData];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
     
     self.stationLabel.text = selectedStation.name;
 //    self.busMonitor.on = false;
@@ -376,8 +465,9 @@
     self.closeBtn.hidden = false;
     
     [UIView animateWithDuration:0.25f animations:^{
-        float height = 44+36*MIN(count,4)+30;
-        self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.view.bounds)-height, 320, height);
+        float height = 52+36*MIN(count,4);
+        self.lineView.frame = CGRectMake(10, CGRectGetHeight(self.view.bounds)-height, 300, height);
+        self.tableView.frame = CGRectMake(0, 52, 300, 36*MIN(count,4));
     } completion:^(BOOL finished) {
         
     }];
@@ -386,7 +476,7 @@
 
 - (void)closeLineView{
     [UIView animateWithDuration:0.25f animations:^{
-        self.lineView.frame = CGRectMake(0, CGRectGetHeight(self.view.bounds)-44, 320, 44);
+        self.lineView.frame = CGRectMake(10, CGRectGetHeight(self.view.bounds)-44, 300, 44);
     } completion:^(BOOL finished) {
         self.stationLabel.text = @"请选择站点";
 //        self.busMonitor.hidden = true;
@@ -518,11 +608,8 @@
 //    _stationLabel.text = selectedStation.name;
 //    [_tableView reloadData];
 //}
-//
-//
-//
-//
-//
+
+
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView == self.tableView) {
         selectedIndexPath = indexPath;

@@ -291,6 +291,7 @@
     }
     //    UITextAttributeFont,UITextAttributeTextShadowOffset,UITextAttributeTextShadowColor
     [[UINavigationBar appearance] setTitleTextAttributes: @{UITextAttributeTextColor:[UIColor whiteColor]}];
+    [[UISegmentedControl appearanceWhenContainedIn:[UISearchBar class], nil] setTintColor:[UIColor whiteColor]];
 }
 
 
