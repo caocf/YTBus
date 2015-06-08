@@ -1,0 +1,98 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+    body {
+        margin: 0px;
+        padding:0 15px 0 15px;
+        background-color: #ffffff;
+        overflow-x: hidden;
+    }
+    a {
+        text-decoration: none;
+        color:#000000;
+    }
+    #title {
+        text-align: center;
+        font: 20px "微软雅黑", "黑体", "宋体";
+        padding-top: 15px;
+    }
+    #subtitle {
+        text-align: center;
+        color: #a5a5a5;
+        font: 12px "宋体";
+        margin: 10px 0;
+    }
+    .source a {
+        color: #a5a5a5;
+        margin: 0 5px;
+    }
+    .source a.red {
+        color: #aa0800;
+        margin: 0 10px;
+    }
+    .rel_title{
+        background:#E9E9E9;
+    }
+    #rel{
+        font-size: 18px;
+        line-height: 35px;
+    }
+    .contentstyle {
+        color: #212121;
+        text-align: left; /*justify*/
+        margin-top: 10px;
+        word-wrap: break-word;
+    }
+    .normal_font{
+        font-size:18px;
+        line-height:24px;
+    }
+    .small_font{
+        font-size:14px;
+        line-height:20px;
+    }
+    .big_font{
+        font-size:20px;
+        line-height:26px;
+    }
+    </style>
+    <script src="jquery.min.js"></script>
+    <script type="text/javascript">
+        function adjustImgSize(){
+            var width = 320*0.9;
+            $(this).attr({width:width+"px"});
+            $(this).wrap("<div style='width:"+width+"px;overflow:scroll;position:relative;'></div>");
+        }
+        $(document).ready(function(){
+            $("img").each(adjustImgSize);
+        });
+    </script>
+</head>
+<body>
+    <!-- 导航部分透明时,留下导航高度 -->
+    <!--
+    <div style="height:44px"></div>
+    -->
+    <!-- 文章部分 -->
+    <div id="title_section">
+        
+        {% if title %}
+        <div id='title'>{{title}}</div>
+        {% /if %}
+        
+        
+        <div id='subtitle'>
+            {% if source %} <span>来源:{{source}}</span>{% /if %}
+            {% if addtime %}<span>{{addtime}}</span>{% /if %}
+            {% if date %}   <span>{{date}}</span>   {% /if %}
+        </div>
+    </div>
+        
+    <div id="body_section" class="contentstyle {{font_class}}">
+        {{content}}
+    </div>
+
+
+</body>
+</html>

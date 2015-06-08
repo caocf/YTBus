@@ -142,12 +142,13 @@
                                        defaultContent:nil
                                                 image:[ShareSDK jpegImageWithImage:[UIImage imageNamed:@"iphone5s"] quality:1]
                                                 title:@"“烟台公交”上线啦！"
-                                                  url:@"http://m.jiaodong.net"
+                                                  url:Redirect_Url
                                           description:[_textView.text stringByAppendingFormat:@"//%@",_content]
                                             mediaType:SSPublishContentMediaTypeText];
     // QQ空间的内容
 //    [publishContent addQQSpaceUnitWithTitle:INHERIT_VALUE url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:[JDOUtils isEmptyString:_textView.text]?@"分享":_textView.text summary:_content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
     
+    [publishContent addSinaWeiboUnitWithContent:[_textView.text stringByAppendingFormat:@"//%@//下载地址:%@",_content,Redirect_Url] image:INHERIT_VALUE];
     // 人人的内容，ShareSDK的bug，把description和message搞成一样的了
     [publishContent addRenRenUnitWithName:@"“烟台公交”上线啦！等车不再捉急，到点准时来接你。" description:_content url:INHERIT_VALUE message:[JDOUtils isEmptyString:_textView.text]?@"分享":_textView.text image:INHERIT_VALUE caption:INHERIT_VALUE];
     

@@ -29,5 +29,12 @@ typedef enum{
 
 + (NSString *)formatDate:(NSDate *) date withFormatter:(DateFormatType) format;
 + (NSDate *)formatString:(NSString *)date withFormatter:(DateFormatType) format;
-CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, int numberOfLines);
++ (CGSize) JDOSizeOfString:(NSString *)string :(CGSize) constrainedToSize :(UIFont *) font :(NSLineBreakMode) lineBreakMode :(int) numberOfLines;
+
++ (NSArray *) getXmlTagAttrib:(NSString *) xmlStr andTag:(NSString *) tag andAttr:(NSString *) attr;
++ (BOOL) checkTelephone:(NSString *)number;
+
++ (NSString *) getUUID;
++ (BOOL) deleteUUID;
+
 @end

@@ -20,19 +20,35 @@ typedef enum {
     ViewStatusRetry,        //服务器错误,点击重试
 } ViewStatusType;   //需要从网络加载的视图的几种状态变化
 
-#define Location_Auto_Refresh_Distance 200
+// 当前站点范围121.23495  121.598595  37.341312   37.62461
+#define YT_MIN_X 121.1
+#define YT_MAX_X 121.7
+#define YT_MIN_Y 37.2
+#define YT_MAX_Y 37.7
+
+#define Main_Background_Color @"f0f0f0"
+#define URL_Request_Timeout 8.0f    //超时时间应该小于自动刷新时间，不然每次取消掉前面的connection就不能走didFinishConnection了
+#define Advertise_Cache_File @"advertise"
+#define Advertise_Cache_File2 @"advertise_busline"
+#define Redirect_Url @"http://m.jiaodong.net/gongjiao"
 #define After_iOS6 [[[UIDevice currentDevice] systemVersion] floatValue]>=6.0
 #define After_iOS7 [[[UIDevice currentDevice] systemVersion] floatValue]>=7.0
 #define After_iOS8 [[[UIDevice currentDevice] systemVersion] floatValue]>=8.0
-#define DFE_Server_URL @"http://218.56.32.7:1030"
-#define JDO_Server_URL @"http://p.jiaodong.net/mobileQuery/V11"
+#define DFE_Server_URL @"http://ytbus.jiaodong.cn:4998"
+#define JDO_Server_URL @"http://p.jiaodong.net/mobileQuery/V12"
 #define JDO_RESOURCE_URL @"http://p.jiaodong.net/jdmsys/"
 #define JDO_Bus_Server @"http://p.jiaodong.net/ytbus/V10"
 #define Download_Action @"SynBusSoftWebservice/DownloadServlet"
-#define DB_Download_URL @"http://218.56.32.7:1030/SynBusSoftWebservice/DownloadServlet?method=downloadDb"
-#define GetBusLineStatus_URL @"http://218.56.32.7:4999/BusPosition.asmx"
-#define GetBusLineStatus_MSG @"<v:Envelope xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:d=\"http://www.w3.org/2001/XMLSchema\" xmlns:c=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:v=\"http://schemas.xmlsoap.org/soap/envelope/\"><v:Header /><v:Body><GetBusLineStatus xmlns=\"http://www.dongfang-china.com/\" id=\"o0\" c:root=\"1\"><stationID i:type=\"d:int\">%@</stationID><lineID i:type=\"d:int\">%@</lineID><lineStatus i:type=\"d:int\">%@</lineStatus></GetBusLineStatus></v:Body></v:Envelope>"
 
+#define Default_Realtime_Port @"4990"
+#define GetBusLineStatus_SOAP_URL @"http://ytbus.jiaodong.cn:%@/BusPosition.asmx"
+#define GetBusLineStatus_SOAP_MSG @"<?xml version=\"1.0\" encoding=\"utf-8\"?>"                                            @"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"                                                                       @"  <soap:Body>"                                                                                                                    @"      <GetBusLineStatus xmlns=\"http://www.dongfang-china.com/\">"                                                                    @"          <stationID>%@</stationID>"                                                                                                  @"          <lineID>%@</lineID>"                                                                                                                @"          <lineStatus>%@</lineStatus>"                                                                                                        @"          <userRole>0</userRole>"                                                                                                             @"      </GetBusLineStatus>"                                                                                                                @"  </soap:Body>"                                                                                                                       @"</soap:Envelope>"
+
+#define GetDbVersion_SOAP_URL @"http://ytbus.jiaodong.cn:4998/SynBusSoftWebservice/services/SynBusSoft"
+#define GetDbVersion_SOAP_MSG @"<?xml version=\"1.0\" encoding=\"utf-8\"?>"                                                                                                             @"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"                                                                                                                          @"  <soap:Body>"                                                                                                                                                    @"      <getDbVersion>"                                                                                                                                               @"      </getDbVersion>"                                                                                                                                    @"  </soap:Body>"                                                                                                                                                           @"</soap:Envelope>"
+
+#define SubmmitFeedback_SOAP_URL @"http://ytbus.jiaodong.cn:4998/SynBusSoftWebservice/services/FeedBackService"
+#define SubmmitFeedback_SOAP_MSG @"<?xml version=\"1.0\" encoding=\"utf-8\"?>"                                                          @"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"                                                                              @"  <soap:Body>"                                                                                                                    @"      <feedBack>"                                                                                                                 @"          <in0>%@</in0>"                                                                                                      @"          <in1>%@</in1>"                                                                                                                @"          <in2>%@</in2>"                                                                                                        @"          <in3>%@</in3>"                                                                                                              @"          <in4>%@</in4>"                                                                                                                          @"          <in5>%@</in5>"                                                                                                           @"      </feedBack>"                                                                                                                @"  </soap:Body>"                                                                                                                       @"</soap:Envelope>"
 
 #define Headline_Height 176.0f
 #define News_Cell_Image_Height 100.0f

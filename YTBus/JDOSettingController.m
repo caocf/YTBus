@@ -13,6 +13,7 @@
 
 @property (nonatomic,assign) IBOutlet UISegmentedControl *distanceSegment;
 @property (nonatomic,assign) IBOutlet UISegmentedControl *intervalSegment;
+@property (nonatomic,assign) IBOutlet UISegmentedControl *refreshMoveSegment;
 @property (nonatomic,assign) IBOutlet V8HorizontalPickerView *pickerView;
 
 @end
@@ -26,12 +27,14 @@
     
     self.tableView.bounces = false;
     
-    int distance = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
-    int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
-    int hintNumber = [[NSUserDefaults standardUserDefaults] integerForKey:@"station_hint_number"]?:3;
+    long distance = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_distance"]?:1000;
+    long interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
+    long refreshMove = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_refresh_move"]?:200;
+    long hintNumber = [[NSUserDefaults standardUserDefaults] integerForKey:@"station_hint_number"]?:3;
     
     self.distanceSegment.selectedSegmentIndex = distance/1000;
     self.intervalSegment.selectedSegmentIndex = interval/30;
+    self.refreshMoveSegment.selectedSegmentIndex = refreshMove/500;
 //    switch (distance) {
 //        case 500:    self.distanceSegment.selectedSegmentIndex = 0;  break;
 //        case 1000:   self.distanceSegment.selectedSegmentIndex = 1;  break;
@@ -60,7 +63,7 @@
     [indicatorLabel setFont:[UIFont boldSystemFontOfSize:16.0f]];
     [indicatorLabel setTextColor:[UIColor whiteColor]];
     [indicatorLabel setTextAlignment:NSTextAlignmentCenter];
-    [indicatorLabel setText:[NSString stringWithFormat:@"%d", hintNumber]];
+    [indicatorLabel setText:[NSString stringWithFormat:@"%ld", hintNumber]];
     [indicator addSubview:indicatorLabel];
     
     self.pickerView.selectionIndicatorView = indicator;
@@ -79,7 +82,13 @@
     
     [[NSUserDefaults standardUserDefaults] setInteger:[value intValue] forKey:@"refresh_interval"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh_interval_changed" object:nil];
+}
+
+-(IBAction)onRefreshMoveChanged:(UISegmentedControl *)sender{
+    NSString *value = [sender titleForSegmentAtIndex:sender.selectedSegmentIndex];
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:[value intValue] forKey:@"nearby_refresh_move"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSInteger)numberOfElementsInHorizontalPickerView:(V8HorizontalPickerView *)picker{
@@ -93,7 +102,7 @@
 - (UIView *)horizontalPickerView:(V8HorizontalPickerView *)picker viewForElementAtIndex:(NSInteger)index{
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(3, 3, 18.0f, 18.0f)];
     [label setBackgroundColor:[UIColor clearColor]];
-    [label setText:[NSString stringWithFormat:@"%d", index+1]];
+    [label setText:[NSString stringWithFormat:@"%ld", index+1]];
     [label setTextColor:[UIColor grayColor]];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setFont:[UIFont boldSystemFontOfSize:13.0]];
@@ -104,7 +113,7 @@
 - (void)horizontalPickerView:(V8HorizontalPickerView *)picker currentSelectingElementAtIndex:(NSInteger)index{
     [[NSUserDefaults standardUserDefaults] setInteger:index+1 forKey:@"station_hint_number"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [indicatorLabel setText:[NSString stringWithFormat:@"%d", index+1]];
+    [indicatorLabel setText:[NSString stringWithFormat:@"%ld", index+1]];
 }
 
 //- (void)horizontalPickerView:(V8HorizontalPickerView *)picker didSelectElementAtIndex:(NSInteger)index{

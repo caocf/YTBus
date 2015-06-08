@@ -300,7 +300,7 @@
                                                                          NSFontAttributeName: self.titleFont,
                                                                          NSParagraphStyleAttributeName: titleParagraphStyle
                                                                          }
-                                                               context:nil].size.height;
+                                                               context:nil].size.height+_titleMessagePadding;
             }
             else {
                 
@@ -309,7 +309,7 @@
                 
                 textFrame.origin.y += [self.title sizeWithFont:self.titleFont
                                              constrainedToSize:CGSizeMake(textFrame.size.width, 99999.0)
-                                                 lineBreakMode:NSLineBreakByClipping].height;
+                                                 lineBreakMode:NSLineBreakByClipping].height+_titleMessagePadding;
                 
 #pragma clang diagnostic pop
                 
@@ -458,7 +458,7 @@
         textSize.height += titleSize.height;
     }
     
-    _bubbleSize = CGSizeMake(textSize.width + _cornerRadius*2, textSize.height + _cornerRadius*2);
+    _bubbleSize = CGSizeMake(textSize.width + _cornerRadius*2, textSize.height + _cornerRadius*2 + _titleMessagePadding);
     
     UIView *superview = containerView.superview;
     if ([superview isKindOfClass:[UIWindow class]])
@@ -718,8 +718,8 @@
         _hasShadow = hasShadow;
         
         if (hasShadow) {
-            self.layer.shadowOffset = CGSizeMake(0, 3);
-            self.layer.shadowRadius = 2.0;
+            self.layer.shadowOffset = CGSizeMake(0, 1);
+            self.layer.shadowRadius = 1.0;
             self.layer.shadowColor = [[UIColor blackColor] CGColor];
             self.layer.shadowOpacity = 0.3;
         } else {

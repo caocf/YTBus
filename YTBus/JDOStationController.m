@@ -36,8 +36,9 @@
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
     _searchBar.placeholder = @"搜索站点";
     _searchBar.delegate = self;
-    _searchBar.showsScopeBar = true;
-    _searchBar.scopeButtonTitles = @[@"公交站点",@"周边地名"];
+    // TODO 附近地名查询
+//    _searchBar.showsScopeBar = true;
+//    _searchBar.scopeButtonTitles = @[@"公交站点",@"周边地名"];
     [_searchBar sizeToFit];
     self.tableView.tableHeaderView = _searchBar;
     
@@ -112,6 +113,7 @@
             [station.passLinesName addObject:lineName];
         }
     }
+    [rs close];
     
     // 加载历史搜索记录
     _historyStations = [[[NSUserDefaults standardUserDefaults] arrayForKey:@"history_station"] mutableCopy];
@@ -207,19 +209,19 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
     if([JDOUtils isEmptyString:_searchBar.text]){  // 历史记录
-        cell = [tableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"historyCell"]; // forIndexPath:indexPath];
         NSString *station = _historyStations[indexPath.row];
         [(UILabel *)[cell viewWithTag:1001] setText:station];
         [[cell viewWithTag:1003] setHidden:(indexPath.row == _historyStations.count-1)];
     }else{
-        cell = [tableView dequeueReusableCellWithIdentifier:@"stationCell" forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"stationCell"]; // forIndexPath:indexPath];
         JDOStationModel *station = (JDOStationModel *)_filterAllStations[indexPath.row];
         [(UILabel *)[cell viewWithTag:1001] setText:station.name];
         NSString *desc;
         if (station.passLinesName.count <= 3) {
             desc = [NSString stringWithFormat:@"%@经过",[station.passLinesName componentsJoinedByString:@"、"]];
         }else{
-            desc = [NSString stringWithFormat:@"%@等%d条线路经过",station.passLinesName[0],station.passLinesName.count];
+            desc = [NSString stringWithFormat:@"%@等%lu条线路经过",station.passLinesName[0],(unsigned long)station.passLinesName.count];
         }
         [(UILabel *)[cell viewWithTag:1002] setText:desc];
         [[cell viewWithTag:1003] setHidden:(indexPath.row == _filterAllStations.count-1)];

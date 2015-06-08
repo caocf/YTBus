@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BMapKit.h"
 
 @interface JDOInterChangeController : UIViewController
+
+@property (nonatomic,weak) IBOutlet UITextField *startField;
+@property (nonatomic,weak) IBOutlet UITextField *endField;
+@property (nonatomic,strong) BMKPoiInfo *startPoi;
+@property (nonatomic,strong) BMKPoiInfo *endPoi;
 
 @end

@@ -301,7 +301,7 @@ typedef enum{
     if (After_iOS7) {
         deltaY = 64; // iOS7后，controller.view的superview(UIViewControllerWrapperView)从(0,0)开始计算，而之前是从(0,64)开始计算
     }
-    reviewPanelFrame.origin.y = self.view.bounds.size.height + deltaY + 49/*tab栏高度*/ - (keyboardRect.size.height + reviewPanelFrame.size.height);
+    reviewPanelFrame.origin.y = self.view.bounds.size.height + deltaY /*+49 设置hideBottomBarOnPush，tab隐藏不再计算*/ /*tab栏高度*/ - (keyboardRect.size.height + reviewPanelFrame.size.height);
     CGRect _endFrame = reviewPanelFrame;
     
     if( isKeyboardShowing == false){

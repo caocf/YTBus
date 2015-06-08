@@ -107,7 +107,7 @@
     self.bubbleSection = nil;
     
     // Loading new data
-    int count = 0;
+    long count = 0;
     self.bubbleSection = [[NSMutableArray alloc] init];
     
     if (self.bubbleDataSource && (count = [self.bubbleDataSource rowsForBubbleTable:self]) > 0)
@@ -162,7 +162,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    int result = [self.bubbleSection count];
+    long result = [self.bubbleSection count];
     if (self.typingBubble != NSBubbleTypingTypeNobody) result++;
     return result;
 }

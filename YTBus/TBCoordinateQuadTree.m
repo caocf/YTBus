@@ -9,12 +9,7 @@
 #import "TBCoordinateQuadTree.h"
 #import "TBClusterAnnotation.h"
 #import "JDOStationModel.h"
-
-// 当前站点范围121.23495  121.598595  37.341312   37.62461
-#define MIN_X 121.1
-#define MAX_X 121.7
-#define MIN_Y 37.2
-#define MAX_Y 37.7
+#import "JDOConstants.h"
 
 typedef struct JDOStationInfo {
     char* stationId;
@@ -114,7 +109,7 @@ float TBCellSizeForZoomScale(BMKZoomScale zoomScale)
         for (NSInteger i = 0; i < stations.count; i++) {
             dataArray[i] = TBDataFromModel(stations[i]);
         }
-        TBBoundingBox world = TBBoundingBoxMake(MIN_Y, MIN_X, MAX_Y, MAX_X);
+        TBBoundingBox world = TBBoundingBoxMake(YT_MIN_Y, YT_MIN_X, YT_MAX_Y, YT_MAX_X);
         _root = TBQuadTreeBuildWithData(dataArray, stations.count, world, 4);
     }
 }
@@ -153,7 +148,7 @@ float TBCellSizeForZoomScale(BMKZoomScale zoomScale)
     double bottomY = mapView.region.center.latitude - mapView.region.span.latitudeDelta/2;
     double topY = mapView.region.center.latitude + mapView.region.span.latitudeDelta/2;
     
-    double minX = MIN_X, maxX = rightX, minY = bottomY, maxY = MAX_Y;
+    double minX = YT_MIN_X, maxX = rightX, minY = bottomY, maxY = YT_MAX_Y;
     while (minX < leftX) {
         minX += TBCellSize;
     }

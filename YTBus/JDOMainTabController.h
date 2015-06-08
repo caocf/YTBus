@@ -10,4 +10,9 @@
 
 @interface JDOMainTabController : UITabBarController
 
+@property (nonatomic,assign) int hasNewVersion;
+@property (nonatomic,strong) NSString *versionNumber;
+@property (nonatomic,assign) BOOL hasNewInfo;
+@property (nonatomic,strong) NSString *newsId;
+
 @end

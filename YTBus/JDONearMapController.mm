@@ -29,7 +29,7 @@
 @interface JDONearMapController () <BMKMapViewDelegate,BMKLocationServiceDelegate,UITableViewDataSource,UITableViewDelegate> {
     BMKLocationService *_locService;
     BMKUserLocation *currentUserLocation;
-    int distanceRadius;
+    long distanceRadius;
     NSMutableArray *_stations;
     NSMutableArray *_linesOfFoundNearestStation;
     FMDatabase *_db;
@@ -81,6 +81,8 @@
             JDOBusLine *busLine = [JDOBusLine new];
             busLine.lineId = [rs stringForColumn:@"LINEID"];
             busLine.lineName = [rs stringForColumn:@"LINENAME"];
+            busLine.zhixian = [rs intForColumn:@"ZHIXIAN"];
+            
             JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
             lineDetail.detailId = [rs stringForColumn:@"LINEDETAILID"];
             lineDetail.lineDetail = [rs stringForColumn:@"LINEDETAIL"];
@@ -92,6 +94,7 @@
             }
             [station.passLines addObject:busLine];
         }
+        [rs close];
         if (station.passLines.count >0) {
             [_stations addObject:station];
         }
@@ -124,8 +127,9 @@
     if (currentUserLocation) {
         // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
         double moveDistance = [userLocation.location distanceFromLocation:currentUserLocation.location];
+        long autoRefreshDistance = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_refresh_move"]?:200;
         // currentUserLocation为nil时返回-1
-        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance) {
+        if (moveDistance != -1 && moveDistance < autoRefreshDistance) {
 //            NSLog(@"移动距离%g，不足刷新条件",moveDistance);
             return;
         }
@@ -144,7 +148,7 @@
     
     double longitudeDelta = distanceRadius/85390.0;
     double latitudeDelta = distanceRadius/111000.0;
-    NSString *sql = @"select * from STATION where gpsx2>? and gpsx2<? and gpsy2>? and gpsy2<? and stationname not like 't_%'";
+    NSString *sql = @"select * from STATION where MAPX>? and MAPX<? and MAPY>? and MAPY<? and stationname not like 't_%'";
     CLLocationCoordinate2D currentCoor = currentUserLocation.location.coordinate;
     NSArray *argu = @[@(currentCoor.longitude-longitudeDelta),@(currentCoor.longitude+longitudeDelta),@(currentCoor.latitude-latitudeDelta),@(currentCoor.latitude+latitudeDelta)];
     FMResultSet *s = [_db executeQuery:sql withArgumentsInArray:argu];
@@ -153,8 +157,8 @@
         station.fid = [NSString stringWithFormat:@"%d",[s intForColumn:@"ID"]];
         station.name = [s stringForColumn:@"STATIONNAME"];
         station.direction = [s stringForColumn:@"GEOGRAPHICALDIRECTION"];
-        station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSX2"]];
-        station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"GPSY2"]];
+        station.gpsX = [NSNumber numberWithDouble:[s doubleForColumn:@"MAPX"]];
+        station.gpsY = [NSNumber numberWithDouble:[s doubleForColumn:@"MAPY"]];
         // 对比与当前地理位置的距离小于1000的站点
         CLLocationCoordinate2D bdStation = CLLocationCoordinate2DMake(station.gpsY.doubleValue, station.gpsX.doubleValue);
         // gps坐标转百度坐标
@@ -166,6 +170,7 @@
             [_nearbyStations addObject:station];
         }
     }
+    [s close];
     
     // 按距离由近及远排序
     [_nearbyStations sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
@@ -198,7 +203,6 @@
 //    param.locationViewImgName = @"";
     param.isAccuracyCircleShow = false;
     [_mapView updateLocationViewWithParam:param];
-    // TODO 设置跟随状态切换按钮
     
     if (needRefresh) {
         needRefresh = false;
@@ -267,7 +271,7 @@
 - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view{
     // 选中某个marker后，将此marker移动到地图中心偏下的位置，使其上方弹出的callout能在屏幕内显示全
     float delta = Screen_Height>480?70:100;
-    [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
+//    [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
     CGPoint p = [mapView convertCoordinate:view.annotation.coordinate toPointToView:mapView];
     CLLocationCoordinate2D coor = [mapView convertPoint:CGPointMake(p.x, p.y-delta) toCoordinateFromView:mapView];
     [mapView setCenterCoordinate:coor animated:YES];
@@ -319,7 +323,9 @@
         JDOPaoPaoTable *paopaoTable = [(NSArray *)sender objectAtIndex:0];
         NSIndexPath *indexPath = [(NSArray *)sender objectAtIndex:1];
         NSArray *paopaoLines = paopaoTable.station.passLines;
-        rt.busLine = paopaoLines[indexPath.row];
+        JDOBusLine *busLine = paopaoLines[indexPath.row];
+        rt.busLine = busLine;
+        rt.busLine.zhixian = busLine.zhixian;
         rt.busLine.nearbyStationPair = [NSMutableArray arrayWithArray:@[paopaoTable.station]];
     }
 }

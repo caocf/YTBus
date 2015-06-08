@@ -16,12 +16,13 @@
 #import "JDONewsTableCell.h"
 #import "JSONKit.h"
 #import "JDONewsModel.h"
+#import "JDONewsDetailController.h"
+#import "JDOAlertTool.h"
 
 #define NewsHead_Page_Size 3
 #define NewsList_Page_Size 20
 #define News_Cell_Height 70.0f
 #define Finished_Label_Tag 111
-#define Main_Background_Color @"f0f0f0"
 
 @interface JDONewsController ()
 
@@ -40,6 +41,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationItem.rightBarButtonItem.target = self;
+    self.navigationItem.rightBarButtonItem.action = @selector(showDownloadAlert);
     
     self.currentPage = 1;
     self.tableView.backgroundColor = [UIColor colorWithHex:Main_Background_Color];
@@ -79,6 +82,16 @@
     [self.noNetWorkView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onRetryClicked)]];
     self.status = ViewStatusLoading;
     [self loadDataFromNetwork];
+}
+
+- (void)showDownloadAlert{
+    JDOAlertTool *alert = [[JDOAlertTool alloc] init];
+    [alert showAlertView:self title:@"强烈推荐" message:@"“看天下，知烟台”，更多新闻、资讯、爆料内容，尽在烟台第一掌上媒体“胶东在线新闻客户端”。" cancelTitle:@"关闭" otherTitle1:@"前往下载" otherTitle2:nil cancelAction:^{
+        
+    } otherAction1:^{
+        NSURL *url = [NSURL URLWithString:@"itms-apps://itunes.apple.com/cn/app/jiao-dong-zai-xian/id693957416?mt=8"];
+        [[UIApplication sharedApplication] openURL:url];
+    } otherAction2:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -161,7 +174,7 @@
                 JDONewsModel *newsModel = [[JDONewsModel alloc] initWithDict:[data objectAtIndex:i]];
                 [dataList addObject:newsModel];
             }
-            if(dataList != nil && dataList.count >0){
+            if(dataList.count >0){
                 [self.headArray removeAllObjects];
                 [self.headArray addObjectsFromArray:dataList];
                 headlineFinished = true;
@@ -172,7 +185,7 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         self.status = ViewStatusRetry;
-        [JDOUtils showHUDText:error.description inView:self.view];
+        [JDOUtils showHUDText:error.localizedDescription inView:self.view];
     }];
     
     // 加载列表
@@ -186,7 +199,7 @@
                 JDONewsModel *newsModel = [[JDONewsModel alloc] initWithDict:[data objectAtIndex:i]];
                 [dataList addObject:newsModel];
             }
-            if(dataList != nil && dataList.count >0){
+            if(dataList.count >0){
                 [self.listArray removeAllObjects];
                 [self.listArray addObjectsFromArray:dataList];
                 newslistFinished = true;
@@ -205,85 +218,77 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         self.status = ViewStatusRetry;
-        [JDOUtils showHUDText:error.description inView:self.view];
+        [JDOUtils showHUDText:error.localizedDescription inView:self.view];
     }];
 }
 
 
 - (void) refresh{
-//    if(![Reachability isEnableNetwork]){
-//        [JDOCommonUtil showHintHUD:No_Network_Connection inView:self];
-//        [self.tableView.pullToRefreshView stopAnimating];
-//        return ;
-//    }
-//    self.currentPage = 1;
-//    __block bool headlineFinished = false;
-//    __block bool newslistFinished = false;
-//    DCParserConfiguration *config = [DCParserConfiguration configuration];
-//    DCArrayMapping *mapper = [DCArrayMapping mapperForClassElements:[JDONewsModel class] forAttribute:@"data" onClass:[JDOArrayModel class]];
-//    [config addArrayMapper:mapper];
-//    // 刷新头条
-//    [[JDOJsonClient sharedClient] getJSONByServiceName:NEWS_SERVICE modelClass:@"JDOArrayModel" params:self.headLineParam success:^(JDOArrayModel *dataModel) {
-//        NSArray *data = dataModel.data;
-//        NSMutableArray *dataList = [[NSMutableArray alloc] init];
-//        for (int i = 0; i < data.count; i++) {
-//            if (i >= 3) {
-//                continue;
-//            }
-//            if ([[data objectAtIndex:i] isKindOfClass:[NSDictionary class]]) {
-//                DCKeyValueObjectMapping *mapper = [DCKeyValueObjectMapping mapperForClass:[JDONewsModel class]];
-//                [dataList addObject:[mapper parseDictionary:[data objectAtIndex:i]]];
-//            } else {
-//                [dataList addObject:[data objectAtIndex:i]];
-//            }
-//        }
-//        if(dataList.count >0){
-//            [self.headArray removeAllObjects];
-//            [self.headArray addObjectsFromArray:dataList];
-//            headlineFinished = true;
-//            if(newslistFinished){
-//                [self reloadTableView];
-//            }
-//        }
-//    } failure:^(NSString *errorStr) {
-//        [self.tableView.pullToRefreshView stopAnimating];
-//        [JDOCommonUtil showHintHUD:errorStr inView:self];
-//    }];
-//    // 刷新列表
-//    [[JDOHttpClient sharedClient] getJSONByServiceName:NEWS_SERVICE modelClass:@"JDOArrayModel" params:self.newsListParam success:^(JDOArrayModel *dataModel) {
-//        NSArray *data = dataModel.data;
-//        NSMutableArray *dataList = [[NSMutableArray alloc] init];
-//        for (int i = 0; i < data.count; i++) {
-//            if ([[data objectAtIndex:i] isKindOfClass:[NSDictionary class]]) {
-//                DCKeyValueObjectMapping *mapper = [DCKeyValueObjectMapping mapperForClass:[JDONewsModel class]];
-//                [dataList addObject:[mapper parseDictionary:[data objectAtIndex:i]]];
-//            } else {
-//                [dataList addObject:[data objectAtIndex:i]];
-//            }
-//        }
-//        
-//        if(dataList != nil && dataList.count >0){
-//            [self.listArray removeAllObjects];
-//            [self.listArray addObjectsFromArray:dataList];
-//            [self.readDB isExistById:dataList];
-//            newslistFinished = true;
-//            if(headlineFinished){
-//                [self reloadTableView];
-//            }
-//            if(dataList.count<NewsList_Page_Size ){
-//                [self.tableView.infiniteScrollingView setEnabled:false];
-//                // 总数量不足第一页时不显示"已加载完成"提示
-//                [self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag].hidden = true;
-//            }else{
-//                [self.tableView.infiniteScrollingView setEnabled:true];
-//                [self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag].hidden = true;
-//            }
-//        }
-//    } failure:^(NSString *errorStr) {
-//        [self.tableView.pullToRefreshView stopAnimating];
-//        [JDOCommonUtil showHintHUD:errorStr inView:self];
-//    }];
+    if(![Reachability isEnableNetwork]){
+        [JDOUtils showHUDText:@"网络当前不可用" inView:self.view];
+        [self.tableView.pullToRefreshView stopAnimating];
+        return ;
+    }
+    self.currentPage = 1;
+    __block bool headlineFinished = false;
+    __block bool newslistFinished = false;
+    // 刷新头条
+    [[JDOHttpClient sharedJDOClient] getPath:@"Data/getArticles" parameters:self.headLineParam success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSData *jsonData = responseObject;
+        NSDictionary *obj = [jsonData objectFromJSONData];
+        if ([obj[@"status"] intValue]==1) {
+            NSArray *data = obj[@"data"];
+            NSMutableArray *dataList = [NSMutableArray new];
+            for (int i = 0; i < data.count; i++) {
+                JDONewsModel *newsModel = [[JDONewsModel alloc] initWithDict:[data objectAtIndex:i]];
+                [dataList addObject:newsModel];
+            }
+            if(dataList.count >0){
+                [self.headArray removeAllObjects];
+                [self.headArray addObjectsFromArray:dataList];
+                headlineFinished = true;
+                if(newslistFinished){
+                    [self reloadTableView];
+                }
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.tableView.pullToRefreshView stopAnimating];
+        [JDOUtils showHUDText:error.localizedDescription inView:self.view];
+    }];
     
+    // 刷新列表
+    [[JDOHttpClient sharedJDOClient] getPath:@"Data/getArticles" parameters:self.newsListParam success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSData *jsonData = responseObject;
+        NSDictionary *obj = [jsonData objectFromJSONData];
+        if ([obj[@"status"] intValue]==1) {
+            NSArray *data = obj[@"data"];
+            NSMutableArray *dataList = [NSMutableArray new];
+            for (int i = 0; i < data.count; i++) {
+                JDONewsModel *newsModel = [[JDONewsModel alloc] initWithDict:[data objectAtIndex:i]];
+                [dataList addObject:newsModel];
+            }
+            if(dataList.count >0){
+                [self.listArray removeAllObjects];
+                [self.listArray addObjectsFromArray:dataList];
+                newslistFinished = true;
+                if(headlineFinished){
+                    [self reloadTableView];
+                }
+                if(dataList.count<NewsList_Page_Size ){
+                    [self.tableView.infiniteScrollingView setEnabled:false];
+                    // 总数量不足第一页时不显示"已加载完成"提示
+                    [self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag].hidden = true;
+                }else{
+                    [self.tableView.infiniteScrollingView setEnabled:true];
+                    [self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag].hidden = true;
+                }
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.tableView.pullToRefreshView stopAnimating];
+        [JDOUtils showHUDText:error.localizedDescription inView:self.view];
+    }];
 }
 
 - (void) reloadTableView{
@@ -304,59 +309,68 @@
 
 
 - (void) loadMore{
-//    if(![Reachability isEnableNetwork]){
-//        [JDOUtils showHUDText:@"网络当前不可用" inView:self.view];
-//        [self.tableView.infiniteScrollingView stopAnimating];
-//        return ;
-//    }
-//    
-//    self.currentPage += 1;
-//    DCParserConfiguration *config = [DCParserConfiguration configuration];
-//    DCArrayMapping *mapper = [DCArrayMapping mapperForClassElements:[JDONewsModel class] forAttribute:@"data" onClass:[JDOArrayModel class]];
-//    [config addArrayMapper:mapper];
-//    [[JDOHttpClient sharedClient] getJSONByServiceName:NEWS_SERVICE modelClass:@"JDOArrayModel" config:config params:self.newsListParam success:^(JDOArrayModel *dataModel) {
-//        NSArray *dataList = (NSArray *)dataModel.data;
-//        [self.tableView.infiniteScrollingView stopAnimating];
-//        bool finished = false;
-//        if(dataList == nil || dataList.count == 0){    // 数据加载完成
-//            finished = true;
-//        }else{
-//            [self.readDB isExistById:dataList];
-//            NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:NewsList_Page_Size];
-//            for(int i=0;i<dataList.count;i++){
-//                [indexPaths addObject:[NSIndexPath indexPathForRow:self.listArray.count+i inSection:1]];
-//            }
-//            [self.listArray addObjectsFromArray:dataList];
-//            [self.tableView beginUpdates];
-//            [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationRight];
-//            [self.tableView endUpdates];
-//            
-//            if(dataList.count < NewsList_Page_Size){
-//                finished = true;
-//            }
-//        }
-//        if(finished){
-//            // 延时执行是为了给insertRowsAtIndexPaths的动画留出时间
-//            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC);
-//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//                if([self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag]){
-//                    [self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag].hidden = false;
-//                }else{
-//                    UILabel *finishLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.infiniteScrollingView.bounds.size.width, self.tableView.infiniteScrollingView.bounds.size.height)];
-//                    finishLabel.textAlignment = NSTextAlignmentCenter;
-//                    finishLabel.text = All_Data_Load_Finished;
-//                    finishLabel.tag = Finished_Label_Tag;
-//                    finishLabel.backgroundColor = [UIColor clearColor];
-//                    [self.tableView.infiniteScrollingView setEnabled:false];
-//                    [self.tableView.infiniteScrollingView addSubview:finishLabel];
-//                }
-//            });
-//        }
-//    } failure:^(NSString *errorStr) {
-//        [self.tableView.infiniteScrollingView stopAnimating];
-//        [JDOCommonUtil showHintHUD:errorStr inView:self withSlidingMode:WBNoticeViewSlidingModeUp];
-//    }];
+    if(![Reachability isEnableNetwork]){
+        [JDOUtils showHUDText:@"网络当前不可用" inView:self.view];
+        [self.tableView.infiniteScrollingView stopAnimating];
+        return ;
+    }
     
+    self.currentPage += 1;
+    [[JDOHttpClient sharedJDOClient] getPath:@"Data/getArticles" parameters:self.newsListParam success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.tableView.infiniteScrollingView stopAnimating];
+        NSData *jsonData = responseObject;
+        NSDictionary *obj = [jsonData objectFromJSONData];
+        if ([obj[@"status"] intValue]==1) {
+            NSArray *data = obj[@"data"];
+            NSMutableArray *dataList = [NSMutableArray new];
+            for (int i = 0; i < data.count; i++) {
+                JDONewsModel *newsModel = [[JDONewsModel alloc] initWithDict:[data objectAtIndex:i]];
+                [dataList addObject:newsModel];
+            }
+            bool finished = false;
+            if( dataList.count == 0){    // 数据加载完成
+                finished = true;
+            }else{
+                NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:NewsList_Page_Size];
+                for(int i=0;i<dataList.count;i++){
+                    [indexPaths addObject:[NSIndexPath indexPathForRow:self.listArray.count+i inSection:1]];
+                }
+                [self.listArray addObjectsFromArray:dataList];
+                [self.tableView beginUpdates];
+                [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationRight];
+                [self.tableView endUpdates];
+                
+                if(dataList.count < NewsList_Page_Size){
+                    finished = true;
+                }
+            }
+            if(finished){
+                [self.tableView.infiniteScrollingView setEnabled:false];
+                // 延时执行是为了给insertRowsAtIndexPaths的动画留出时间
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC);
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    if([self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag]){
+                        [self.tableView.infiniteScrollingView viewWithTag:Finished_Label_Tag].hidden = false;
+                    }else{
+                        UILabel *finishLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.infiniteScrollingView.bounds.size.width, self.tableView.infiniteScrollingView.bounds.size.height)];
+                        finishLabel.textAlignment = NSTextAlignmentCenter;
+                        finishLabel.font = [UIFont systemFontOfSize:16];
+                        finishLabel.textColor = [UIColor colorWithWhite:130/255.0f alpha:1.0];
+                        finishLabel.text = @"全部数据加载完成";
+                        finishLabel.tag = Finished_Label_Tag;
+                        finishLabel.backgroundColor = [UIColor clearColor];
+                        [self.tableView.infiniteScrollingView addSubview:finishLabel];
+                    }
+                });
+            }
+        }else{
+            self.currentPage -= 1;
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.tableView.infiniteScrollingView stopAnimating];
+        self.currentPage -= 1;
+        [JDOUtils showHUDText:error.localizedDescription inView:self.view];
+    }];
 }
 
 // 将普通新闻和头条划分为两个section
@@ -368,7 +382,7 @@
     if(section == 0){
         return 1;
     }else{
-        return self.listArray.count==0 ? 20:self.listArray.count;
+        return self.listArray.count;
     }
 }
 
@@ -399,23 +413,10 @@
 }
 
 - (void) galleryImageClicked:(UITapGestureRecognizer *)gesture{
-//    JDONewsHeadCell *cell = (JDONewsHeadCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-//    int index = [cell.imageViews indexOfObject:gesture.view];
-//    JDONewsDetailController *detailController;
-//    if ([[self.headArray objectAtIndex:index] isKindOfClass:[JDONewsModel class]]) {
-//        detailController = [[JDONewsDetailController alloc] initWithNewsModel:[self.headArray objectAtIndex:index]];
-//    } else {
-//        NSDictionary *adv = [[self.headArray objectAtIndex:index] objectAtIndex:0];
-//        NSString *newsid = [adv objectForKey:@"murl"];
-//        NSString *NewsTitle = [adv objectForKey:@"title"];
-//        JDONewsModel *newsModel = [[JDONewsModel alloc] init];
-//        newsModel.id = newsid;
-//        newsModel.title = NewsTitle;
-//        newsModel.summary = @" ";
-//        detailController = [[JDONewsDetailController alloc] initWithNewsModel:newsModel Collect:NO isAdv:YES];
-//    }
-//    JDOCenterViewController *centerController = (JDOCenterViewController *)[[SharedAppDelegate deckController] centerController];
-//    [centerController pushViewController:detailController animated:true];
+    JDONewsHeadCell *cell = (JDONewsHeadCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    NSUInteger index = [cell.imageViews indexOfObject:gesture.view];
+    JDONewsDetailController *detailController = [[JDONewsDetailController alloc] initWithNewsModel:[self.headArray objectAtIndex:index]];
+    [self.navigationController pushViewController:detailController animated:true];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -428,14 +429,9 @@
         // section0 由于存在scrollView与didSelectRowAtIndexPath冲突，不会进入该函数，通过给UIImageView设置gesture的方式解决
     }else{
         JDONewsModel* model = [self.listArray objectAtIndex:indexPath.row];
-//        JDONewsDetailController *detailController = [[JDONewsDetailController alloc] initWithNewsModel:model];
-//        [model setRead:TRUE];
-//        [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
-//        [self.readDB save:[model id]];
-//        JDOCenterViewController *centerController = (JDOCenterViewController *)[[SharedAppDelegate deckController] centerController];
-//        [centerController pushViewController:detailController animated:true];
-//        [tableView deselectRowAtIndexPath:indexPath animated:true];
-        
+        JDONewsDetailController *detailController = [[JDONewsDetailController alloc] initWithNewsModel:model];
+        [self.navigationController pushViewController:detailController animated:true];
+        [tableView deselectRowAtIndexPath:indexPath animated:true];
     }
 }
 

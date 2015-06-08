@@ -11,5 +11,6 @@
 @interface TBClusterAnnotationView : BMKAnnotationView
 
 @property (assign, nonatomic) NSUInteger count;
+@property (nonatomic,strong) UIColor *markerColor;
 
 @end

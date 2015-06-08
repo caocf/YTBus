@@ -71,7 +71,6 @@ static const void *LabelKey = &LabelKey;
 @implementation JDOStationMapController{
     FMDatabase *_db;
     NSMutableArray *_stations;
-    JDOStationModel *selectedStation;
     NSIndexPath *selectedIndexPath;
     NSOperationQueue *_queryQueue;
     BOOL rightBtnIsSearch;
@@ -89,11 +88,22 @@ static const void *LabelKey = &LabelKey;
     _mapView.minZoomLevel = 12; // 覆盖当前全部站点的范围
     // 进入时候根据传入的定位位置进行设置(定位位置保存为全局变量)，并相应增大初始化时候的缩放级别
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    if (delegate.userLocation) {
-        _mapView.centerCoordinate = delegate.userLocation.location.coordinate;
-        _mapView.zoomLevel = 15;
-    }else{
-        _mapView.centerCoordinate = CLLocationCoordinate2DMake(37.4698,121.454);   // 市政府的位置
+    
+    // 有站点信息，则是通过站点详情进入的
+    if (self.selectedStation && _selectedStation.gpsY.doubleValue>0 && _selectedStation.gpsX.doubleValue>0) {
+        _mapView.centerCoordinate = CLLocationCoordinate2DMake(_selectedStation.gpsY.doubleValue, _selectedStation.gpsX.doubleValue);
+        _mapView.zoomLevel = 19;
+    }else if (delegate.userLocation) {
+        CLLocationCoordinate2D coor = delegate.userLocation.location.coordinate;
+        if (coor.latitude>YT_MIN_Y && coor.latitude<YT_MAX_Y && coor.longitude>YT_MIN_X && coor.longitude<YT_MAX_X) {
+            _mapView.centerCoordinate = delegate.userLocation.location.coordinate;
+            _mapView.zoomLevel = 15;
+        }else{  // 若定位范围出现偏差，超出烟台市区范围，则指向市政府位置
+            _mapView.centerCoordinate = CLLocationCoordinate2DMake(37.4698,121.454);
+            _mapView.zoomLevel = 13;
+        }
+    }else{  // 未能定位，也指向市政府的位置
+        _mapView.centerCoordinate = CLLocationCoordinate2DMake(37.4698,121.454);
         _mapView.zoomLevel = 13;
     }
     
@@ -111,7 +121,7 @@ static const void *LabelKey = &LabelKey;
     
 //    self.tableView.sectionHeaderHeight = 15;
 //    self.tableView.sectionFooterHeight = 15;
-    self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+    self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.bounces = true;
     
     self.lineView.frame = CGRectMake(10, CGRectGetHeight(self.view.bounds)-44, 300, 44);
@@ -146,6 +156,7 @@ static const void *LabelKey = &LabelKey;
         station.gpsY = [NSNumber numberWithDouble:[rs doubleForColumn:@"GPSY"]];
         [_stations addObject:station];
     }
+    [rs close];
     [self.coordinateQuadTree buildTree:_stations];
     [_stations removeAllObjects];
     // 初始时候的mapView.visibleRect位置在北京，无法获取visibleRect变化完成的事件，即使在viewDidAppear直接调用也不行。
@@ -164,6 +175,10 @@ static const void *LabelKey = &LabelKey;
     
     _mapView.delegate = self;
     [_mapView viewWillAppear];
+    
+    if (self.selectedStation) {
+        [self showLineView];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -172,6 +187,7 @@ static const void *LabelKey = &LabelKey;
     
     [_mapView viewWillDisappear];
     _mapView.delegate = nil;
+    
 }
 
 
@@ -235,13 +251,20 @@ static const void *LabelKey = &LabelKey;
     
     if (ca.stations.count == 0) {
 
-    }else if(ca.stations.count ==1) {   // 若marker上只有一个站点，则不弹出paopaoView，直接打开线路列表
-        selectedStation = ca.stations[0];
+    }else if(ca.stations.count ==1) {
+        [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
+        // 若marker上只有一个站点，则不弹出paopaoView，直接打开线路列表
+        _selectedStation = ca.stations[0];
         [self showLineView];
-    }else{  // 多个站点的时候，取位置进行反地理编码填充表格头部
+    }else{
+        // 选中某个marker后，将此marker移动到地图中心
+        [mapView setCenterCoordinate:view.annotation.coordinate animated:YES];
+        
         TBClusterAnnotationView *annotationView = (TBClusterAnnotationView *)view;
         UIView *customView = [annotationView.paopaoView subviews][0];
         UILabel *title = (UILabel *)[customView viewWithTag:8001];
+        
+        // 多个站点的时候，取位置进行反地理编码填充表格头部
         BMKReverseGeoCodeOption *reverseGeoCodeSearchOption = [[BMKReverseGeoCodeOption alloc] init];
         reverseGeoCodeSearchOption.reverseGeoPoint = ca.coordinate;
         BMKGeoCodeSearch *searcher =[[BMKGeoCodeSearch alloc] init];
@@ -280,15 +303,21 @@ static const void *LabelKey = &LabelKey;
         annotationView = [[TBClusterAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:TBAnnotatioViewReuseID];
     }else{
         annotationView.annotation = annotation;
+        annotationView.markerColor = nil;
     }
     
     TBClusterAnnotation *ca = (TBClusterAnnotation *)annotation;
     annotationView.count = ca.count;
     annotationView.canShowCallout = true;
     if (ca.stations.count == 0) {
-        ca.title = [NSString stringWithFormat:@"附近有%d个站点",ca.count];
+        ca.title = [NSString stringWithFormat:@"%ld个站点,放大可显示详情",(long)ca.count];
     }else if(ca.stations.count ==1) {
-        annotationView.paopaoView = [[BMKActionPaopaoView alloc] initWithCustomView:[[UIView alloc] initWithFrame:CGRectZero]];
+//        annotationView.paopaoView = [[BMKActionPaopaoView alloc] initWithCustomView:[[UIView alloc] initWithFrame:CGRectZero]];
+        JDOStationModel *station = ca.stations[0];
+        ca.title = station.name;
+//        if ([station.fid isEqualToString:self.selectedStation.fid]) {
+//            annotationView.markerColor = [UIColor orangeColor];
+//        }
     }else{
         annotationView.paopaoView = [self createPaoPaoView:ca.stations];
     }
@@ -350,7 +379,7 @@ static const void *LabelKey = &LabelKey;
         JDOPaoPaoTable2 *paopaoTable = (JDOPaoPaoTable2 *)tableView;
         return paopaoTable.stations.count;
     }else{
-        return selectedStation.passLines.count;
+        return _selectedStation.passLines.count;
     }
 }
 
@@ -389,20 +418,19 @@ static const void *LabelKey = &LabelKey;
         
         return cell;
     }else{
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"stationLine" forIndexPath:indexPath];
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"stationLine"]; // forIndexPath:indexPath];
         if (indexPath.row%2==0) {
-//            cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
             cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"隔行1"]];
         }else{
             cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"隔行2"]];
         }
         
-        JDOBusLine *busLine = selectedStation.passLines[indexPath.row];
+        JDOBusLine *busLine = _selectedStation.passLines[indexPath.row];
         JDOBusLineDetail *lineDetail = busLine.lineDetailPair[0];
         [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
         [(UILabel *)[cell viewWithTag:1002] setText:lineDetail.lineDetail];
 //        [[cell viewWithTag:1003] setHidden:!self.busMonitor.on];
-        [[cell viewWithTag:1004] setHidden:(indexPath.row == selectedStation.passLines.count-1)];  //最后一行不显示分割线
+        [[cell viewWithTag:1004] setHidden:(indexPath.row == _selectedStation.passLines.count-1)];  //最后一行不显示分割线
         
         return cell;
     }
@@ -432,21 +460,22 @@ static const void *LabelKey = &LabelKey;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if ([tableView isKindOfClass:[JDOPaoPaoTable2 class]]) {
         JDOPaoPaoTable2 *paopaoTable = (JDOPaoPaoTable2 *)tableView;
-        selectedStation = [paopaoTable.stations objectAtIndex:indexPath.row];
+        _selectedStation = [paopaoTable.stations objectAtIndex:indexPath.row];
         [self showLineView];
     }
 }
 
 - (void) showLineView{
-    selectedStation.passLines = [NSMutableArray new];
+    _selectedStation.passLines = [NSMutableArray new];
     // 根据站点id查询通过的线路，并实时刷新最近的车辆
     int count = 0;
-    FMResultSet *rs = [_db executeQuery:GetLinesByStation,selectedStation.fid];
+    FMResultSet *rs = [_db executeQuery:GetLinesByStation,_selectedStation.fid];
     while ([rs next]) {
         JDOBusLine *busLine = [JDOBusLine new];
-        [selectedStation.passLines addObject:busLine];
+        [_selectedStation.passLines addObject:busLine];
         busLine.lineId = [rs stringForColumn:@"LINEID"];
         busLine.lineName = [rs stringForColumn:@"LINENAME"];
+        busLine.zhixian = [rs intForColumn:@"ZHIXIAN"];
         busLine.lineDetailPair = [NSMutableArray new];
         
         JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
@@ -457,17 +486,18 @@ static const void *LabelKey = &LabelKey;
         
         count++;
     }
+    [rs close];
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
     
-    self.stationLabel.text = selectedStation.name;
+    self.stationLabel.text = _selectedStation.name;
 //    self.busMonitor.on = false;
 //    self.busMonitor.hidden = false;
     self.closeBtn.hidden = false;
     
     [UIView animateWithDuration:0.25f animations:^{
-        float height = 52+36*MIN(count,4);
+        float height = 56+36*MIN(count,4);
         self.lineView.frame = CGRectMake(10, CGRectGetHeight(self.view.bounds)-height, 300, height);
-        self.tableView.frame = CGRectMake(0, 52, 300, 36*MIN(count,4));
+        self.tableView.frame = CGRectMake(0, 49, 300, 36*MIN(count,4));
     } completion:^(BOOL finished) {
         
     }];
@@ -620,9 +650,10 @@ static const void *LabelKey = &LabelKey;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"toRealtimeFromStation"]) {
         JDORealTimeController *rt = segue.destinationViewController;
-        JDOBusLine *busLine = selectedStation.passLines[selectedIndexPath.row];
-        busLine.nearbyStationPair = [NSMutableArray arrayWithObject:selectedStation];
+        JDOBusLine *busLine = _selectedStation.passLines[selectedIndexPath.row];
+        busLine.nearbyStationPair = [NSMutableArray arrayWithObject:_selectedStation];
         rt.busLine = busLine;
+        rt.busLine.zhixian = busLine.zhixian;
     }
 }
 

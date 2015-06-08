@@ -10,7 +10,6 @@
 
 @interface JDONewsController : UITableViewController
 
-@property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) NSMutableArray *headArray;
 @property (nonatomic,strong) NSMutableArray *listArray;
 

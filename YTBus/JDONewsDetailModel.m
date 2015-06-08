@@ -63,7 +63,7 @@
 + (NSString *) mergeToHTMLTemplateFromDictionary:(NSDictionary *)dictionary{
     MGTemplateEngine *engine = [[self class] sharedTemplateEngine];
     [engine setMatcher:[ICUTemplateMatcher matcherWithTemplateEngine:engine]];
-    NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"content_template" ofType:@"html"];
+    NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"template" ofType:@"html"];
     
     // 默认字号从UserDefault获取 small_font,normal_font,big_font
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];

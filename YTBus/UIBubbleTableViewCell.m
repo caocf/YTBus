@@ -75,7 +75,7 @@
     
     
     self.avatarImage.image = (self.data.avatar ? self.data.avatar : [UIImage imageNamed:@"missingAvatar.png"]);
-    CGFloat avatarX = (type == BubbleTypeSomeoneElse) ? 2 : self.frame.size.width - (Avatar_Size+2);
+    CGFloat avatarX = (type == BubbleTypeSomeoneElse) ? 8 : self.frame.size.width - (Avatar_Size+8);
     CGFloat avatarY = self.frame.size.height - Avatar_Size;
     
     self.avatarImage.frame = CGRectMake(avatarX, avatarY, Avatar_Size, Avatar_Size);
@@ -87,12 +87,12 @@
     [self.contentView addSubview:self.customView];
     
     if (type == BubbleTypeSomeoneElse) {
-        x += Avatar_Size+4;
+        x += Avatar_Size+8+2;
         [(UILabel *)self.customView setTextColor:[UIColor whiteColor]];
         self.bubbleImage.image = [[UIImage imageNamed:@"someoneBubble"] stretchableImageWithLeftCapWidth:21 topCapHeight:9];
     }
     if (type == BubbleTypeMine){
-        x -= Avatar_Size+4;
+        x -= Avatar_Size+8+2;
         [(UILabel *)self.customView setTextColor:[UIColor blackColor]];
         self.bubbleImage.image = [[UIImage imageNamed:@"myBubble"] stretchableImageWithLeftCapWidth:15 topCapHeight:9];
     }

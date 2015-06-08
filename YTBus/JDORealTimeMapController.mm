@@ -13,6 +13,7 @@
 #import "JSONKit.h"
 #import "JDOBusModel.h"
 #import <objc/runtime.h>
+#import "AppDelegate.h"
 
 //BMKCircle只有静态构造函数，无法通过继承获得子类的具体类型，只能通过category添加属性
 
@@ -70,8 +71,13 @@ static const void *SelectedKey = &SelectedKey;
         for (int i=0; i<_stations.count; i++) {
             JDOStationModel *station = _stations[i];
             if ([station.fid isEqualToString:_stationId]) {
-                _mapView.centerCoordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue,station.gpsX.doubleValue);
-                _mapView.zoomLevel = 15;
+                if (station.gpsY.doubleValue>0 && station.gpsX.doubleValue>0) {
+                    _mapView.centerCoordinate = CLLocationCoordinate2DMake(station.gpsY.doubleValue,station.gpsX.doubleValue);
+                    _mapView.zoomLevel = 15;
+                }else{
+                    _mapView.zoomLevel = 13;
+                    [self setMapCenter];
+                }
                 break;
             }
         }
@@ -142,6 +148,9 @@ static const void *SelectedKey = &SelectedKey;
         [_timer invalidate];
         _timer = nil;
     }
+    if (_connection) {
+        [_connection cancel];
+    }
 }
 
 - (void) refreshData:(NSTimer *)timer{
@@ -152,11 +161,14 @@ static const void *SelectedKey = &SelectedKey;
     if (!_stationId || !_lineId || !_lineStatus) {
         return;
     }
-    NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_MSG,_stationId,_lineId,_lineStatus];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:GetBusLineStatus_URL]];
+    NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_SOAP_MSG,_stationId,_lineId,_lineStatus];
+    AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    NSString *port = appDelegate.systemParam[@"realtimePort"]?:Default_Realtime_Port;
+    NSString *url = [NSString stringWithFormat:GetBusLineStatus_SOAP_URL,port];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:URL_Request_Timeout];
     [request addValue:@"text/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:[NSString stringWithFormat:@"%lu",(unsigned long)[soapMessage length]] forHTTPHeaderField:@"Content-Length"];
     [request addValue:@"http://www.dongfang-china.com/GetBusLineStatus" forHTTPHeaderField:@"SOAPAction"];
-    [request addValue:[NSString stringWithFormat:@"%d",[soapMessage length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:[soapMessage dataUsingEncoding:NSUTF8StringEncoding]];
     if (_connection) {
@@ -177,7 +189,7 @@ static const void *SelectedKey = &SelectedKey;
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
-    [JDOUtils showHUDText:[NSString stringWithFormat:@"网络连接异常:%ld",error.code] inView:self.view];
+    [JDOUtils showHUDText:[NSString stringWithFormat:@"连接服务器异常:%ld",(long)error.code] inView:self.view];
     NSLog(@"error:%@",error);
 }
 
@@ -244,9 +256,9 @@ static const void *SelectedKey = &SelectedKey;
         JDOBusModel *bus = _buses[i];
         JDOStationModel *nextStation;
         int nextStationIndex;
-        for (int j=0; j<_stations.count; j++) {
-            nextStation = _stations[j];
-            if ([nextStation.fid isEqualToString:bus.toStationId]) {
+        for (int j=0; j<_stations.count-1; j++) {
+            JDOStationModel *aStation = _stations[j];
+            if ([aStation.fid isEqualToString:bus.toStationId]) {
                 nextStation = _stations[j+1];
                 nextStationIndex = j+1;
                 break;
@@ -323,7 +335,7 @@ static const void *SelectedKey = &SelectedKey;
 {
     BMKCircleView* circleView = [[BMKCircleView alloc] initWithOverlay:overlay];
     BMKCircle *circle = (BMKCircle *)overlay;
-    circleView.fillColor = [circle.selected boolValue]?[UIColor colorWithRed:255/255.0f green:180/255.0f blue:0 alpha:1.0f]:[UIColor colorWithRed:55/255.0f green:170/255.0f blue:50/255.0f alpha:1.0f];
+    circleView.fillColor = [circle.selected boolValue]?[UIColor colorWithRed:55/255.0f green:170/255.0f blue:50/255.0f alpha:1.0f]:[UIColor colorWithRed:255/255.0f green:180/255.0f blue:0 alpha:1.0f];
     circleView.strokeColor = [UIColor colorWithHex:@"FEFEFE"];
     circleView.lineWidth = 1.0f;
     
@@ -367,11 +379,11 @@ static const void *SelectedKey = &SelectedKey;
         numLabel.frame = CGRectMake((18-CGRectGetWidth(numLabel.bounds))/2, (18-CGRectGetHeight(numLabel.bounds))/2, CGRectGetWidth(numLabel.bounds), CGRectGetHeight(numLabel.bounds));
         
         if (sa.station.isStart) {
-            annotationView.image = [UIImage imageNamed:@"公交选中"];
-        }else if(sa.station.isEnd){
-            annotationView.image = [UIImage imageNamed:@"公交选中"];
-        }else{
             annotationView.image = [UIImage imageNamed:@"公交未选中"];
+        }else if(sa.station.isEnd){
+            annotationView.image = [UIImage imageNamed:@"公交未选中"];
+        }else{
+            annotationView.image = [UIImage imageNamed:@"公交选中"];
         }
     }else{
         static NSString *AnnotationViewID = @"busAnnotation";

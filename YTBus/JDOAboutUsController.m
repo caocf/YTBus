@@ -7,8 +7,12 @@
 //
 
 #import "JDOAboutUsController.h"
+#import "JDOUtils.h"
+#import "AppDelegate.h"
 
 @interface JDOAboutUsController ()
+
+@property (nonatomic,strong) NSMutableString *banAdvPwd;
 
 @end
 
@@ -16,18 +20,46 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    _banAdvPwd = [[NSMutableString alloc] init];
+    for (int tag=8001; tag<8005; tag++) {
+        [[self.view viewWithTag:tag] addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onPwdClicked:)]];
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    _banAdvPwd = nil;
+    for (int tag=8001; tag<8005; tag++) {
+        UIView *view = [self.view viewWithTag:tag];
+        if(view.gestureRecognizers.count>0){
+            [view removeGestureRecognizer:view.gestureRecognizers[0]];
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
-- (void)onTelClicked
-{
-    NSString *num = [[NSString alloc] initWithFormat:@"telprompt://6690009"];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:num]];
+- (void)onPwdClicked:(UITapGestureRecognizer *)gesture{
+    [_banAdvPwd appendFormat:@"%ld",(long)gesture.view.tag-8000];
+    if ([_banAdvPwd isEqualToString:@"1423"]) {
+        AppDelegate *delegate = [UIApplication sharedApplication].delegate;
+        if([delegate.systemParam[@"allowBanAdv"] isEqualToString:@"1"]){
+            BOOL flg = [[NSUserDefaults standardUserDefaults] boolForKey:@"JDO_Ban_Adv"];
+            if (flg) {
+                [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"JDO_Ban_Adv"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [JDOUtils showHUDText:@"已允许广告展示" inView:self.view];
+            }else{
+                [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"JDO_Ban_Adv"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [JDOUtils showHUDText:@"已屏蔽广告展示" inView:self.view];
+            }
+        }
+    }
 }
 
 /*

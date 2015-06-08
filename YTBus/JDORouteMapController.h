@@ -12,5 +12,6 @@
 @interface JDORouteMapController : UIViewController
 
 @property (nonatomic,strong) BMKTransitRouteLine *route;
+@property (nonatomic,strong) NSString *lineTitle;
 
 @end

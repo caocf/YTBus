@@ -19,6 +19,7 @@
     _toStationId = [dictionary objectForKey:@"站"];
     _gpsX = [NSNumber numberWithDouble:[(NSString *)[dictionary objectForKey:@"GPSX"] doubleValue]];
     _gpsY = [NSNumber numberWithDouble:[(NSString *)[dictionary objectForKey:@"GPSY"] doubleValue]];
+    _state = [NSNumber numberWithInt:[(NSString *)[dictionary objectForKey:@"站内外"] intValue]];
     
     return self;
 }

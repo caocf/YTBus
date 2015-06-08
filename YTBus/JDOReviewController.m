@@ -65,7 +65,7 @@
     [super layoutSubviews];
     
     self.textLabel.frame = CGRectMake(10, 10, Feedback_Name_Width, Feedback_Name_Height);
-    float contentHeight = JDOSizeOfString(self.detailTextLabel.text, CGSizeMake(300, MAXFLOAT), [UIFont systemFontOfSize:Review_Font_Size], NSLineBreakByWordWrapping, 0).height;
+    float contentHeight = [JDOUtils JDOSizeOfString:self.detailTextLabel.text :CGSizeMake(300, MAXFLOAT) :[UIFont systemFontOfSize:Review_Font_Size] :NSLineBreakByWordWrapping :0].height;
     self.detailTextLabel.frame = CGRectMake(10, 10+Feedback_Name_Height+5, 300, contentHeight);
     self.separatorLine.frame = CGRectMake(10, 10+Feedback_Name_Height+5+contentHeight+10, 320-20, 1);
 }
@@ -372,7 +372,7 @@
         NSDictionary *model = [self.listArray objectAtIndex:indexPath.row];
         NSString *content = model[@"content"];
         
-        float contentHeight = JDOSizeOfString(content, CGSizeMake(300, MAXFLOAT), [UIFont systemFontOfSize:Review_Font_Size], NSLineBreakByWordWrapping, 0).height;
+        float contentHeight = [JDOUtils JDOSizeOfString:content :CGSizeMake(300, MAXFLOAT) :[UIFont systemFontOfSize:Review_Font_Size] :NSLineBreakByWordWrapping :0].height;
         return contentHeight + Feedback_Name_Height + 10+15 /*上下边距*/ +5 /*间隔*/ ;
     }
 }

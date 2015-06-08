@@ -131,6 +131,7 @@ typedef enum {
 @property (nonatomic, assign)           CGFloat                 sidePadding;
 @property (nonatomic, assign)           CGFloat                 topMargin;
 @property (nonatomic, assign)           CGFloat                 pointerSize;
+@property (nonatomic, assign)           CGFloat                 titleMessagePadding;
 @property (nonatomic, strong) NSTimer *autoDismissTimer;
 
 /* Contents can be either a message or a UIView */

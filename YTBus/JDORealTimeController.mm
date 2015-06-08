@@ -22,11 +22,14 @@
 #import <QZoneConnection/ISSQZoneApp.h>
 #import "JDOReportController.h"
 #import "MBProgressHUD.h"
+#import "JDOAlertTool.h"
+#import "NSString+SSToolkitAdditions.h"
+#import "UIViewController+MJPopupViewController.h"
+#import "JDOStationMapController.h"
 
 #define GrayColor [UIColor colorWithRed:110/255.0f green:110/255.0f blue:110/255.0f alpha:1.0f]
-// TODO 原来的颜色太重了，换个浅一点的
-//#define PopViewColor [UIColor colorWithRed:75/255.0f green:77/255.0f blue:88/255.0f alpha:1.0f]
-#define PopViewColor [UIColor colorWithRed:150/255.0f green:154/255.0f blue:176/255.0f alpha:1.0f]
+#define PopViewColor [UIColor colorWithRed:210/255.0f green:250/255.0f blue:210/255.0f alpha:1.0f]
+#define PopTextColor [UIColor colorWithHex:@"37aa32"]
 #define LineHeight 32
 
 @interface JDORealTimeCell : UITableViewCell
@@ -90,11 +93,59 @@
 
 @interface JDOToMapButton : UIButton
 
+@property (nonatomic,assign) NSInteger row;
 @property (nonatomic,weak) CMPopTipView *popView;
 
 @end
 
 @implementation JDOToMapButton
+
+@end
+
+// 广告弹出
+
+@interface JDOAdvController : UIViewController
+
+@property (nonatomic,strong) UIImage *advImage;
+@property (nonatomic,strong) NSString *advLinkUrl;
+@property (nonatomic,weak) JDORealTimeController *parent;
+@property (nonatomic,assign) MJPopupViewAnimation type;
+
+@end
+
+@implementation JDOAdvController
+
+- (void) viewDidLoad{
+    UIImageView *iv = [[UIImageView alloc] initWithImage:_advImage];
+    float scale = 1.0f;
+    while (_advImage.size.width/scale > 320-60 || _advImage.size.height/scale > App_Height-120) {
+        scale += 0.2f;
+    }
+    iv.frame = CGRectMake(0, 0, _advImage.size.width/scale, _advImage.size.height/scale);
+    iv.userInteractionEnabled = true;
+    [iv addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(gotoNavigator)]];
+    self.view.frame = iv.frame;
+    self.view.center = _parent.view.center;
+    [self.view addSubview:iv];
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame = CGRectMake(CGRectGetMaxX(iv.frame)-20, CGRectGetMinY(iv.frame)-16, 36, 36);
+    [btn setImage:[UIImage imageNamed:@"广告-关闭"] forState:UIControlStateNormal];
+    [btn addTarget:self action:@selector(closeAdvertise) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+}
+
+- (void) gotoNavigator {
+    if(_advLinkUrl && ([_advLinkUrl hasPrefix:@"http://"] || [_advLinkUrl hasPrefix:@"https://"]) ){
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:_advLinkUrl]];
+        [self.parent dismissPopupViewControllerWithanimationType:self.type];
+    }
+}
+
+- (void) closeAdvertise{
+    [self.parent dismissPopupViewControllerWithanimationType:self.type];
+}
+
 
 @end
 
@@ -113,6 +164,10 @@
     UIImage *screenImage;
     JDORealTimeCell *_currentPopTipViewCell;
     NSIndexPath *_currentPopTipViewIndexPath;
+    __strong JDOAlertTool *alert;
+    BOOL advCanceled;
+    NSString *advLinkUrl;
+    BOOL notShowZhixianHint;
 }
 
 @property (nonatomic,assign) IBOutlet UILabel *lineDetail;
@@ -144,6 +199,9 @@
     BOOL isMenuHidden;
     MBProgressHUD *hud;
     BOOL isFirstRefreshData;
+    UIImage *advImage;
+    UIView *advBackground;
+    JDOAdvController *advController;
 }
 
 - (void)viewDidLoad {
@@ -163,12 +221,17 @@
         dbObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"db_finished" object:nil queue:nil usingBlock:^(NSNotification *note) {
             _db = [JDODatabase sharedDB];
             [self loadData];
+            [self scrollToTargetStation:false];
         }];
     }
     
     self.tableView.sectionHeaderHeight = 15;
     self.tableView.sectionFooterHeight = 15;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
+    
+    // 最后一行考虑到选择站点时给弹窗留出空间，高度增加20
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
+    self.tableView.tableFooterView.backgroundColor = [UIColor clearColor];
     
     _topBackground.backgroundColor=(_busLine.showingIndex==0?[UIColor colorWithHex:@"d2ebed"]:[UIColor colorWithHex:@"d2eddb"]);
 }
@@ -201,8 +264,6 @@
     
     self.navigationItem.rightBarButtonItem.enabled = true;
     [self setFavorBtnState];
-    
-    [self scrollToTargetStation:false];
 }
 
 - (void)setFavorBtnState {  // 收藏标志
@@ -211,7 +272,8 @@
         _favorBtn.selected = false;
         JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
         for (int i=0; i<favorLineIds.count; i++) {
-            NSString *lineDetailId = favorLineIds[i];
+            NSDictionary *dict = favorLineIds[i];
+            NSString *lineDetailId = dict[@"lineDetailId"];
             if([lineDetail.detailId isEqualToString:lineDetailId]){
                 _favorBtn.selected = true;
                 break;
@@ -234,6 +296,7 @@
         aLineDetail.direction = [rs stringForColumn:@"DIRECTION"];
         [lineDetails addObject:aLineDetail];
     }
+    [rs close];
     if(lineDetails.count == 0){
         NSLog(@"线路无详情数据");
         return;
@@ -243,7 +306,7 @@
         _busLine.lineDetailPair = lineDetails;
         _busLine.nearbyStationPair = [NSMutableArray arrayWithObjects:[NSNull null],[NSNull null],nil];
     }else if(_busLine.lineDetailPair.count == 1){
-        // 从附近进入，且附近只有单向线路 或者从站点进入
+        // 从附近进入，且附近只有单向线路 或者从站点进入 或者从收藏进入
         if ( lineDetails.count == 2) {  // 重新查询出双向线路
             JDOBusLineDetail *d0 = _busLine.lineDetailPair[0];
             JDOBusLineDetail *d1 = lineDetails[0];
@@ -288,8 +351,9 @@
         _lineDetail.text = [rs stringForColumn:@"BUSLINENAME"];
         _startTime.text = [rs stringForColumn:@"FIRSTTIME"];
         _endTime.text = [rs stringForColumn:@"LASTTIME"];
-        _price.text = [NSString stringWithFormat:@"%g",[rs doubleForColumn:@"PRICE"]];
+        _price.text = [NSString stringWithFormat:@"%g元",[rs doubleForColumn:@"PRICE"]];
     }
+    [rs close];
     
     // 加载该线路的所有站点信息
     [_stations removeAllObjects];
@@ -321,6 +385,7 @@
         station.gpsY = [NSNumber numberWithDouble:[rs doubleForColumn:@"GPSY"]];
         return station;
     }
+    [rs close];
     return nil;
 }
 
@@ -329,19 +394,197 @@
     [MobClick event:@"realtime"];
     [MobClick beginEvent:@"realtime"];
     
-    [self resetTimer];
-    
+    // 标志位用来保证只有创建后第一次显示时执行，防止从下级navigationController返回时也执行
     if (_isInit) {
-        if (isLoadFinised) {
-            [self scrollToTargetStation:false];
-        }
+        // 滚动tableView的操作需要在这里执行，因为self.tableView的高度在viewDidLoad后会被改变，在viewDidLoad里滚动会有偏移
+        [self scrollToTargetStation:false];
         _isInit = false;
+        
+        // 是否显示插屏广告的逻辑
+        NSMutableDictionary *advTimer = [[[NSUserDefaults standardUserDefaults] objectForKey:@"JDO_Adv_Timer"] mutableCopy];
+        if(!advTimer) {
+            advTimer = [[NSMutableDictionary alloc] init];
+        }
+        NSDate *lastShowTime = (NSDate *)[advTimer valueForKey:_busLine.lineId];
+        NSDate *now = [NSDate date];
+        AppDelegate *delegate = [UIApplication sharedApplication].delegate;
+        NSString *interval = delegate.systemParam[@"advInterval"]?:@"3600"; /*默认一小时*/
+        if ([delegate.systemParam[@"closeLineAdv"] isEqualToString:@"1"]) { // 系统设置中关闭广告
+            [self showRealTime];
+        }else if([[NSUserDefaults standardUserDefaults] boolForKey:@"JDO_Ban_Adv"]){ // 通过密码操作关闭广告
+            [self showRealTime];
+        }else if(!lastShowTime || [now timeIntervalSinceDate:lastShowTime] > [interval intValue] ) {
+            [advTimer setValue:now forKey:_busLine.lineId];
+            [[NSUserDefaults standardUserDefaults] setObject:advTimer forKey:@"JDO_Adv_Timer"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            // 处理广告显示和关闭
+            [self asyncLoadAdvertise];
+            [self performSelector:@selector(cancelAdvertise) withObject:nil afterDelay:2.5f];
+        }else{
+            [self showRealTime];
+        }
+    }else{
+        [self showRealTime];
     }
+}
+
+//- (void) addAdvBg{
+//    advBackground = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, App_Height)];
+//    advBackground.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
+//    UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//    [indicator startAnimating];
+//    indicator.center = advBackground.center;
+//    [advBackground addSubview:indicator];
+//    [[[UIApplication sharedApplication].delegate window] addSubview:advBackground];
+//}
+
+- (void) asyncLoadAdvertise{   // 异步加载广告页
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *userid = [JDOUtils getUUID];
+        
+        NSMutableDictionary *advCounter = [[[NSUserDefaults standardUserDefaults] objectForKey:@"JDO_Adv_Counter"] mutableCopy];
+        if(!advCounter) {
+            advCounter = [[NSMutableDictionary alloc] init];
+        }
+        NSNumber *index = (NSNumber *)[advCounter valueForKey:_busLine.lineId];
+        if (!index) {
+            index = @(0);
+        }else{
+            index = @((index.intValue+1)%3);
+        }
+        [advCounter setValue:index forKey:_busLine.lineId];
+        [[NSUserDefaults standardUserDefaults] setObject:advCounter forKey:@"JDO_Adv_Counter"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        NSString *advUrl = [JDO_Bus_Server stringByAppendingString:[NSString stringWithFormat:@"/index/getXlAdv?busid=%@&index=%@&userid=%@",_busLine.lineId,index,userid] ];
+        NSError *error ;
+        NSData *jsonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:advUrl] options:NSDataReadingUncached error:&error];
+        if(error){
+            NSLog(@"获取广告页json出错:%@",error);
+            return;
+        }
+        if (advCanceled) {
+            return;
+        }
+        NSDictionary *jsonObject = [jsonData objectFromJSONData];
+        if ([jsonObject[@"status"] isEqualToString:@"nodata"]) {
+            dispatch_async(dispatch_get_main_queue(), ^{    // 取消2秒的等待，立刻关闭广告
+                if (!advCanceled) {
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(cancelAdvertise) object:nil];
+                    [self cancelAdvertise];
+                }
+            });
+            return;
+        }
+        NSDictionary *data = [jsonObject objectForKey:@"data"];
+        NSString *advImgUrl = [data valueForKey:@"picUrl"];
+        id linkUrl = [data valueForKey:@"url"];
+        if ([linkUrl isKindOfClass:[NSString class]] && ![linkUrl isEqualToString:@""]) {
+            advLinkUrl = linkUrl;
+        }else{
+            advLinkUrl = nil;
+        }
+        NSString *sha1Url= [advImgUrl SHA1Sum];
+        NSString *cacheFilePath = [[JDOUtils getJDOCacheDirectory] stringByAppendingPathComponent:sha1Url];
+        NSData *imgData = [[NSFileManager defaultManager] contentsAtPath:cacheFilePath];
+        if(imgData){    // 先查本地缓存
+            if(!advImage) {
+                advImage = [UIImage imageWithData:imgData];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (!advCanceled) {
+                        [self showAdvertiseImage];
+                    }
+                });
+            }
+        }else{
+            NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:advImgUrl] options:NSDataReadingUncached error:&error];
+            if(error){
+                NSLog(@"获取广告页图片出错:%@",error);
+                return;
+            }
+            if(!advImage) {
+                advImage = [UIImage imageWithData:imgData];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (!advCanceled) {
+                        [self showAdvertiseImage];
+                    }
+                });
+            }
+            // 图片缓存到磁盘
+            [imgData writeToFile:cacheFilePath options:NSDataWritingAtomic error:&error];
+            if(error){
+                NSLog(@"磁盘缓存广告页图片出错:%@",error);
+                return;
+            }
+        }
+    });
+}
+
+- (void) showAdvertiseImage {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(cancelAdvertise) object:nil];
+    
+    advController = [[JDOAdvController alloc] init];
+    advController.advImage = advImage;
+    advController.advLinkUrl = advLinkUrl;
+    advController.parent = self;
+    switch (arc4random()%9) {
+        case 0: advController.type = MJPopupViewAnimationFade;   break;
+        case 1: advController.type = MJPopupViewAnimationSlideBottomTop;   break;
+        case 2: advController.type = MJPopupViewAnimationSlideBottomBottom;   break;
+        case 3: advController.type = MJPopupViewAnimationSlideTopTop;   break;
+        case 4: advController.type = MJPopupViewAnimationSlideTopBottom;   break;
+        case 5: advController.type = MJPopupViewAnimationSlideLeftLeft;   break;
+        case 6: advController.type = MJPopupViewAnimationSlideLeftRight;   break;
+        case 7: advController.type = MJPopupViewAnimationSlideRightLeft;   break;
+        case 8: advController.type = MJPopupViewAnimationSlideRightRight;   break;
+        default: break;
+    }
+    [self presentPopupViewController:advController animationType:advController.type dismissed:^{
+        [self showRealTime];
+    }];
+}
+
+- (void) cancelAdvertise{
+    advCanceled = true;
+    [self showRealTime];
+}
+
+- (void) showRealTime {
+    if (_busLine.zhixian >= 1 && !notShowZhixianHint) {
+        notShowZhixianHint = true;
+        NSString *key = [NSString stringWithFormat:@"JDO_IgnoreDispatchHint_%@",_busLine.lineId];
+        BOOL isZhuxian = (_busLine.zhixian==1);
+        BOOL exist = [[NSUserDefaults standardUserDefaults] boolForKey:key];
+        if (!exist) {
+            alert = [[JDOAlertTool alloc] init];
+            NSString *msg = isZhuxian?@"本线路为主线，但线路中显示的实时车辆有可能属于支线线路，请您上车前确认。":@"本线路为支线，车辆实时数据并入主线路显示，若需查看请您切换至对应主线路。";
+            [alert showAlertView:self title:@"温馨提醒" message:msg cancelTitle:@"不再提醒" otherTitle1:@"关闭" otherTitle2:nil cancelAction:^{
+                [[NSUserDefaults standardUserDefaults] setBool:true forKey:key];
+                if (isZhuxian) {    // 支线既然无数据，就不要提示选择上车站点了
+                    [self loadRealTimeData];
+                }
+            } otherAction1:^{
+                if (isZhuxian) {
+                    [self loadRealTimeData];
+                }
+            } otherAction2:nil];
+        }else{
+            if (isZhuxian) {
+                [self loadRealTimeData];
+            }
+        }
+    }else{
+        [self loadRealTimeData];
+    }
+}
+
+- (void) loadRealTimeData {
+    [self resetTimer];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetTimer) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void) resetTimer {
-    int interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
+    long interval = [[NSUserDefaults standardUserDefaults] integerForKey:@"refresh_interval"]?:10;
     if (_timer && [_timer isValid]) {
         [_timer invalidate];
     }
@@ -358,6 +601,9 @@
     if ( _timer && [_timer isValid]) {
         [_timer invalidate];
         _timer = nil;
+    }
+    if (_connection) {
+        [_connection cancel];
     }
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
@@ -381,6 +627,7 @@
         NSLog(@"站点信息不存在");
         return;
     }
+    
     JDOStationModel *startStation;
     if(selectedStartStation){
         startStation = selectedStartStation;
@@ -396,7 +643,7 @@
         startStation = _busLine.nearbyStationPair[_busLine.showingIndex];
     }
     
-    if (isFirstRefreshData) {
+    if (isFirstRefreshData && !hud) {
         hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
         hud.mode = MBProgressHUDModeIndeterminate;
         hud.minShowTime = 0.5f;
@@ -408,20 +655,24 @@
     JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
     NSString *lineStatus = [lineDetail.direction isEqualToString:@"下行"]?@"1":@"2";
     
-    NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_MSG,stationId,busLineId,lineStatus];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:GetBusLineStatus_URL]];
+    NSString *soapMessage = [NSString stringWithFormat:GetBusLineStatus_SOAP_MSG,stationId,busLineId,lineStatus];
+    // 从系统参数获取端口号，若未加载系统参数的话，使用默认端口
+    AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    NSString *port = appDelegate.systemParam[@"realtimePort"]?:Default_Realtime_Port;
+    NSString *url = [NSString stringWithFormat:GetBusLineStatus_SOAP_URL,port];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:URL_Request_Timeout];
     [request addValue:@"text/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:[NSString stringWithFormat:@"%lu",(unsigned long)[soapMessage length]] forHTTPHeaderField:@"Content-Length"];
     [request addValue:@"http://www.dongfang-china.com/GetBusLineStatus" forHTTPHeaderField:@"SOAPAction"];
-    [request addValue:[NSString stringWithFormat:@"%d",[soapMessage length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:[soapMessage dataUsingEncoding:NSUTF8StringEncoding]];
+    
     if (_connection) {
         [_connection cancel];
     }
     _connection = [NSURLConnection connectionWithRequest:request delegate:self];
     _webData = [NSMutableData data];
 }
-
 
 -(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{
     [_webData appendData:data];
@@ -437,11 +688,11 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
     if (hud) {
         hud.mode = MBProgressHUDModeText;
-        hud.labelText = [NSString stringWithFormat:@"网络连接异常:%ld",error.code];
+        hud.labelText = [NSString stringWithFormat:@"连接服务器异常:%ld",(long)error.code];
         [hud hide:true afterDelay:1.0f];
         hud = nil;
     }else{
-        [JDOUtils showHUDText:[NSString stringWithFormat:@"网络连接异常:%ld",error.code] inView:self.view];
+        [JDOUtils showHUDText:[NSString stringWithFormat:@"连接服务器异常:%ld",(long)error.code] inView:self.view];
         NSLog(@"error:%@",error);
     }
 }
@@ -458,6 +709,10 @@
         [_jsonResult appendString: string];
     }
 }
+
+//TODO 错误的情况应该处理一下
+/* <?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><soap:Fault><faultcode>soap:Server</faultcode><faultstring>服务器无法处理请求。 ---&gt; 未将对象引用设置到对象的实例。</faultstring><detail /></soap:Fault></soap:Body></soap:Envelope>
+ */
 
 -(void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
     if( [elementName isEqualToString:@"GetBusLineStatusResult"]){
@@ -509,11 +764,11 @@
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError{
     if (hud) {
         hud.mode = MBProgressHUDModeText;
-        hud.labelText = [NSString stringWithFormat:@"解析XML错误:%ld",parseError.code];
+        hud.labelText = [NSString stringWithFormat:@"解析XML错误:%ld",(long)parseError.code];
         [hud hide:true afterDelay:1.0f];
         hud = nil;
     }else{
-        [JDOUtils showHUDText:[NSString stringWithFormat:@"解析XML错误:%ld",parseError.code] inView:self.view];
+        [JDOUtils showHUDText:[NSString stringWithFormat:@"解析XML错误:%ld",(long)parseError.code] inView:self.view];
         NSLog(@"Error:%@",parseError);
     }
     
@@ -598,6 +853,9 @@
         if (_realBusList && _realBusList.count>0) {
             rt.realBusList = [NSMutableArray arrayWithArray:_realBusList];
         }
+    }else if([segue.identifier isEqualToString:@"showStationDetail"]){
+        JDOStationMapController *vc = (JDOStationMapController *)segue.destinationViewController;
+        vc.selectedStation = (JDOStationModel *)sender;
     }
 }
 
@@ -661,9 +919,19 @@
     JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
     sender.selected = !sender.selected;
     if (sender.selected) {
-        [favorLineIds addObject:lineDetail.detailId];
+        JDOStationModel *startStation = [self getStartStation];
+        if (!startStation) {
+            [favorLineIds addObject:@{@"lineDetailId":lineDetail.detailId}];
+        }else{
+            [favorLineIds addObject:@{@"lineDetailId":lineDetail.detailId,@"startStationId":startStation.fid}];
+        }
     }else{
-        [favorLineIds removeObject:lineDetail.detailId];
+        for (int i=0; i<favorLineIds.count; i++) {
+            NSDictionary *dict = favorLineIds[i];
+            if ([dict[@"lineDetailId"] isEqualToString:lineDetail.detailId]) {
+                [favorLineIds removeObject:dict];
+            }
+        }
     }
     [[NSUserDefaults standardUserDefaults] setObject:favorLineIds forKey:@"favor_line"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -684,7 +952,10 @@
     JDOStationModel *startStation = [self getStartStation];
     NSString *direction = [NSString stringWithFormat:@"%@ 开往 %@ 方向",self.busLine.lineName,[[_stations lastObject] name]];
     
-    JDOReportController *vc = [[JDOReportController alloc] initWithStation:startStation.name direction:direction];
+    JDOBusLineDetail *lineDetail = _busLine.lineDetailPair[_busLine.showingIndex];
+    NSString *lineStatus = [lineDetail.direction isEqualToString:@"下行"]?@"1":@"2";
+    
+    JDOReportController *vc = [[JDOReportController alloc] initWithStation:startStation.name direction:direction stationId:startStation.fid lineId:self.busLine.lineId lineDirection:lineStatus];
     UINavigationController *naVC = [[UINavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:naVC animated:true completion:nil];
 }
@@ -722,12 +993,12 @@
                                        defaultContent:nil
                                                 image:[ShareSDK jpegImageWithImage:[UIImage imageNamed:@"分享80"] quality:1.0]
                                                 title:@"“烟台公交”上线啦！等车不再捉急，到点准时来接你。"
-                                                  url:@"http://m.jiaodong.net"
+                                                  url:Redirect_Url
                                           description:content
                                             mediaType:SSPublishContentMediaTypeNews];
     //QQ使用title和content(大概26个字以内)，但能显示字数更少。
     [publishContent addQQUnitWithType:INHERIT_VALUE content:[NSString stringWithFormat:@"我正在查询%@车的实时位置,你也来试试吧!",self.busLine.lineName] title:@"“烟台公交”上线啦！" url:INHERIT_VALUE image:INHERIT_VALUE];
-    [publishContent addQQSpaceUnitWithTitle:@"“烟台公交”上线啦！" url:INHERIT_VALUE site:@"胶东在线" fromUrl:@"http://www.jiaodong.net" comment:nil summary:content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
+    [publishContent addQQSpaceUnitWithTitle:@"“烟台公交”上线啦！" url:INHERIT_VALUE site:@"烟台公交" fromUrl:Redirect_Url comment:nil summary:content image:INHERIT_VALUE type:INHERIT_VALUE playUrl:INHERIT_VALUE nswb:INHERIT_VALUE];
     
     id<ISSQZoneApp> app =(id<ISSQZoneApp>)[ShareSDK getClientWithType:ShareTypeQQSpace];
     NSObject *qZone;
@@ -765,6 +1036,13 @@
     return [_stations count];
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 15.0f;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 15.0f;
+}
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 15)];
     iv.image = [UIImage imageNamed:@"表格圆角上"];
@@ -777,9 +1055,8 @@
     return iv;
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    JDORealTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"lineStation" forIndexPath:indexPath];
+    JDORealTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"lineStation"]; // forIndexPath:indexPath];
     cell.controller = self;
     JDOStationModel *station = _stations[indexPath.row];
     station.start = false;
@@ -817,10 +1094,11 @@
     }
     
     [cell.stationName setText:station.name];
-    [cell.stationSeq setText:[NSString stringWithFormat:@"%d",indexPath.row+1]];
+    [cell.stationSeq setText:[NSString stringWithFormat:@"%ld",indexPath.row+1]];
     CGRect stationFrame = cell.stationName.frame;
     
     if (_busIndexSet && [_busIndexSet containsObject:indexPath]) {
+        // TODO在图标上区分进站和出站状态
         cell.arrivedBus.hidden = false;
         int busNumInSameStation = 0;    // 检查是否超过1辆车
         for (int i=0; i<_realBusList.count; i++){
@@ -852,7 +1130,7 @@
 //- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 //}
 
-- (UIImage *) imageAtPosition:(int)pos selected:(BOOL)selected{
+- (UIImage *) imageAtPosition:(long)pos selected:(BOOL)selected{
     NSString *imageName;
     if (pos == 0) {
         imageName = selected?@"起点选中":@"起点";
@@ -892,22 +1170,23 @@
     JDOSetStartButton *setStartBtn = [JDOSetStartButton buttonWithType:UIButtonTypeCustom];
     setStartBtn.frame = CGRectMake(15, 0, 115, LineHeight);
     setStartBtn.row = indexPath.row;
-    setStartBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    [setStartBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    setStartBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+    [setStartBtn setTitleColor:PopTextColor forState:UIControlStateNormal];
     [setStartBtn setTitle:@"选为上车站点" forState:UIControlStateNormal];
     [setStartBtn addTarget:self action:@selector(setToStartStation:) forControlEvents:UIControlEventTouchUpInside];
-    [setStartBtn setImage:[UIImage imageNamed:@"圆点"] forState:UIControlStateNormal];
+    [setStartBtn setImage:[UIImage imageNamed:@"小标注"] forState:UIControlStateNormal];
     [setStartBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
     [setStartBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 1, 0, 99)];
     [contentView addSubview:setStartBtn];
     
     JDOToMapButton *toMapBtn = [JDOToMapButton buttonWithType:UIButtonTypeCustom];
     toMapBtn.frame = CGRectMake(170, 0, 115, LineHeight);
-    toMapBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    [toMapBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    toMapBtn.row = indexPath.row;
+    toMapBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+    [toMapBtn setTitleColor:PopTextColor forState:UIControlStateNormal];
     [toMapBtn setTitle:@"查看站点详情" forState:UIControlStateNormal];
     [toMapBtn addTarget:self action:@selector(showStationDetail:) forControlEvents:UIControlEventTouchUpInside];
-    [toMapBtn setImage:[UIImage imageNamed:@"圆点"] forState:UIControlStateNormal];
+    [toMapBtn setImage:[UIImage imageNamed:@"小标注"] forState:UIControlStateNormal];
     [toMapBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
     [toMapBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 1, 0, 99)];
     [contentView addSubview:toMapBtn];
@@ -919,8 +1198,8 @@
     popTipView.hasGradientBackground = NO;
     popTipView.cornerRadius = 0.0f;
     popTipView.sidePadding = 10.0f;
-    popTipView.topMargin = 3.0f;
-    popTipView.pointerSize = 3.0f;
+    popTipView.topMargin = 1.0f;
+    popTipView.pointerSize = 5.0f;
     popTipView.hasShadow = true;
     popTipView.backgroundColor = PopViewColor;
     popTipView.textColor = [UIColor whiteColor];
@@ -944,7 +1223,7 @@
 
 - (void) showStationDetail:(JDOToMapButton *)btn{
     [btn.popView dismissAnimated:false];
-    // TODO
+    [self performSegueWithIdentifier:@"showStationDetail" sender:_stations[btn.row]];
 }
 
 - (void)showBusMenu:(JDORealTimeCell *)cell{
@@ -959,11 +1238,18 @@
         NSDictionary *dict = _realBusList[i];
         JDOBusModel *bus = [[JDOBusModel alloc] initWithDictionary:dict];
         if ([station.fid isEqualToString:bus.toStationId]) {
-            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(15, count*LineHeight+5, 120, 22)];
-            busNo.text = [NSString stringWithFormat:@"车牌号：%@",bus.busNo];
-            busNo.textColor = [UIColor whiteColor];
+            UILabel *state = [[UILabel alloc] initWithFrame:CGRectMake(12, count*LineHeight+5, 30, 22)];
+            state.text = [bus.state intValue]==1?@"进站":@"出站";
+            state.textColor = [bus.state intValue]==1?[UIColor colorWithHex:@"FF6100"]:PopTextColor;
+            state.backgroundColor = [UIColor clearColor];
+            state.font = [UIFont boldSystemFontOfSize:14];
+            [contentView addSubview:state];
+            
+            UILabel *busNo = [[UILabel alloc] initWithFrame:CGRectMake(55, count*LineHeight+5, 105, 22)];
+            busNo.text = [NSString stringWithFormat:@"车牌:%@",bus.busNo];
+            busNo.textColor = PopTextColor;
             busNo.backgroundColor = [UIColor clearColor];
-            busNo.font = [UIFont systemFontOfSize:14];
+            busNo.font = [UIFont boldSystemFontOfSize:14];
             [contentView addSubview:busNo];
             
             double distance = 0;
@@ -983,15 +1269,15 @@
                     break;
                 }
             }
-            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(155, count*LineHeight+5, 105, 22)];
+            UILabel *distanceLabel =[[UILabel alloc] initWithFrame:CGRectMake(168, count*LineHeight+5, 90, 22)];
             if (distance>999) {    //%.Ng代表N位有效数字(包括小数点前面的)，%.Nf代表N位小数位
-                distanceLabel.text = [NSString stringWithFormat:@"距离：%.1f公里",distance/1000];
+                distanceLabel.text = [NSString stringWithFormat:@"距离:%.1f公里",distance/1000];
             }else{
-                distanceLabel.text = [NSString stringWithFormat:@"距离：%d米",[@(distance) intValue]];
+                distanceLabel.text = [NSString stringWithFormat:@"距离:%d米",[@(distance) intValue]];
             }
-            distanceLabel.textColor = [UIColor whiteColor];
+            distanceLabel.textColor = PopTextColor;
             distanceLabel.backgroundColor = [UIColor clearColor];
-            distanceLabel.font = [UIFont systemFontOfSize:14];
+            distanceLabel.font = [UIFont boldSystemFontOfSize:14];
             [contentView addSubview:distanceLabel];
             
             JDOClockButton *clock = [JDOClockButton buttonWithType:UIButtonTypeCustom];
@@ -1017,8 +1303,8 @@
     popTipView.hasGradientBackground = NO;
     popTipView.cornerRadius = 0.0f;
     popTipView.sidePadding = 10.0f;
-    popTipView.topMargin = -3.0f;
-    popTipView.pointerSize = 3.0f;
+    popTipView.topMargin = -5.0f;
+    popTipView.pointerSize = 5.0f;
     popTipView.hasShadow = true;
     popTipView.backgroundColor = PopViewColor;
     popTipView.textColor = [UIColor whiteColor];

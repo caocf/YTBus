@@ -16,6 +16,7 @@
 @property(nonatomic,strong) NSString *toStationId;
 @property(nonatomic,strong) NSNumber *gpsX;
 @property(nonatomic,strong) NSNumber *gpsY;
+@property(nonatomic,strong) NSNumber *state;
 
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 

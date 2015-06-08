@@ -23,10 +23,11 @@
 #import "WXApi.h"
 #import "WeiboSDK.h"
 #import <QZoneConnection/ISSQZoneApp.h>
+#import "JDOStartupController.h"
+#import "JDOAlertTool.h"
 
 #define Adv_Min_Show_Seconds 2.0f
 #define Param_Max_Wait_Seconds 5.0f
-#define Advertise_Cache_File @"advertise"
 
 @interface AppDelegate () <BMKGeneralDelegate,BMKOfflineMapDelegate>{
     BMKOfflineMap* _offlineMap;
@@ -36,12 +37,12 @@
 
 @implementation AppDelegate{
     BOOL canEnterMain;
-    __strong UIViewController *controller;
+    __strong JDOStartupController *controller;
     UIImage *advImage;
     BOOL checkVersionFinished;
     BOOL showAdvFinished;
     MBProgressHUD *hud;
-    NSDictionary *onlineParam;
+    __strong JDOAlertTool *alert;
 }
 
 + (void)initialize{
@@ -62,7 +63,9 @@
 //        [application setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
     }
     
-    canEnterMain = true;
+    canEnterMain = false;
+    checkVersionFinished = false;
+    _realtimeRequestCount = 0;
     
     // 友盟配置
     [self initUMengConfig];
@@ -74,7 +77,7 @@
     [self initPushConfig];
     
     // 使用LaunchImage作为背景占位图，如果从友盟检测到的最小允许版本高于当前版本，则不进入storyboard，直接退出应用或进入appstore下载
-    controller = [[UIViewController alloc] init];
+    controller = [[JDOStartupController alloc] init];
     if (Screen_Height > 480) {
         controller.view = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchImage-568h"]];
     }else{
@@ -86,14 +89,15 @@
     self.window.rootViewController = controller;
     [self.window makeKeyAndVisible];
     
-//    [self asyncLoadAdvertise];
+    [self asyncLoadAdvertise];
     [self performSelector:@selector(showAdvertiseView) withObject:nil afterDelay:2.0f];
     
+    _systemParam = [NSMutableDictionary new];
     [[JDOHttpClient sharedBUSClient] getPath:@"index/getSysParams" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSData *jsonData = responseObject;
         NSDictionary *obj = [jsonData objectFromJSONData];
         if ([obj[@"status"] intValue]==1) {
-            onlineParam = obj[@"data"];
+            [_systemParam addEntriesFromDictionary:obj[@"data"]];
             [self onVersionCheckFinished:true];
         }else{
             NSLog(@"获取参数结果错误:%@",obj[@"info"]);
@@ -126,11 +130,10 @@
     [ShareSDK allowExchangeDataEnabled:true];
     [ShareSDK ssoEnabled:true];
     
-    
-    // TODO 分享平台尚未提交审核
+    // TODO 分享平台尚未提交审核，分享界面需要适配微信内置浏览器
     [ShareSDK connectSinaWeiboWithAppKey:@"2993327297"
                                appSecret:@"7027a9f77cdd1d5ecdee09b433502ece"
-                             redirectUri:@"http://m.jiaodong.net"
+                             redirectUri:Redirect_Url
                              weiboSDKCls:[WeiboSDK class]];
     
     [ShareSDK connectQZoneWithAppKey:@"1104226312"
@@ -174,19 +177,13 @@
     NSError *error;
     if ([fm fileExistsAtPath:baidumapDir isDirectory:&isDir]) {
         if (isDir) {
-            NSLog(@"目录已存在");
-            if ([fm fileExistsAtPath:baidumapDes]) {
-                NSLog(@"离线地图已存在");
-            }else{
+            if (![fm fileExistsAtPath:baidumapDes]) {
                 doCopy = true;
             }
-        }else{
-            NSLog(@"%@不是目录",baidumapDir);
         }
     }else{
         BOOL success = [fm createDirectoryAtPath:baidumapDir withIntermediateDirectories:true attributes:nil error:&error];
         if ( success ) {
-            NSLog(@"创建地图目录成功");
             doCopy = true;
         }else{
             NSLog(@"创建地图目录失败:%@",error);
@@ -194,45 +191,42 @@
     }
     
     if( doCopy ){
-        NSLog(@"开始复制离线地图");
         BOOL result = [fm copyItemAtPath:baidumapSrc toPath:baidumapDes error:&error];
         if(!result){
             NSLog(@"复制离线地图失败:%@",error);
-        }else{
-            NSLog(@"复制离线地图成功");
         }
     }
 }
 
 - (void)onGetOfflineMapState:(int)type withState:(int)state{
-    if (type == TYPE_OFFLINE_UPDATE) {
-        //id为state的城市正在下载或更新，start后会毁掉此类型
-        BMKOLUpdateElement* updateInfo;
-        updateInfo = [_offlineMap getUpdateInfo:state];
-        NSLog(@"城市名：%@,下载比例:%d",updateInfo.cityName,updateInfo.ratio);
-    }
-    if (type == TYPE_OFFLINE_NEWVER) {
-        //id为state的state城市有新版本,可调用update接口进行更新
-        BMKOLUpdateElement* updateInfo;
-        updateInfo = [_offlineMap getUpdateInfo:state];
-        NSLog(@"是否有更新%d",updateInfo.update);
-    }
-    if (type == TYPE_OFFLINE_UNZIP) {
-        //正在解压第state个离线包，导入时会回调此类型
-    }
-    if (type == TYPE_OFFLINE_ZIPCNT) {
-        //检测到state个离线包，开始导入时会回调此类型
-        NSLog(@"检测到%d个离线包",state);
-    }
-    if (type == TYPE_OFFLINE_ERRZIP) {
-        //有state个错误包，导入完成后会回调此类型
-        NSLog(@"有%d个离线包导入错误",state);
-    }
-    if (type == TYPE_OFFLINE_UNZIPFINISH) {
-        NSLog(@"成功导入%d个离线包",state);
-        //导入成功state个离线包，导入成功后会回调此类型
-    }
-    
+//    if (type == TYPE_OFFLINE_UPDATE) {
+//        //id为state的城市正在下载或更新，start后会毁掉此类型
+//        BMKOLUpdateElement* updateInfo;
+//        updateInfo = [_offlineMap getUpdateInfo:state];
+//        NSLog(@"城市名：%@,下载比例:%d",updateInfo.cityName,updateInfo.ratio);
+//    }
+//    if (type == TYPE_OFFLINE_NEWVER) {
+//        //id为state的state城市有新版本,可调用update接口进行更新
+//        BMKOLUpdateElement* updateInfo;
+//        updateInfo = [_offlineMap getUpdateInfo:state];
+//        NSLog(@"是否有更新%d",updateInfo.update);
+//    }
+//    if (type == TYPE_OFFLINE_UNZIP) {
+//        //正在解压第state个离线包，导入时会回调此类型
+//    }
+//    if (type == TYPE_OFFLINE_ZIPCNT) {
+//        //检测到state个离线包，开始导入时会回调此类型
+//        NSLog(@"检测到%d个离线包",state);
+//    }
+//    if (type == TYPE_OFFLINE_ERRZIP) {
+//        //有state个错误包，导入完成后会回调此类型
+//        NSLog(@"有%d个离线包导入错误",state);
+//    }
+//    if (type == TYPE_OFFLINE_UNZIPFINISH) {
+//        NSLog(@"成功导入%d个离线包",state);
+//        //导入成功state个离线包，导入成功后会回调此类型
+//    }
+//    
 }
 
 - (void) initUMengConfig{
@@ -248,7 +242,7 @@
     
     // 友盟用户反馈
     [UMFeedback setAppkey:@"54a8b1c7fd98c5d5850008c5"];
-    [UMFeedback setLogEnabled:true];
+    [UMFeedback setLogEnabled:false];
     
     // 友盟集成测试获取测试设备唯一识别码
 //    Class cls = NSClassFromString(@"UMANUtil");
@@ -315,7 +309,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         int width = [[NSNumber numberWithFloat:Screen_Width*[UIScreen mainScreen].scale] intValue];
         int height = [[NSNumber numberWithFloat:Screen_Height*[UIScreen mainScreen].scale] intValue];
-        NSString *advUrl = [JDO_Server_URL stringByAppendingString:[NSString stringWithFormat:@"/Data/getAdv?width=%d&height=%d",width,height] ];
+        NSString *advUrl = [JDO_Bus_Server stringByAppendingString:[NSString stringWithFormat:@"/index/getStartAdv?width=%d&height=%d",width,height] ];
         NSError *error ;
         NSData *jsonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:advUrl] options:NSDataReadingUncached error:&error];
         if(error){
@@ -325,14 +319,13 @@
         NSDictionary *jsonObject = [[jsonData objectFromJSONData] objectForKey:@"data"];
         
         // 每次广告图更新后的URL会变动，则URL缓存就能够区分出是从本地获取还是从网络获取，没有必要使用版本号机制
-        NSString *advServerURL = [jsonObject valueForKey:@"path"];
+        NSString *advServerURL = [jsonObject valueForKey:@"picUrl"];
         NSString *advLocalURL = [[NSUserDefaults standardUserDefaults] objectForKey:@"adv_url"];
         
         // 第一次加载或者NSUserDefault被清空，以及服务器地址与本地不一致时，从网络加载图片。同时需要保证服务器获得的advServerURL不是nil
         if( (advLocalURL==nil || ![advLocalURL isEqualToString:advServerURL]) && advServerURL!= nil ){
-            NSString *advImgUrl = [JDO_RESOURCE_URL stringByAppendingString:advServerURL];
             // 同步方法不使用URLCache，若使用AFNetworking则无法禁用缓存
-            NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:advImgUrl] options:NSDataReadingUncached error:&error];
+            NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:advServerURL] options:NSDataReadingUncached error:&error];
             if(error){
                 NSLog(@"获取广告页图片出错:%@",error);
                 return;
@@ -386,12 +379,12 @@
         hud.labelText = @"正在检查版本信息";
     }else{
         if (canEnterMain) {
-            [self enterMainStoryboard];
+            [controller checkDBInfo];
         }
     }
 }
 
-// TODO 从后台获取在线参数，友盟的在线参数有如下几个问题：
+// 从后台获取在线参数，友盟的在线参数有如下几个问题：
 // 1.网络丢包率高的情况下，请求超时时间太长，会导致界面卡在版本检查的地方
 // 2.[MobClick getAdURL]同样会触发该回调，若被调用过早，会导致逻辑错乱
 // 3.在客户端同样的网络情况下，响应时间不稳定。
@@ -415,15 +408,15 @@
         float sysVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
         NSString *minVersion;
         if (sysVersion>=5.0f && sysVersion<6.0f) {
-            minVersion = onlineParam[@"iOS5MinVersion"];
+            minVersion = _systemParam[@"iOS5MinVersion"];
         }else if(sysVersion>=6.0f && sysVersion<7.0f){
-            minVersion = onlineParam[@"iOS6MinVersion"];
+            minVersion = _systemParam[@"iOS6MinVersion"];
         }else if(sysVersion>=7.0f && sysVersion<8.0f){
-            minVersion = onlineParam[@"iOS7MinVersion"];
+            minVersion = _systemParam[@"iOS7MinVersion"];
         }else if(sysVersion>=8.0f && sysVersion<9.0f){
-            minVersion = onlineParam[@"iOS8MinVersion"];
+            minVersion = _systemParam[@"iOS8MinVersion"];
         }else{
-            minVersion = onlineParam[@"minVersion"];
+            minVersion = _systemParam[@"iOSMinVersion"];    //TODO 最低版本号和下载地址都分成安卓和iOS
         }
         NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         
@@ -432,34 +425,28 @@
             // 如果还没进入广告页，就没必要展示广告页了
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(showAdvertiseView) object:nil];
             // 弹AlertView提示，程序不能继续向下执行
-            if (After_iOS8) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"当前版本过低，请更新后使用。"  message:nil preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action){
-                    exit(0);
-                }]];
-                [alert addAction:[UIAlertAction actionWithTitle:@"更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-                    [iVersion sharedInstance].updateURL = [NSURL URLWithString:onlineParam[@"updateURL"]];
-                    [[iVersion sharedInstance] openAppPageInAppStore];
-                    exit(0);
-                }]];
-                [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
-            }else{
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"当前版本过低，请更新后使用。" message:nil delegate:self cancelButtonTitle:@"退出" otherButtonTitles:@"更新", nil];
-                [alert show];
-            }
+            alert = [[JDOAlertTool alloc] init];
+            [alert showAlertView:self.window.rootViewController title:@"应用版本过低，请更新后使用。" message:nil cancelTitle:@"退出" otherTitle1:@"更新" otherTitle2:nil cancelAction:^{
+                exit(0);
+            } otherAction1:^{
+//                [iVersion sharedInstance].updateURL = [NSURL URLWithString:_systemParam[@"iOSUpdateUrl"]];
+                [[iVersion sharedInstance] openAppPageInAppStore];
+                exit(0);
+            } otherAction2:nil];
         }else{
             if (showAdvFinished) {
-                [self enterMainStoryboard];
+                [controller checkDBInfo];
+            }else{
+                canEnterMain = true;
             }
         }
     }else{
         if (showAdvFinished) {
-            [self enterMainStoryboard];
+            [controller checkDBInfo];
+        }else{
+            canEnterMain = true;
         }
     }
-    
-    
-    
 }
 
 - (void)enterMainStoryboard{
@@ -467,49 +454,58 @@
     // 保证只被执行一次
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        UIStoryboard * storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        self.window.rootViewController = [storyBoard instantiateInitialViewController];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIStoryboard * storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIView *previousView = self.window.rootViewController.view;
+            self.window.rootViewController = [storyBoard instantiateInitialViewController];
+            [self.window.rootViewController.view addSubview:previousView];
+            [UIView animateWithDuration:0.25f animations:^{
+                CGRect frame = previousView.frame;
+                previousView.frame = CGRectMake(-frame.size.width*0.5f,-frame.size.height*0.5f,frame.size.width*2,frame.size.height*2);
+                previousView.alpha = 0;
+            } completion:^(BOOL finished) {
+                [previousView removeFromSuperview];
+            }];
+        });
     });
     
 //    @synchronized (self){
 //        if (canEnterMain) {
 //            canEnterMain = false;
-//            UIStoryboard * storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//            self.window.rootViewController = [storyBoard instantiateInitialViewController];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                @try{
+//                    UIStoryboard * storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//                    self.window.rootViewController = [storyBoard instantiateInitialViewController];
+//                }@catch(NSException *exception){
+//                    NSLog(@"exception:%@", exception);    // iOS5.1以下不能识别localized string格式的storyboard
+//                }
+//            });
 //        }
 //    }
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == 1) {
-        [iVersion sharedInstance].updateURL = [NSURL URLWithString:onlineParam[@"updateURL"]];
-        [[iVersion sharedInstance] openAppPageInAppStore];
-    }
-    exit(0);
-}
-
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    if (notificationSettings.types != UIUserNotificationTypeNone) {
-        [application registerForRemoteNotifications];
-    }
-}
-
-
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-
-}
-
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-
-}
+//- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+//    if (notificationSettings.types != UIUserNotificationTypeNone) {
+//        [application registerForRemoteNotifications];
+//    }
+//}
+//
+//
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+//
+//}
+//
+//- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+//
+//}
 
 //- (void)application:(UIApplication *)applicatio didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
 //    
 //}
 
-- (void)application:(UIApplication *)applicatio didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    
-}
+//- (void)application:(UIApplication *)applicatio didReceiveRemoteNotification:(NSDictionary *)userInfo {
+//    
+//}
 
 
 //- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler{

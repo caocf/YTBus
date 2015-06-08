@@ -7,21 +7,21 @@
 //
 
 #import "JDOMainTabController.h"
-#import "JDODatabase.h"
-#import "AFNetworking.h"
-#import "SSZipArchive.h"
-#import "MBProgressHUD.h"
 #import "JDOConstants.h"
+#import "UMFeedback.h"
 #import "JDOHttpClient.h"
+#import "JSONKit.h"
+#import "iVersion.h"
 
+@interface JDOMainTabController () <UITabBarDelegate,iVersionDelegate>
 
-@interface JDOMainTabController () <SSZipArchiveDelegate> {
-    MBProgressHUD *hud;
-}
+@property (strong, nonatomic) UMFeedback *feedback;
 
 @end
 
-@implementation JDOMainTabController
+@implementation JDOMainTabController{
+    BOOL notShowHint;
+}
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
     self = [super initWithCoder:aDecoder];
@@ -56,52 +56,72 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-//    if (![JDODatabase isDBExistInDocument]) {
-//        // 若document中不存在数据库文件，则下载数据库文件
-//        hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
-////        hud.minShowTime = 1.0f;
-//        hud.labelText = @"初始化数据";
-//        NSLog(@"开始下载");
-//        [[JDOHttpClient sharedDFEClient] getPath:Download_Action parameters:@{@"method":@"downloadDb"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//            NSLog(@"下载完成，开始保存");
-//            NSData *zipData = (NSData *)responseObject;
-//            BOOL success = [JDODatabase saveZipFile:zipData];
-//            NSLog(@"保存完成，开始解压");
-//            if ( success) { // 解压缩文件
-//                BOOL result = [JDODatabase unzipDBFile:self];
-//                if ( result) {
-//                    // 正在解压
-//                }else{  // 解压文件出错
-                    [JDODatabase openDB:1];
-//                }
-//            }else{  // 保存文件出错
-//                [JDODatabase openDB:1];
-//            }
-//            [hud hide:true];
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            NSLog(@"Error: %@", error);
-//            [JDODatabase openDB:1];
-//            [hud hide:true];
-//        }];
-//    }else{
-//        //TODO 更新最新数据
-//        [JDODatabase openDB:2];
-////    http://218.56.32.7:4998/SynBusSoftWebservice/services/SynBusSoft
-////        SOAPAction: http://service.epfgetAppVersion
-////        <v:Envelope xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:d="http://www.w3.org/2001/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:getAppVersion id="o0" c:root="1" xmlns:n0="http://service.epf" /></v:Body></v:Envelope>
-//    }
+    notShowHint = false;
+
+    // UITabBarController本身就会把self设置为tabBar的delegate，这里再手动设置反而会报错！
+//    self.tabBar.delegate = self;
     
     //TODO 在这里就检查一遍意见反馈和新闻资讯，有新的话在“更多”那里加红点提示
+    self.feedback = [UMFeedback sharedInstance];
+    if (self.feedback.theNewReplies.count>0) {
+        [self showHintPoint];
+    }else if([[NSUserDefaults standardUserDefaults] boolForKey:@"JDO_Read_Guide"] == false){
+        [self showHintPoint];
+    }
+    
+    // 检查最新资讯
+    long newestAid = [[NSUserDefaults standardUserDefaults] integerForKey:@"JDO_Newest_Aid"]?:1;
+    [[JDOHttpClient sharedJDOClient] getPath:@"Data/getNewestAid" parameters:@{@"aid":@(newestAid),@"cid":@"47"} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSData *jsonData = responseObject;
+        NSDictionary *obj = [jsonData objectFromJSONData];
+        if ([obj[@"status"] isEqualToString:@"exist"]) {
+            [self showHintPoint];
+            self.newsId = obj[@"data"];
+            self.hasNewInfo = true;
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+    
+    // 检查新版本
+    // Apple新的审核规范禁止应用内版本升级检查
+//    [iVersion sharedInstance].delegate = self;
+//    [[iVersion sharedInstance] checkForNewVersion];
 }
 
-- (void)zipArchiveDidUnzipArchiveAtPath:(NSString *)path zipInfo:(unz_global_info)zipInfo unzippedPath:(NSString *)unzippedPath{
-    NSLog(@"解压完成，打开数据库");
-    [JDODatabase openDB:2];
+- (void)iVersionDidNotDetectNewVersion{
+    self.hasNewVersion = 1;
 }
 
-- (void)zipArchiveProgressEvent:(NSInteger)loaded total:(NSInteger)total{
-    NSLog(@"解压进度:%g",loaded*1.0/total);
+- (void)iVersionVersionCheckDidFailWithError:(NSError *)error{
+    self.hasNewVersion = 2;
+}
+
+- (void)iVersionDidDetectNewVersion:(NSString *)version details:(NSString *)versionDetails{
+    self.versionNumber = version;
+    self.hasNewVersion = 3;
+}
+
+- (BOOL)iVersionShouldDisplayNewVersion:(NSString *)version details:(NSString *)versionDetails{
+    return false;   // 不使用弹出Alert的方式提示新版本
+}
+
+- (void) showHintPoint {
+    UIView *badge = [self.tabBar viewWithTag:7001];
+    if (!badge && !notShowHint) {
+        badge = [[UIView alloc] initWithFrame:CGRectMake(298, 3, 8, 8)];
+        badge.layer.cornerRadius = 4;
+        badge.tag = 7001;
+        badge.backgroundColor = [UIColor colorWithHex:@"da4000"];
+        [self.tabBar addSubview:badge];
+    }
+}
+
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item{
+    if (item == [tabBar.items lastObject]) {
+        [[tabBar viewWithTag:7001] removeFromSuperview];
+        notShowHint = true;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -109,14 +129,13 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    UIViewController *vc = [segue destinationViewController];
+//}
+
 
 @end

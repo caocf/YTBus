@@ -20,5 +20,6 @@
 @property(nonatomic,strong) NSMutableArray *lineDetailPair;
 @property(nonatomic,strong) NSMutableArray *nearbyStationPair;
 @property(nonatomic,assign) int showingIndex;
+@property(nonatomic,assign) int zhixian;
 
 @end

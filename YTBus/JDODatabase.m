@@ -43,11 +43,9 @@ static int currentDB;
 
 }
 
-+ (void) openDB:(int) which{   //   which:1,2
-    if (DB) {
-        if (which==currentDB) {
-            return;
-        }
++ (void) openDB:(int) which force:(BOOL) force{
+    if (DB && which==currentDB && !force) {
+        return;
     }
     currentDB = which;
     NSString *path = which==1?dbPathAtBundle:dbPath;
@@ -62,6 +60,10 @@ static int currentDB;
             [[NSNotificationCenter defaultCenter] postNotificationName:@"db_finished" object:nil];
         }
     }
+}
+
++ (void) openDB:(int) which {   //   which:1,2
+    [self openDB:which force:false];
 }
 
 + (FMDatabase *) sharedDB{

@@ -78,7 +78,12 @@
 - (void)loadFavorLines{
     _favorLines = [NSMutableArray new];
     // 从NSUserDefault获取收藏线路的id
-    NSArray *favorLineIds = [[NSUserDefaults standardUserDefaults] arrayForKey:@"favor_line"];
+    NSArray *favorLineObjects = [[NSUserDefaults standardUserDefaults] arrayForKey:@"favor_line"];
+    NSMutableArray *favorLineIds = [[NSMutableArray alloc] init];
+    for (int i=0; i<favorLineObjects.count; i++) {
+        NSDictionary *dict = favorLineObjects[i];
+        [favorLineIds addObject:dict[@"lineDetailId"]];
+    }
     NSString *ids = [favorLineIds componentsJoinedByString:@","];
     if(ids){
         FMResultSet *rs = [_db executeQuery:[GetLineById stringByReplacingOccurrencesOfString:@"?" withString:ids]];
@@ -86,6 +91,7 @@
             JDOBusLine *busLine = [JDOBusLine new];
             busLine.lineId = [rs stringForColumn:@"LINEID"];
             busLine.lineName = [rs stringForColumn:@"BUSLINENAME"];
+            busLine.zhixian = [rs intForColumn:@"ZHIXIAN"];
             
             JDOBusLineDetail *busLineDetail = [JDOBusLineDetail new];
             busLineDetail.detailId = [rs stringForColumn:@"DETAILID"];
@@ -93,8 +99,30 @@
             busLineDetail.direction = [rs stringForColumn:@"DIRECTION"];
             
             busLine.lineDetailPair = [NSMutableArray arrayWithObject:busLineDetail];
+            for (int i=0; i<favorLineObjects.count; i++) {
+                NSDictionary *dict = favorLineObjects[i];
+                // 若收藏的时候指定了上车站点，则需要查询该站点的信息(主要是使用fid,name)
+                if ([dict[@"lineDetailId"] isEqualToString:busLineDetail.detailId]) {
+                    if (dict[@"startStationId"]) {
+                        NSString *stationId = dict[@"startStationId"];
+                        FMResultSet *s2 = [_db executeQuery:@"select STATIONNAME,GEOGRAPHICALDIRECTION,MAPX,MAPY FROM STATION where id = ?",stationId];
+                        if ([s2 next]) {
+                            JDOStationModel *station = [JDOStationModel new];
+                            station.fid = stationId;
+                            station.name = [s2 stringForColumn:@"STATIONNAME"];
+                            station.direction = [s2 stringForColumn:@"GEOGRAPHICALDIRECTION"];
+                            station.gpsX = [NSNumber numberWithDouble:[s2 doubleForColumn:@"MAPX"]];
+                            station.gpsY = [NSNumber numberWithDouble:[s2 doubleForColumn:@"MAPY"]];
+                            busLine.nearbyStationPair = [NSMutableArray arrayWithObject:station];
+                        }
+                        [s2 close];
+                    }
+                    break;
+                }
+            }
             [_favorLines addObject:busLine];
         }
+        [rs close];
     }
     [self sortLines:_favorLines];
     _filterFavorLines = [_favorLines copy];
@@ -107,10 +135,12 @@
         JDOBusLine *busLine = [JDOBusLine new];
         busLine.lineId = [rs stringForColumn:@"ID"];
         busLine.lineName = [rs stringForColumn:@"BUSLINENAME"];
+        busLine.zhixian = [rs intForColumn:@"ZHIXIAN"];
         busLine.stationA = [rs stringForColumn:@"STATIONANAME"];
         busLine.stationB = [rs stringForColumn:@"STATIONBNAME"];
         [_allLines addObject:busLine];
     }
+    [rs close];
     [self sortLines:_allLines];
     _filterAllLines = [_allLines copy];
 }
@@ -148,11 +178,14 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"toRealtimeFromLine"]) {
         JDORealTimeController *rt = segue.destinationViewController;
+        JDOBusLine *busLine;
         if (selectedIndexPath.section == 0 && _filterFavorLines.count>0) {
-            rt.busLine = _filterFavorLines[selectedIndexPath.row];
+            busLine = _filterFavorLines[selectedIndexPath.row];
         }else{
-            rt.busLine = _filterAllLines[selectedIndexPath.row];
+            busLine = _filterAllLines[selectedIndexPath.row];
         }
+        rt.busLine = busLine;
+        rt.busLine.zhixian = busLine.zhixian;   // copy对象未能正确复制zhixian属性，却能复制showingIndex属性！！原因未知。。。
     }
 }
 
@@ -224,7 +257,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier = @"busLine";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier]; //forIndexPath:indexPath];
     if (indexPath.row%2==0) {
         cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"线路单元格背景"]];
     }else{
@@ -242,6 +275,11 @@
         [(UIImageView *)[cell viewWithTag:1004] setImage:[UIImage imageNamed:@"路牌-收藏"]];
         [(UIImageView *)[cell viewWithTag:1005] setImage:[UIImage imageNamed:@"始"]];
         [(UIImageView *)[cell viewWithTag:1006] setImage:[UIImage imageNamed:@"终"]];
+        if (busLine.nearbyStationPair && busLine.nearbyStationPair.count > 0) {
+            [(UIImageView *)[cell viewWithTag:1007] setHidden:false];
+        }else{
+            [(UIImageView *)[cell viewWithTag:1007] setHidden:true];
+        }
     }else{
         busLine =  (JDOBusLine *)_filterAllLines[indexPath.row];
         [(UILabel *)[cell viewWithTag:1001] setText:busLine.lineName];
@@ -250,6 +288,7 @@
         [(UIImageView *)[cell viewWithTag:1004] setImage:[UIImage imageNamed:@"路牌-线路"]];
         [(UIImageView *)[cell viewWithTag:1005] setImage:[UIImage imageNamed:@"线路圆点"]];
         [(UIImageView *)[cell viewWithTag:1006] setImage:[UIImage imageNamed:@"线路圆点"]];
+        [(UIImageView *)[cell viewWithTag:1007] setHidden:true];
     }
     
     

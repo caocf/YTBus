@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JDOStationModel.h"
 
 @interface JDOStationMapController : UIViewController
 
 @property (nonatomic,strong) NSString *stationName;
+@property (nonatomic,strong) JDOStationModel *selectedStation;
 
 @end

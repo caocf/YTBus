@@ -8,6 +8,7 @@
 
 #import "JDOUtils.h"
 #import "MBProgressHUD.h"
+#import "STKeychain.h"
 
 @implementation JDOUtils
 
@@ -93,8 +94,7 @@ static NSDateFormatter *dateFormatter;
     [dateFormatter setDateFormat:formatString];
     return [dateFormatter dateFromString:date];
 }
-
-CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font, NSLineBreakMode lineBreakMode, int numberOfLines) {
++ (CGSize) JDOSizeOfString:(NSString *)string :(CGSize) constrainedToSize :(UIFont *) font :(NSLineBreakMode) lineBreakMode :(int) numberOfLines{
     if (string.length == 0) {
         return CGSizeZero;
     }
@@ -113,6 +113,73 @@ CGSize JDOSizeOfString(NSString *string, CGSize constrainedToSize, UIFont *font,
     }
     
     return size;
+}
+
++ (NSArray *) getXmlTagAttrib:(NSString *)xmlStr andTag:(NSString *)tag andAttr:(NSString *)attr {
+    NSString *regxpForTag = [[@"<\\s*" stringByAppendingString:tag] stringByAppendingString:@"\\s+([^>]*)\\s*/>"];
+    NSString *regxpForTagAttrib = [attr stringByAppendingString:@"=\"([^\"]+)\""];
+    
+    NSRegularExpression *regex1 = [NSRegularExpression regularExpressionWithPattern:regxpForTag options:NSRegularExpressionCaseInsensitive error:nil];
+    
+    NSRegularExpression *regex2 = [NSRegularExpression regularExpressionWithPattern:regxpForTagAttrib options:NSRegularExpressionCaseInsensitive error:nil];
+    
+    NSArray *matches =    nil;
+    NSMutableArray *retArray =[[NSMutableArray alloc] init];
+    matches = [regex1 matchesInString:xmlStr options:0 range:NSMakeRange(0, [xmlStr length])];
+    for (NSTextCheckingResult *match in matches) {
+        NSRange range = [match range];
+        NSString *subString = [xmlStr substringWithRange:range];
+        NSTextCheckingResult *firstSubMatch = [regex2 firstMatchInString:subString options:0 range:NSMakeRange(0, [subString length])];
+        NSRange subRange = [firstSubMatch rangeAtIndex:1];
+        NSString *retString = [subString substringWithRange:subRange];
+        [retArray addObject:retString];
+    }
+    return retArray;
+}
+
++ (BOOL) checkTelephone:(NSString *)number{
+    // 扩大手机号正则匹配的范围，防止增加的176等号段超出该范围
+    NSString *MOBILE = @"^1[3-8]\\d{9}$";
+    NSPredicate *regex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MOBILE];
+    return [regex evaluateWithObject:number];
+}
+
++ (NSString *) getUUID{
+    NSError *error;
+    NSString *uuid = [STKeychain getPasswordForUsername:@"YTBus" andServiceName:@"uuid" error:&error];
+    if (error != nil) {
+        NSLog(@"GetUUID Error:%li",(long)error.code);
+        return @"00000000";
+    }
+    if (uuid == nil || [uuid isEqualToString:@""]){
+        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef stringRef = CFUUIDCreateString (kCFAllocatorDefault,uuidRef);
+        uuid = (__bridge_transfer NSString*)stringRef;
+        BOOL success = [STKeychain storeUsername:@"YTBus" andPassword:uuid forServiceName:@"uuid" updateExisting:true error:&error];
+        if (!success) {
+            NSLog(@"SaveUUID Error:%li",(long)error.code);
+            return @"00000000";
+        }
+    }
+    return uuid;
+}
+
++ (BOOL) deleteUUID{
+    NSError *error;
+    NSString *uuid = [STKeychain getPasswordForUsername:@"YTBus" andServiceName:@"uuid" error:&error];
+    if (error != nil) {
+        NSLog(@"GetUUID Error:%li",(long)error.code);
+        return false;
+    }
+    if (uuid == nil || [uuid isEqualToString:@""]){
+        return true;
+    }else{
+        BOOL success = [STKeychain deleteItemForUsername:@"YTBus" andServiceName:@"uuid" error:&error];
+        if(success) {
+            return true;
+        }
+    }
+    return false;
 }
 
 @end

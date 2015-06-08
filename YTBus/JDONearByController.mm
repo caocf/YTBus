@@ -17,6 +17,7 @@
 #import "MBProgressHUD.h"
 #import "JDOConstants.h"
 #import "AppDelegate.h"
+#import "JDOAlertTool.h"
 
 @interface JDONearByCell : UITableViewCell
 
@@ -60,7 +61,7 @@
     NSMutableArray *_linesInfo;
     id distanceObserver;
     id dbObserver;
-    int distanceRadius;
+    long distanceRadius;
     MBProgressHUD *hud;
     NSMutableSet *animationIndexPath;
     UILabel *hintLabel;
@@ -85,34 +86,38 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"JDO_Hint_Guide"]) {
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"setting_light"] style:UIBarButtonItemStylePlain target:self action:@selector(showHintGuide)];
+    }
     self.navigationItem.rightBarButtonItem.enabled = false;
     self.tableView.backgroundColor = [UIColor colorWithHex:@"dfded9"];
-    // TODO 增加当前位置和移动距离横幅条，在设置中增加移动xx距离后刷新附近站点的选项
 //    self.tableView.showsVerticalScrollIndicator = false;
     self.tableView.bounces = false;
     sectionHeight = 0;
     
     float deltaY = Screen_Height>480?50:0;
-    hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 265+deltaY, 280, 80)];
+    hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 250+deltaY, 280, 110)];
     hintLabel.backgroundColor = [UIColor clearColor];
     hintLabel.font = [UIFont systemFontOfSize:15];
     hintLabel.numberOfLines = 4;
     hintImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10+deltaY, 300, 351)];
-    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 255+deltaY, 280, 100)];
+    
+    noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 250+deltaY, 280, 110)];
     noDataLabel.backgroundColor = [UIColor clearColor];
     noDataLabel.font = [UIFont systemFontOfSize:15];
     noDataLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
-    noDataLabel.text = @"          很抱歉，“烟台公交”仅覆盖烟台市辖区范围内的公交数据，您的位置附近没有找到公交线路和站点信息。若您在烟台市区范围内，请尝试在“更多->系统设置->附近半径”中增加查询范围。";
+    NSString *originalText = @"          “烟台公交”仅覆盖烟台市辖区范围内的公交数据，您的位置附近没有找到相关信息。若您在烟台市区，请移动一段距离后重试，或在“更多->系统设置->附近站点半径范围”中增加查询范围。";
+    [self setLabel:noDataLabel text:originalText lineSpacing:2];
     noDataLabel.numberOfLines = 5;
     noDataLabel.hidden = true;
-    [self.tableView addSubview:noDataLabel];
     noDataImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10+deltaY, 300, 351)];
     noDataImage.image = [UIImage imageNamed:@"超出范围"];
     noDataImage.hidden = true;
     [self.tableView addSubview:noDataImage];
+    [self.tableView addSubview:noDataLabel];
     
     // 另外启用一个定位服务，因为百度定位无法获取授权状态变化的回调
-    locationManger = [[CLLocationManager alloc]init];
+    locationManger = [[CLLocationManager alloc] init];
     locationManger.delegate = self;
     if (After_iOS8) {
         [locationManger requestWhenInUseAuthorization];
@@ -140,6 +145,14 @@
     
 }
 
+- (void) showHintGuide {
+    JDOAlertTool *alert = [[JDOAlertTool alloc] init];
+    [alert showAlertView:self title:@"温馨提醒" message:@"您可以访问“更多->新手指南”，对本应用的使用方式进行更全面的了解。" cancelTitle:@"我知道了" otherTitle1:nil otherTitle2:nil cancelAction:^{
+        [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"JDO_Hint_Guide"];
+        self.navigationItem.leftBarButtonItem = nil;
+    } otherAction1:nil otherAction2:nil];
+}
+
 - (void) checkLocationState{
     if (showLocationErrorHint) {
         hud = [MBProgressHUD showHUDAddedTo:self.view animated:true];
@@ -155,7 +168,8 @@
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
         
-        hintLabel.text = @"          您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
+        NSString *originalText = @"          您当前已关闭定位服务，请按以下顺序操作以开启定位服务：设置->隐私->定位服务->开启。";
+        [self setLabel:hintLabel text:originalText lineSpacing:4];
         hintLabel.textColor = [UIColor colorWithHex:@"5f5e59"];
         hintImage.image = [UIImage imageNamed:@"关闭定位"];
         [self.tableView addSubview:hintImage];
@@ -166,7 +180,8 @@
         [self.tableView reloadData];
         self.navigationItem.rightBarButtonItem.enabled = false;
         
-        hintLabel.text = @"          您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";
+        NSString *originalText = @"          您尚未允许“烟台公交”使用定位服务，请按以下顺序操作以开启定位:设置->隐私->定位服务->烟台公交->选择“使用应用程序期间”。";;
+        [self setLabel:hintLabel text:originalText lineSpacing:4];
         hintLabel.textColor = [UIColor colorWithHex:@"8f8e89"];
         hintImage.image = [UIImage imageNamed:@"不允许使用定位"];
         [self.tableView addSubview:hintImage];
@@ -183,6 +198,18 @@
     }
 }
 
+- (void) setLabel:(UILabel *)label text:(NSString *) originalText lineSpacing:(int) spacing{
+    if (After_iOS6) {
+        NSMutableAttributedString * attrString = [[NSMutableAttributedString alloc] initWithString:originalText];
+        NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineSpacing:4];
+        [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [originalText length])];
+        label.attributedText = attrString;
+    }else{
+        label.text = originalText;
+    }
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -191,6 +218,7 @@
         JDORealTimeController *rt = segue.destinationViewController;
         JDONearByCell *cell = (JDONearByCell *)sender;
         rt.busLine = cell.busLine;
+        rt.busLine.zhixian = cell.busLine.zhixian;
         self.navigationItem.backBarButtonItem.title = @"附近";
     }else if([segue.identifier isEqualToString:@"toNearMap"]){
         JDONearMapController *nm = segue.destinationViewController;
@@ -246,8 +274,9 @@
     if (currentUserLocation) {
         // 每次startUserLocationService都会触发一次忽略位移的定位，若两次viewWillAppear调用之间若距离变化不足则不刷新
         double moveDistance = [userLocation.location distanceFromLocation:currentLocation];
-        if (moveDistance != -1 && moveDistance < Location_Auto_Refresh_Distance) {
-            myMovement.text = [NSString stringWithFormat:@"距离上次位置%d米",(int)moveDistance];
+        long autoRefreshDistance = [[NSUserDefaults standardUserDefaults] integerForKey:@"nearby_refresh_move"]?:200;
+        if (moveDistance != -1 && moveDistance < autoRefreshDistance) {
+            myMovement.text = [NSString stringWithFormat:@"距上次刷新位置%d米",(int)moveDistance];
 //            [JDOUtils showHUDText:[NSString stringWithFormat:@"距离上次刷新位置:%g米",moveDistance] inView:self.view];
             return;
         }
@@ -307,6 +336,7 @@
             [_nearbyStations addObject:station];
         }
     }
+    [s close];
     
     // 按距离由近及远排序
     [_nearbyStations sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
@@ -319,7 +349,7 @@
     }];
     
     // 测试超出烟台范围无公交站点的情况
-    //    [_nearbyStations removeAllObjects];
+//    [_nearbyStations removeAllObjects];
     
     // 将同一线路的上下行两个方向分别离当前最近的站点合并成一个数组，距离近的在前，保存在busLine的nearbyStation中
     _linesInfo = [[NSMutableArray alloc] init];
@@ -343,6 +373,7 @@
                 busLine.lineId = lineId;
                 busLine.lineName = [rs stringForColumn:@"LINENAME"];
                 busLine.runTime = [rs stringForColumn:@"RUNTIME"];
+                busLine.zhixian = [rs intForColumn:@"ZHIXIAN"];
                 
                 busLine.lineDetailPair = [[NSMutableArray alloc] initWithCapacity:2];
                 JDOBusLineDetail *lineDetail = [JDOBusLineDetail new];
@@ -375,19 +406,21 @@
                 [busLine.nearbyStationPair addObject:station];
             }
         }
+        [rs close];
     }
     [animationIndexPath removeAllObjects];
-    [self.tableView reloadData];
     if (_linesInfo.count>0) {
         noDataLabel.hidden = true;
         noDataImage.hidden = true;
         sectionHeight = 46;
-        self.navigationItem.rightBarButtonItem.enabled = true;
+        [self.tableView reloadData];
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:false];
+        self.navigationItem.rightBarButtonItem.enabled = true;
     }else{
         noDataLabel.hidden = false;
         noDataImage.hidden = false;
         sectionHeight = 0;
+        [self.tableView reloadData];    // 防止反向定位栏显示在最上面
         self.navigationItem.rightBarButtonItem.enabled = false;
     }
 }
@@ -444,8 +477,9 @@
     bg.image = [UIImage imageNamed:@"附近头部"];
     // 父视图不开启userInteractionEnabled，只开子视图的无效
     bg.userInteractionEnabled = true;
-    myLocation = [[UILabel alloc] initWithFrame:CGRectMake(30, 10, 120, 21)];
+    myLocation = [[UILabel alloc] initWithFrame:CGRectMake(28, 10, 120, 21)];
     myLocation.textColor = [UIColor colorWithWhite:240/255.0f alpha:1.0f];
+    myLocation.backgroundColor = [UIColor clearColor];
     myLocation.font = [UIFont systemFontOfSize:14];
     myLocation.minimumFontSize = 10;
     myLocation.text = @"我的位置";
@@ -453,8 +487,9 @@
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(changeDisplayLocation:)];
     [myLocation addGestureRecognizer:gesture];
     [bg addSubview:myLocation];
-    myMovement = [[UILabel alloc] initWithFrame:CGRectMake(180, 10, 135, 21)];
+    myMovement = [[UILabel alloc] initWithFrame:CGRectMake(178, 10, 140, 21)];
     myMovement.textColor = [UIColor colorWithWhite:240/255.0f alpha:1.0f];
+    myMovement.backgroundColor = [UIColor clearColor];
     myMovement.font = [UIFont systemFontOfSize:14];
     myMovement.minimumFontSize = 10;
     myMovement.text = @"正在定位";
@@ -464,7 +499,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    JDONearByCell *cell = [tableView dequeueReusableCellWithIdentifier:@"busLine" forIndexPath:indexPath];
+    JDONearByCell *cell = [tableView dequeueReusableCellWithIdentifier:@"busLine"]; // forIndexPath:indexPath];
     if(!cell.backgroundView){
         cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"公交车列表"]];
         cell.backgroundColor = [UIColor clearColor];
